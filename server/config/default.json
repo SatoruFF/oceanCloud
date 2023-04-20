@@ -1,0 +1,9 @@
+{   
+    "PORT": 3002,
+    "SECRET-KEY": "pear",
+    "DB-name": "OceanCloud",
+    "DB-user": "SatoruF",
+    "DB-password": "5352",
+    "DB-host": "localhost",
+    "DB-port": 5432
+}

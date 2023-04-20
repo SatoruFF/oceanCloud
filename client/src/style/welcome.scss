@@ -1,0 +1,27 @@
+@import '../utils/tmp.scss';
+.welcome__wrapper {
+    width: 100wh;
+    height: 91vh;
+    background: url('../assets/welcome-back.jpg') no-repeat center center;
+    background-size: cover;
+    @extend %centerTemplate;
+}
+
+.welcome__card {
+    width: 600px;
+    height: auto;
+    border-radius: 10px;
+    //@extend %shadowTemplate;
+    .welcome-card__title {
+        font-size: 29px;
+        color: white;
+        margin-top: 20px;
+        @extend %secondFont;
+    }
+    .welcome-card__description {
+        margin-top: 15px;
+        color: white;
+        line-height: 40px;
+        @extend %mainFont;
+    }
+}

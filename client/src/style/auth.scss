@@ -1,0 +1,49 @@
+@import '../utils/tmp.scss';
+
+.auth__wrapper {
+    width: 100vw;
+    height: 91vh;
+    .auth__space {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+        .auth__left-side {
+            background-color: black;
+            width: 20%;
+            height: 100%;
+            @extend %centerTemplate;
+            .left-side__title {
+                font-size: 23px;
+                color: white;
+                line-height: 50px;
+                font-weight: bold;
+                @extend %mainFont;
+            }
+        }
+        .auth__right-side {
+            background: url('../assets/reg-back.jpg') no-repeat center center;
+            background-size: cover;
+            background-color: #fafafa;
+            height: 100%;
+            width: 80%;
+            @extend %centerTemplate;
+            .right-side__form {
+                padding: 20px;
+                width: 400px;
+                height: auto;
+                border-radius: 15px;
+                background-color: white;
+                @extend %shadowTemplate;
+                .auth-form__title {
+                    width: 100%;
+                    font-size: 23px;
+                    margin-bottom: 15px;
+                }
+                * {
+                    @extend %secondFont;
+                }
+            }
+        }
+    }
+}

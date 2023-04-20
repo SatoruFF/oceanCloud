@@ -1,0 +1,42 @@
+import { pool } from "./db.js";
+import { DataTypes } from "sequelize";
+
+
+// User data table
+export const User = pool.define('user', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    firstName: {type: DataTypes.STRING, allowNull: true},
+    lastName: {type: DataTypes.STRING, allowNull: true},
+    email: {type: DataTypes.STRING, unique: true, allowNull: false},
+    password: {type: DataTypes.STRING, allowNull: false},
+    diskSpace: {type: DataTypes.BIGINT, defaultValue: 100*1024*1024},
+    usedSpace: {type: DataTypes.INTEGER, defaultValue: 0},
+    avatar: {type: DataTypes.STRING},
+    role: {type: DataTypes.STRING, defaultValue: "USER"},
+})
+
+// File data table
+export const File = pool.define('file', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    name: {type: DataTypes.STRING, allowNull: false},
+    type: {type: DataTypes.STRING},
+    access_link: {type: DataTypes.STRING},
+    size: {type: DataTypes.INTEGER},
+})
+
+// Relation - one-to-many(one user can have many files)
+User.hasMany(File)
+File.belongsTo(User)
+
+
+// Relation - many-to-one (many files can be located in one folder)
+File.belongsTo(File, { as: 'parent', foreignKey: 'parentId' });
+File.hasMany(File, { as: 'children', foreignKey: 'parentId' });
+
+
+
+
+
+// // parent folder id
+// File.hasOne(File, {as: 'parent'})
+// File.belongsTo(File) 1024**3*10

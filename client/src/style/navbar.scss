@@ -1,0 +1,24 @@
+@import url('https://fonts.googleapis.com/css2?family=Sono&display=swap');
+
+.navbar {
+    width: 100%;
+    height: 9vh;
+    background-color: #434343;
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
+    justify-content: space-around;
+    align-items: center;
+    .main-logo img{
+        width: 100px;
+        height: 80px;
+        margin-left: 20px;
+    }
+    a {
+        text-decoration: none;
+        color: white;
+        font-family: 'Sono', sans-serif;
+        font-size: 14px;
+        text-transform: lowercase;
+    }
+}
