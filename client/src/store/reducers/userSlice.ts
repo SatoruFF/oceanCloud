@@ -2,13 +2,13 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 export interface UserInterface {
   currentUser: any;
-  token: string | null
+  token: string | null;
   isAuth: boolean;
 }
 
 const initialState: UserInterface = {
   currentUser: {},
-  token: '',
+  token: "",
   isAuth: false,
 };
 
@@ -20,10 +20,15 @@ export const userSlice = createSlice({
       state.currentUser = action.payload.user;
       state.token = action.payload.token;
       state.isAuth = true;
-      localStorage.setItem('token', action.payload.token);
+      localStorage.setItem("token", action.payload.token);
+    },
+    logout: (state) => {
+      state.isAuth = false;
+      state.currentUser = {}
+      localStorage.removeItem("token");
     },
   },
 });
 
-export const { setUser } = userSlice.actions;
+export const { setUser, logout } = userSlice.actions;
 export default userSlice.reducer;

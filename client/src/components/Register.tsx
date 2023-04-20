@@ -8,6 +8,7 @@ import { useAppDispatch } from "../store/store";
 import { setUser } from "../store/reducers/userSlice";
 import { current } from "@reduxjs/toolkit";
 import { FILE_ROUTE } from "../utils/consts";
+import { SmileOutlined } from "@ant-design/icons";
 
 const Register = () => {
   const [firstName, setFirstName] = useState("");
@@ -18,25 +19,31 @@ const Register = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const [regUser, { isLoading, error}]: any = userApi.useRegistrationMutation({});
+  const [regUser, { isLoading, error }]: any =
+    userApi.useRegistrationMutation();
 
   const handleCreate = async () => {
     try {
+      if (email == "" && password == "") {
+        return message.error(`error: some field are empty`);
+      }
       const user = await regUser({
         firstName,
         lastName,
         email,
         password,
-      })
-      dispatch(setUser(user.data as any))
+      });
+      dispatch(setUser(user.data as any));
       notification.open({
-        message: 'Success registration',
-        description: `User with email: ${email} was created`
-      })
-      navigate(FILE_ROUTE)
+        message: "Success registration",
+        description: `User with email: ${email} was created`,
+        placement: "topLeft",
+        icon: <SmileOutlined style={{ color: "#52c41a" }} />,
+      });
+      navigate(FILE_ROUTE);
     } catch (e: any) {
-        message.error(`error: ${error.data.message}`);
-        console.log(error.data.message)
+      message.error(`error: ${error.data.message}`);
+      console.log(error.data.message);
     }
   };
 
@@ -44,28 +51,44 @@ const Register = () => {
     <div className="right-side__form">
       <div className="auth-form__title">Registration</div>
       <Form layout="vertical">
-        <Form.Item label="first name:">
+        <Form.Item
+          label="first name:"
+          name="firstName"
+          rules={[{ required: true, message: "Please input your first name!" }]}
+        >
           <Input
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
             placeholder="please input your first name here..."
           />
         </Form.Item>
-        <Form.Item label="last name:">
+        <Form.Item
+          label="last name:"
+          name="lastName"
+          rules={[{ required: true, message: "Please input your last name!" }]}
+        >
           <Input
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
             placeholder="please input your last name here..."
           />
         </Form.Item>
-        <Form.Item label="email:">
+        <Form.Item
+          label="email:"
+          name="email"
+          rules={[{ required: true, message: "Please input your email!" }]}
+        >
           <Input
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="please input your email here..."
           />
         </Form.Item>
-        <Form.Item label="password:">
+        <Form.Item
+          label="password:"
+          name="password"
+          rules={[{ required: true, message: "Please input your password!" }]}
+        >
           <Input
             value={password}
             type="password"

@@ -11,21 +11,23 @@ import {
 import Divider from "antd/es/divider";
 import { NavLink, useNavigate } from "react-router-dom";
 import { FILE_ROUTE, REGISTRATION_ROUTE } from "../utils/consts";
-import { useAppDispatch } from "../store/store";
+import { useAppDispatch, useAppSelector } from "../store/store";
 import { setUser } from "../store/reducers/userSlice";
 import { userApi } from "../actions/user";
+import { SmileOutlined } from "@ant-design/icons";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const [setLogin, { isLoading, error }]: any = userApi.useLoginMutation();
+  const isAuth = useAppSelector((state) => state.users.isAuth);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const handleClick = async () => {
     try {
-      if (email == '' && password == '') {
+      if (email == "" && password == "") {
         return message.error(`error: some field are empty`);
       }
       const user: any = await setLogin({
@@ -36,6 +38,8 @@ const Login = () => {
       notification.open({
         message: "Success log in",
         description: `User with email: ${email} has log in`,
+        placement: "topLeft",
+        icon: <SmileOutlined style={{ color: "#52c41a" }} />,
       });
       navigate(FILE_ROUTE);
     } catch (e: any) {
@@ -48,14 +52,22 @@ const Login = () => {
     <div className="right-side__form">
       <div className="auth-form__title">Login</div>
       <Form layout="vertical">
-        <Form.Item label="email:">
+        <Form.Item
+          label="email:"
+          name="email"
+          rules={[{ required: true, message: "Please input your email!" }]}
+        >
           <Input
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="please input your email here..."
           />
         </Form.Item>
-        <Form.Item label="password:">
+        <Form.Item
+          label="password:"
+          name="password"
+          rules={[{ required: true, message: "Please input your password!" }]}
+        >
           <Input
             type="password"
             value={password}

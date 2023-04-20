@@ -29,15 +29,7 @@ export const privateRoutes = [
     element: Welcome,
   },
   {
-    path: LOGIN_ROUTE,
-    element: Authorization,
-  },
-  {
-    path: REGISTRATION_ROUTE,
-    element: Authorization,
-  },
-  {
     path: FILE_ROUTE,
     element: FileSpace,
   },
-]
+];

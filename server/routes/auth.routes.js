@@ -7,6 +7,7 @@ import {
 import {
     check
 } from "express-validator";
+import authMiddleware from '../middleware/auth.middleware.js';
 
 const router = new Router()
 
@@ -21,5 +22,7 @@ router.post('/register',
 UserController.registration)
 
 router.post('/login', UserController.login)
+
+router.get('/auth', authMiddleware, UserController.auth)
 
 export default router

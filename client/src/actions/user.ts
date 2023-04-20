@@ -12,11 +12,24 @@ interface LoginRequest {
   password: string;
 }
 
+interface AuthResponse {
+  user: any;
+  token: string;
+}
+
+
 export const userApi = createApi({
   reducerPath: "userApi",
   tagTypes: ["User"],
   baseQuery: fetchBaseQuery({
     baseUrl: "http://localhost:3002/api/user/",
+    prepareHeaders: (headers, { getState }) => {
+      const token = (getState() as any).users.token;
+      if (token) {
+        headers.set('authorization', `Bearer ${token}`);
+      }
+      return headers;
+    },
   }),
   endpoints: (builder) => ({
     registration: builder.mutation<any, RegisterRequest>({
@@ -33,5 +46,11 @@ export const userApi = createApi({
         body,
       }),
     }),
+    auth: builder.query<AuthResponse, void>({
+      query: () => "auth",
+      providesTags: (result) => (result ? [{ type: "User", id: result.user.id }] : []),
+    }),
   }),
 });
+
+export const { useAuthQuery } = userApi;
