@@ -59,7 +59,9 @@ class UserControllerClass {
             })
             const token = generateJwt(user.id)
 
-            await FileService.createDir(new File({user: user.id, name: ''}))
+            const newFile = File.build({userId: user.id, name: ''})
+
+            await FileService.createDir(newFile)
 
             return res.json({
                 token,

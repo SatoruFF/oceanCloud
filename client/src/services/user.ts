@@ -1,0 +1,50 @@
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+
+interface RegisterRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+}
+
+interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export const userApi = createApi({
+  reducerPath: "userApi",
+  tagTypes: ["User"],
+  baseQuery: fetchBaseQuery({
+    baseUrl: "http://localhost:3002/api/user/",
+    prepareHeaders: (headers, { getState }) => {
+      //const token = (getState() as any).users.token;
+      const token = localStorage.getItem('token');
+      if (token) {
+        headers.set('Authorization', `Bearer ${token}`);
+      }
+      return headers;
+    },
+  }),
+  endpoints: (builder) => ({
+    registration: builder.mutation<any, RegisterRequest>({
+      query: (body) => ({
+        url: "register",
+        method: "POST",
+        body,
+      }),
+    }),
+    login: builder.mutation<any, LoginRequest>({
+      query: (body) => ({
+        url: "login",
+        method: "POST",
+        body,
+      }),
+    }),
+    auth: builder.query<any, void>({
+      query: () => "auth",
+    }),
+  }),
+});
+
+export const { useAuthQuery } = userApi;

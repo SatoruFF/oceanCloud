@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.0",
+    "chalk": "^5.2.0",
     "config": "^3.3.9",
     "cors": "^2.8.5",
     "express": "^4.18.2",
