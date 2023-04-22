@@ -3,7 +3,7 @@ import Divider from "antd/es/divider";
 import { NavLink, useNavigate } from "react-router-dom";
 import { LOGIN_ROUTE } from "../utils/consts";
 import { useState } from "react";
-import { userApi } from "../actions/user";
+import { userApi } from "../services/user";
 import { useAppDispatch } from "../store/store";
 import { setUser } from "../store/reducers/userSlice";
 import { current } from "@reduxjs/toolkit";
@@ -38,7 +38,7 @@ const Register = () => {
         message: "Success registration",
         description: `User with email: ${email} was created`,
         placement: "topLeft",
-        icon: <SmileOutlined style={{ color: "#52c41a" }} />,
+        icon: <SmileOutlined style={{ color: "#108ee9" }} />,
       });
       navigate(FILE_ROUTE);
     } catch (e: any) {

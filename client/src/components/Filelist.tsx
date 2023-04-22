@@ -1,4 +1,4 @@
-import React from 'react'
+import '../style/fileList.scss'
 
 const Filelist = () => {
     return (

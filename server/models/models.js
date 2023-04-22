@@ -21,7 +21,8 @@ export const File = pool.define('file', {
     name: {type: DataTypes.STRING, allowNull: false},
     type: {type: DataTypes.STRING},
     access_link: {type: DataTypes.STRING},
-    size: {type: DataTypes.INTEGER},
+    size: {type: DataTypes.INTEGER, defaultValue: 0},
+    path: {type: DataTypes.TEXT},
 })
 
 // Relation - one-to-many(one user can have many files)

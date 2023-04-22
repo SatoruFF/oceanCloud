@@ -7,6 +7,8 @@ import {
 import config from 'config';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+import { FileService } from "../services/fileService.js"
+import { File } from "../models/models.js"
 
 const generateJwt = (id) => {
     return jwt.sign({
@@ -56,6 +58,8 @@ class UserControllerClass {
                 password: hashPassword
             })
             const token = generateJwt(user.id)
+
+            await FileService.createDir(new File({user: user.id, name: ''}))
 
             return res.json({
                 token,

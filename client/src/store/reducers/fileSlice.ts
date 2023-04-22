@@ -1,16 +1,27 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-export interface fileInterface {}
+export interface fileInterface {
+  files: [];
+  currentDir: string | null;
+}
 
-const initialState: fileInterface = {};
+const initialState: fileInterface = {
+  files: [],
+  currentDir: null,
+};
 
 export const fileSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    fileReducer: (state) => {},
+    setFiles: (state, action) => {
+      state.files = action.payload.file;
+    },
+    setDir: (state, action) => {
+      state.currentDir = action.payload.dir
+    }
   },
 });
 
-export const { fileReducer } = fileSlice.actions;
+export const { setFiles, setDir } = fileSlice.actions;
 export default fileSlice.reducer;

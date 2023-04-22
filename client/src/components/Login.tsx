@@ -13,7 +13,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { FILE_ROUTE, REGISTRATION_ROUTE } from "../utils/consts";
 import { useAppDispatch, useAppSelector } from "../store/store";
 import { setUser } from "../store/reducers/userSlice";
-import { userApi } from "../actions/user";
+import { userApi } from "../services/user";
 import { SmileOutlined } from "@ant-design/icons";
 
 const Login = () => {

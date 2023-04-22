@@ -6,7 +6,7 @@ export interface UserInterface {
   isAuth: boolean;
 }
 
-const initialState: UserInterface = {
+const initialState: UserInterface  = {
   currentUser: {},
   token: "",
   isAuth: false,
@@ -25,6 +25,7 @@ export const userSlice = createSlice({
     logout: (state) => {
       state.isAuth = false;
       state.currentUser = {}
+      state.token = null
       localStorage.removeItem("token");
     },
   },

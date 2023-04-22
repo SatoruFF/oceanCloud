@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "../style/navbar.scss";
 import { NavLink, useNavigate } from "react-router-dom";
 import mainLogo from "../assets/logo-without-back.png";
@@ -9,14 +9,15 @@ import {
   WELCOME_ROUTE,
 } from "../utils/consts";
 import { useAppDispatch, useAppSelector } from "../store/store";
-import { Button, notification, Typography } from "antd";
-const { Title, Paragraph } = Typography
+import { Button, notification, Typography, Drawer } from "antd";
+const { Title, Paragraph } = Typography;
 import { logout } from "../store/reducers/userSlice";
 import { ApiOutlined, SettingOutlined } from "@ant-design/icons";
 
-const MyNavbar = () => {
+const MyNavbar: React.FC = () => {
   const isAuth = useAppSelector((state) => state.users.isAuth);
-  const user = useAppSelector((state) => state.users.currentUser)
+  const user = useAppSelector((state) => state.users.currentUser);
+  const [drawer, setDrawer] = useState(false);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -24,11 +25,11 @@ const MyNavbar = () => {
     dispatch(logout());
     navigate(WELCOME_ROUTE);
     notification.open({
-      message: 'You succesfully log out',
-      description: 'You have successfully logged out of your account',
-      placement: 'topLeft',
-      icon: <ApiOutlined style={{color: '#ff7875'}}/>,
-    })
+      message: "You succesfully log out",
+      description: "You have successfully logged out of your account",
+      placement: "topLeft",
+      icon: <ApiOutlined style={{ color: "#ff7875" }} />,
+    });
   };
 
   return (
@@ -47,11 +48,21 @@ const MyNavbar = () => {
           <Button type="primary" onClick={() => logOut()}>
             Log out
           </Button>
-          <div className="user-info">
-              <p>{user.firstName}</p>
-              <p>{user.lastName}</p>
-              <SettingOutlined />
+          <div className="user-info" onClick={() => setDrawer(true)}>
+            <p>{user.firstName}</p>
+            <p>{user.lastName}</p>
+            <SettingOutlined />
           </div>
+          <Drawer
+            title="Settings"
+            placement="right"
+            onClose={() => setDrawer(false)}
+            open={drawer}
+          >
+            <p>Some contents...</p>
+            <p>Some contents...</p>
+            <p>Some contents...</p>
+          </Drawer>
         </div>
       ) : (
         <div className="nav__items">
