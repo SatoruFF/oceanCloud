@@ -14,6 +14,7 @@ const FileSpace = () => {
   const [fileName, setFileName] = useState('')
   const dispatch = useAppDispatch();
   const currentDir = useAppSelector((state) => state.files.currentDir);
+  const files = useAppSelector(state => state.files.files)
   const navigate = useNavigate();
   const { data, error, isLoading } = useGetFilesQuery(null);
   const [addFile, { data: dirData, error: dirError, isLoading: dirLoad }] = useCreateDirMutation();
@@ -26,7 +27,7 @@ const FileSpace = () => {
       };
       check();
     }
-  }, [currentDir]);
+  }, [currentDir, files]);
 
   const goBack = () => {
     navigate(-1);
@@ -45,7 +46,10 @@ const FileSpace = () => {
       if (dirError) {
         return message.error('Create dir error')
       }
-      dispatch(addNewFile(dirData))
+      if (dirData) {
+        dispatch(addNewFile(dirData))
+      }
+      setModal(false)
     } catch (error) {
       console.log(error);
     }

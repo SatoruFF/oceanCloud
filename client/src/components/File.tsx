@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Spin } from "antd";
 
 const File = ({ file }: any) => {
+
   return (
     <div className="file-wrapper">
       {file.type == "dir" ? <FolderOutlined /> : <FileOutlined />}
