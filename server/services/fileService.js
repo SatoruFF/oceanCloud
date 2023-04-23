@@ -12,8 +12,8 @@ class FileServiceClass {
         const filePath = path.join(__dirname, '..', 'static', String(file.userId), file.path);
         if (!fs.existsSync(filePath)) {
             fs.mkdirSync(filePath)
-            //return {message: `File was created`}
             await file.save()
+            return {message: 'File was created'}
         } else {
             throw new Error('File already exist')
         }
@@ -21,7 +21,3 @@ class FileServiceClass {
 }
 
 export const FileService = new FileServiceClass()
-
-// import { File } from '../models/models.js';
-// import { v4 as uuidv4 } from 'uuid';
-// import config from 'config';

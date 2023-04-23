@@ -33,7 +33,7 @@ File.belongsTo(User)
 
 // Relation - many-to-one (many files can be located in one folder)
 File.belongsTo(File, { as: 'parent', foreignKey: 'parentId' });
-File.hasMany(File, { as: 'children', foreignKey: 'parentId' });
+File.hasMany(File, { as: 'child', foreignKey: 'childId' });
 
 
 

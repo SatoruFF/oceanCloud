@@ -59,9 +59,6 @@ const MyNavbar: React.FC = () => {
             onClose={() => setDrawer(false)}
             open={drawer}
           >
-            <p>Some contents...</p>
-            <p>Some contents...</p>
-            <p>Some contents...</p>
           </Drawer>
         </div>
       ) : (
