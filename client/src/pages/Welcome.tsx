@@ -9,7 +9,7 @@ const Welcome = () => {
         <div className="welcome-card__title animate__animated animate__fadeIn">Ocean cloud</div>
         <div className="welcome-card__description animate__animated animate__fadeInDown">
           Ocean - its a nice web cloud for everyone. each person is given as much
-          as 100 megabytes
+          as 100 free megabytes
         </div>
       </div>
     </div>

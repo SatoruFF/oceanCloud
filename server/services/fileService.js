@@ -12,7 +12,7 @@ class FileServiceClass {
         const filePath = path.join(__dirname, '..', 'static', String(file.userId), file.path);
         if (!fs.existsSync(filePath)) {
             fs.mkdirSync(filePath)
-            await file.save()
+            //await file.save()
             return {message: 'File was created'}
         } else {
             throw new Error('File already exist')

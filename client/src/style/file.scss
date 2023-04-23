@@ -1,1 +1,28 @@
 @import '../utils/tmp.scss';
+
+.file-wrapper {
+    box-sizing: border-box;
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: 1fr 4fr repeat(4, 1fr);
+    color: black;
+    padding: 10px;
+    background-color: white;
+    align-items: center;
+    @extend %secondFont;
+    .file-name {
+        grid-column-start: 2;
+    }
+    .file-date {
+        grid-column-start: 5;
+        justify-self: center;
+    }
+    .file-size {
+        grid-column-start: 6;
+        justify-self: center;
+    }
+}
+
+.file-wrapper:hover {
+    background-color: #1677ff;
+}

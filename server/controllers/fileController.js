@@ -49,7 +49,7 @@ class FileControllerClass {
         include: [{ model: File, as: "child" }],
       });
 
-      return res.json({ files });
+      return res.json(files);
     } catch (error) {
       console.log(error);
       return res.status(500).json({ message: "Unable to retrieve files" });
