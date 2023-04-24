@@ -27,7 +27,7 @@ const FileSpace = () => {
       };
       check();
     }
-  }, [currentDir, files]);
+  }, [data, currentDir, files, dirData]);
 
   const goBack = () => {
     navigate(-1);
@@ -43,6 +43,7 @@ const FileSpace = () => {
         type: "dir",
         parent: currentDir,
       });
+      message.success('Directory created')
       if (dirError) {
         return message.error('Create dir error')
       }

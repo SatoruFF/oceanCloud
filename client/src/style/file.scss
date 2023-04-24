@@ -2,27 +2,63 @@
 
 .file-wrapper {
     box-sizing: border-box;
-    margin-top: 20px;
+    margin-top: 8px;
     display: grid;
     grid-template-columns: 1fr 4fr repeat(4, 1fr);
     color: black;
     padding: 10px;
-    background-color: white;
     align-items: center;
     @extend %secondFont;
     .file-name {
         grid-column-start: 2;
+
+
+        background-color: white;
+        width: 100px;
+        box-sizing: border-box;
+        padding: 8px;
+        border-radius: 10px;
     }
     .file-date {
         grid-column-start: 5;
         justify-self: center;
+
+        background-color: white;
+        width: 150px;
+        box-sizing: border-box;
+        padding: 8px;
+        border-radius: 10px;
     }
     .file-size {
         grid-column-start: 6;
         justify-self: center;
+
+        background-color: white;
+        width: 100px;
+        box-sizing: border-box;
+        padding: 8px;
+        border-radius: 10px;
+    }
+    .folder {
+        font-size: 24px;
+
+        background-color: white;
+        width: 100px;
+        box-sizing: border-box;
+        padding: 8px;
+        border-radius: 10px;
+    }
+    .file {
+        font-size: 24px;
+
+        background-color: white;
+        width: 100px;
+        box-sizing: border-box;
+        padding: 8px;
+        border-radius: 10px;
     }
 }
 
 .file-wrapper:hover {
-    background-color: #1677ff;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
 }

@@ -18,7 +18,7 @@ export const fileSlice = createSlice({
       state.files = action.payload;
     },
     setDir: (state, action) => {
-      state.currentDir = action.payload.dir
+      state.currentDir = action.payload
     },
     addNewFile: (state: any, action) => {
       state.files.push(action.payload);
