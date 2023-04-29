@@ -7,7 +7,7 @@ import { Button, Spin, Modal, Input, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useCreateDirMutation, useGetFilesQuery } from "../services/file";
 import Filelist from "../components/Filelist";
-import { setFiles, addNewFile } from "../store/reducers/fileSlice";
+import { setFiles, addNewFile, setDir, popToStack } from "../store/reducers/fileSlice";
 
 const FileSpace = () => {
   const [modal, setModal] = useState(false);
@@ -15,14 +15,13 @@ const FileSpace = () => {
   const dispatch = useAppDispatch();
   const currentDir = useAppSelector((state) => state.files.currentDir);
   const files = useAppSelector(state => state.files.files)
-  const navigate = useNavigate();
-  const { data, error, isLoading } = useGetFilesQuery(null);
+  const dirStack = useAppSelector(state => state.files.dirStack)
+  const { data, error, isLoading } = useGetFilesQuery(currentDir);
   const [addFile, { data: dirData, error: dirError, isLoading: dirLoad }] = useCreateDirMutation();
 
   useEffect(() => {
     if (data) {
       const check = async () => {
-        console.log(data);
         dispatch(setFiles(data));
       };
       check();
@@ -30,7 +29,12 @@ const FileSpace = () => {
   }, [data, currentDir, files, dirData]);
 
   const goBack = () => {
-    navigate(-1);
+    if (dirStack.length > 0) {
+      // const backDirId = dirStack.pop()
+      // console.log(backDirId)
+      // dispatch(setDir(backDirId))
+      dispatch(popToStack())
+    }
   };
 
   const addNewFolder = async () => {
@@ -56,7 +60,7 @@ const FileSpace = () => {
     }
   };
 
-  if (isLoading || dirLoad) {
+  if (isLoading || dirLoad || !data) {
     return (
       <Spin style={{ width: "100%", height: "100vh", marginTop: "400px" }} />
     );
@@ -66,8 +70,7 @@ const FileSpace = () => {
     <div className="disk-wrapper">
       <div className="disk-nav">
         <div className="disk-title">
-          {" "}
-          <p>Files</p>{" "}
+          <p>Files</p>
         </div>
         <div className="disk-wrapper-btns">
           <Button onClick={() => goBack()}>

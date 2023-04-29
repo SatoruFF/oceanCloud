@@ -2,15 +2,17 @@ import "../style/file.scss";
 import { FolderOutlined, FileOutlined } from "@ant-design/icons";
 import { useEffect, useState } from 'react';
 import { Spin } from "antd";
-import { useAppDispatch } from "../store/store";
-import { setDir } from "../store/reducers/fileSlice";
+import { useAppDispatch, useAppSelector } from "../store/store";
+import { pushToStack, setDir } from "../store/reducers/fileSlice";
 
 const File = ({ file }: any) => {
 
   const dispatch = useAppDispatch()
+  const currentDir = useAppSelector(state => state.files.currentDir)
 
   const openDirHandler = () => {
     if (file.type == 'dir') {
+      dispatch(pushToStack(currentDir))
       dispatch(setDir(file.id))
     }
   }

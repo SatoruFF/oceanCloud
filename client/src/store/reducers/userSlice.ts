@@ -17,10 +17,12 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     setUser: (state, action: any) => {
-      state.currentUser = action.payload.user;
-      state.token = action.payload.token;
-      state.isAuth = true;
-      localStorage.setItem("token", action.payload.token);
+      if (action.payload && action.payload.user) {
+        state.currentUser = action.payload.user;
+        state.token = action.payload.token;
+        state.isAuth = true;
+        localStorage.setItem("token", action.payload.token);
+      }
     },
     logout: (state) => {
       state.isAuth = false;

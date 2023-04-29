@@ -2,12 +2,14 @@ import { createSlice } from "@reduxjs/toolkit";
 
 export interface fileInterface {
   files: [];
-  currentDir: string | null | number;
+  currentDir: null | number;
+  dirStack: number[] | [];
 }
 
 const initialState: fileInterface = {
   files: [],
   currentDir: null,
+  dirStack: [],
 };
 
 export const fileSlice = createSlice({
@@ -22,9 +24,15 @@ export const fileSlice = createSlice({
     },
     addNewFile: (state: any, action) => {
       state.files.push(action.payload);
-    }
+    },
+    pushToStack: (state: any, action) => {
+      state.dirStack.push(action.payload);
+    },
+    popToStack: (state: any) => {
+      state.currentDir = state.dirStack.pop()
+    },
   },
 });
 
-export const { setFiles, setDir, addNewFile } = fileSlice.actions;
+export const { setFiles, setDir, addNewFile, pushToStack, popToStack } = fileSlice.actions;
 export default fileSlice.reducer;
