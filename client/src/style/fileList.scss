@@ -7,42 +7,39 @@
         width: 100%;
         display: grid;
         grid-template-columns: 1fr 4fr repeat(4, 1fr);
-        color: white;
+        color: black;
         font-size: 16px;
         padding-top: 10px;
         padding-bottom: 10px;
-        border-bottom: 1px solid white;
+        border-bottom: 2px solid white;
         @extend %secondFont;
         .name {
             grid-column-start: 2;
 
-            box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+
             box-sizing: border-box;
             padding: 10px;
             width: 70px;
-            border-radius: 10px;
             cursor: default;
         }
         .date {
             grid-column-start: 5;
             justify-self: center;
 
-            box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+
             box-sizing: border-box;
             padding: 10px;
             width: 60px;
-            border-radius: 10px;
             cursor: default;
         }
         .size {
             grid-column-start: 6;
             justify-self: center;
 
-            box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+
             box-sizing: border-box;
             padding: 10px;
             width: 55px;
-            border-radius: 10px;
             cursor: default;
         }
     }

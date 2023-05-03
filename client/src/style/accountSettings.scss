@@ -1,0 +1,33 @@
+@import '../utils/tmp.scss';
+
+.account-wrapper {
+    width: 100%;
+    height: 100%;
+    .account-personal {
+        height: 50%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        .personal-item {
+            background-color: #1677ff;
+            color: white;
+            padding: 10px;
+            text-align: start;
+            cursor: default;
+            border-radius: 10px;
+            @extend %mainFont;
+        }
+    }
+    .account-settings {
+        height: 50%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        .account-btn {
+            width: 100%;
+        }
+        * {
+            @extend %mainFont;
+        }
+    }
+}

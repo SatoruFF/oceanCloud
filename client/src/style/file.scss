@@ -13,45 +13,39 @@
         grid-column-start: 2;
 
 
-        background-color: white;
         width: 100px;
         box-sizing: border-box;
         padding: 8px;
-        border-radius: 10px;
     }
     .file-date {
         grid-column-start: 5;
         justify-self: center;
 
-        background-color: white;
         width: 150px;
         box-sizing: border-box;
         padding: 8px;
-        border-radius: 10px;
     }
     .file-size {
         grid-column-start: 6;
         justify-self: center;
 
-        background-color: white;
         width: 100px;
         box-sizing: border-box;
         padding: 8px;
-        border-radius: 10px;
     }
     .folder {
-        font-size: 24px;
-
-        background-color: white;
+        font-size: 250%;
+        color: white;
+        
         width: 100px;
         box-sizing: border-box;
         padding: 8px;
         border-radius: 10px;
     }
     .file {
-        font-size: 24px;
+        font-size: 250%;
 
-        background-color: white;
+        color: white;
         width: 100px;
         box-sizing: border-box;
         padding: 8px;

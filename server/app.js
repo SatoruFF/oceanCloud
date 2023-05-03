@@ -4,6 +4,7 @@ import express from "express";
 import cors from 'cors';
 import {pool} from './models/db.js'
 import router from './routes/index.js';
+import fileUpload from 'express-fileupload'
 
 // base consts
 const app = express()
@@ -12,6 +13,7 @@ const port = config.get('PORT')
 // middleware
 app.use(express.json())
 app.use(cors())
+app.use(fileUpload({}))
 
 //routes
 app.use('/api', router)

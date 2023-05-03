@@ -13,6 +13,7 @@ import { Button, notification, Typography, Drawer } from "antd";
 const { Title, Paragraph } = Typography;
 import { logout } from "../store/reducers/userSlice";
 import { ApiOutlined, SettingOutlined } from "@ant-design/icons";
+import AccountSettings from "./AccountSettings.";
 
 const MyNavbar: React.FC = () => {
   const isAuth = useAppSelector((state) => state.users.isAuth);
@@ -59,6 +60,7 @@ const MyNavbar: React.FC = () => {
             onClose={() => setDrawer(false)}
             open={drawer}
           >
+            <AccountSettings/>
           </Drawer>
         </div>
       ) : (

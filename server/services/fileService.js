@@ -8,14 +8,12 @@ const __dirname = dirname(__filename);
 
 class FileServiceClass {
     async createDir(file) {
-        console.log(file)
-        const filePath = path.join(__dirname, '..', 'static', String(file.userId), file.path);
-        if (!fs.existsSync(filePath)) {
-            fs.mkdirSync(filePath)
-            //await file.save()
-            return {message: 'File was created'}
+        const folderPath = path.join(__dirname, '..', 'static', String(file.userId), file.path);
+        if (!fs.existsSync(folderPath)) {
+            fs.mkdirSync(folderPath)
+            return {message: 'Folder was created'}
         } else {
-            throw new Error('File already exist')
+            throw new Error('Folder already exist')
         }
     }
 }

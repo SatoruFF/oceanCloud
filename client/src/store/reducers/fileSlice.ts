@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 export interface fileInterface {
   files: [];
-  currentDir: null | number;
+  currentDir: null | number | any;
   dirStack: number[] | [];
 }
 

@@ -1,5 +1,5 @@
 import "../style/file.scss";
-import { FolderOutlined, FileOutlined } from "@ant-design/icons";
+import { FolderFilled, FileFilled } from "@ant-design/icons";
 import { useEffect, useState } from 'react';
 import { Spin } from "antd";
 import { useAppDispatch, useAppSelector } from "../store/store";
@@ -19,7 +19,7 @@ const File = ({ file }: any) => {
 
   return (
     <div className="file-wrapper" onDoubleClick={() => openDirHandler()}>
-      {file.type == "dir" ? <FolderOutlined className="folder"/> : <FileOutlined className="file"/>}
+      {file.type == "dir" ? <FolderFilled className="folder"/> : <FileFilled className="file"/>}
       <div className="file-name">{file.name}</div>
       <div className="file-date">{file.updatedAt.slice(0, 10)}</div>
       <div className="file-size">{file.size}</div>
