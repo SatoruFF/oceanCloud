@@ -66,6 +66,9 @@ const FileSpace = () => {
     headers: {
       Authorization: `Bearer ${token}`,
     },
+    data: {
+      parent: currentDir
+    },
     onChange(info) {
       if (info.file.status !== "uploading") {
         console.log(info.file, info.fileList);
@@ -114,7 +117,7 @@ const FileSpace = () => {
             <p className="disc-createFolder-txt">Create new folder</p>
           </Button>
 
-          <Upload className="disk-upload" name="file" maxCount={1} {...props}>
+          <Upload className="disk-upload" name="file" multiple={true} {...props}>
             <Button icon={<UploadOutlined />} className="upload-btn">
               Click to Upload
             </Button>

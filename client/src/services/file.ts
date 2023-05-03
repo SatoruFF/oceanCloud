@@ -21,6 +21,13 @@ export const fileApi = createApi({
                 body,
             })
         }),
+        downloadFile: builder.mutation<any, any>({
+            query: (file) => ({
+                url: `file/download?=${file.id}`,
+                method: "POST",
+                file,
+            })
+        }),
         getFiles: builder.query<any, any>({
             query: (dirId: any) => `file${dirId ? '?parent='+String(dirId) : ''}`,
         })
@@ -28,4 +35,4 @@ export const fileApi = createApi({
 
 })
 
-export const { useGetFilesQuery, useCreateDirMutation } = fileApi;
+export const { useGetFilesQuery, useCreateDirMutation, useDownloadFileMutation } = fileApi;

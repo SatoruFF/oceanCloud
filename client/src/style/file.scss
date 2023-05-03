@@ -5,10 +5,13 @@
     margin-top: 8px;
     display: grid;
     grid-template-columns: 1fr 4fr repeat(4, 1fr);
-    color: black;
+    color: white;
     padding: 10px;
     align-items: center;
     @extend %secondFont;
+    .file-btn {
+        display: none;
+    }
     .file-name {
         grid-column-start: 2;
 
@@ -21,7 +24,12 @@
         grid-column-start: 5;
         justify-self: center;
 
-        width: 150px;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        justify-self: center;
         box-sizing: border-box;
         padding: 8px;
     }
@@ -29,10 +37,37 @@
         grid-column-start: 6;
         justify-self: center;
 
-        width: 100px;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        justify-self: center;
         box-sizing: border-box;
         padding: 8px;
     }
+
+    &:hover {
+        .file-date {
+            grid-column-start: 3;
+        }
+        .file-size {
+            grid-column-start: 4;
+        }
+        .file-download {
+            grid-column-start: 5;
+            display: block;
+            width: 70%;
+            align-self: center;
+        }
+        .file-delete {
+            grid-column-start: 6;
+            display: block;
+            width: 70%;
+            align-self: center;
+        }
+    }
+    
     .folder {
         font-size: 250%;
         color: white;
@@ -51,8 +86,4 @@
         padding: 8px;
         border-radius: 10px;
     }
-}
-
-.file-wrapper:hover {
-    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
 }

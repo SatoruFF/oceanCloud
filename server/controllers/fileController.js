@@ -71,6 +71,7 @@ class FileControllerClass {
       }
 
       const parent = await File.findOne({where: {userId: currentUserId, id: req.body.parent}})
+
       const user = await User.findOne({where: {id: currentUserId}})
 
       if (user.usedSpace + file.size > user.diskSpace) {
@@ -95,7 +96,7 @@ class FileControllerClass {
           type,
           size: file.size,
           path: parent?.path,
-          parent: parent?.id,
+          parentId: parent.id,
           userId: user.id,
         })
 
@@ -109,6 +110,21 @@ class FileControllerClass {
     } catch (error) {
       console.log(error)
       return res.status(400).json({message: "Upload error"})
+    }
+  }
+
+  async downloadFile(req, res) {
+    try {
+      const currentUserId = req.user.id
+      const file = await File.findOne({where: {id: req.query.id, userId: currentUserId}})
+      path = path.join(__dirname, '..', 'static', String(currentUserId), file.path, file.name);
+      if (fs.existsSync(path)) {
+        return res.download(path, file.name)
+      }
+      return res.status(500).json({message: "File not found"})
+    } catch (error) {
+      console.log(error)
+      return res.status(500).json({message: "Download error"})
     }
   }
 }

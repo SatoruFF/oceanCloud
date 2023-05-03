@@ -14,7 +14,7 @@ const AccountSettings = () => {
                 <p className='personal-item'>Email: {user.email}</p>
                 <p className='personal-item'>Role: {user.role}</p>
                 <p className='personal-item'>Total disk space: {user.diskSpace}</p>
-                <p className='personal-item'>Used space: {user.usedSpace}</p>
+                <p className='personal-item'>Used space: {user.usedSpace} byte</p>
             </div>
             <div className="account-settings">
                 <Divider orientation='left'>Edit</Divider>
