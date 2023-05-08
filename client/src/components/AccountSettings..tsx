@@ -1,10 +1,13 @@
 import { Button, Divider } from 'antd';
 import '../style/accountSettings.scss'
 import { useAppSelector } from '../store/store';
+import { sizeFormat } from '../utils/sizeFormat';
 
 
 const AccountSettings = () => {
     const user = useAppSelector(state => state.users.currentUser)
+    const totalSpace = sizeFormat(user.diskSpace)
+    const usedSize = sizeFormat(user.usedSpace)
 
     return (
         <div className="account-wrapper">
@@ -13,8 +16,8 @@ const AccountSettings = () => {
                 <p className='personal-item'>Last name: {user.lastName}</p>
                 <p className='personal-item'>Email: {user.email}</p>
                 <p className='personal-item'>Role: {user.role}</p>
-                <p className='personal-item'>Total disk space: {user.diskSpace}</p>
-                <p className='personal-item'>Used space: {user.usedSpace} byte</p>
+                <p className='personal-item'>Total disk space: {totalSpace}</p>
+                <p className='personal-item'>Used space: {usedSize}</p>
             </div>
             <div className="account-settings">
                 <Divider orientation='left'>Edit</Divider>

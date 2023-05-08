@@ -1,10 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
+const url = 'http://localhost:3002/api/'
 
 export const fileApi = createApi({
     reducerPath: 'fileApi',
     baseQuery: fetchBaseQuery({
-        baseUrl: 'http://localhost:3002/api/',
+        baseUrl: url,
         prepareHeaders: (headers) => {
             const token = localStorage.getItem("token")
             if (token) {
@@ -22,10 +23,25 @@ export const fileApi = createApi({
             })
         }),
         downloadFile: builder.mutation<any, any>({
-            query: (file) => ({
-                url: `file/download?=${file.id}`,
+            query: ({file}) => ({
+                url: `file/download?id=${file.id}`,
                 method: "POST",
-                file,
+                responseHandler: async (response) => {
+                    const blob = await response.blob(); // получаем бинарные данные ответа
+                    const url = window.URL.createObjectURL(blob); // создаем URL-адрес для скачивания файла
+                    const link = document.createElement("a"); // создаем ссылку для скачивания файла
+                    link.href = url;
+                    link.download = file.name; // задаем имя файла для скачивания
+                    link.click(); // автоматически кликаем по ссылке, чтобы скачать файл
+                    window.URL.revokeObjectURL(url); // освобождаем занятые ресурсы
+                },
+                cache: "no-cache",
+            })
+        }),
+        deleteFile: builder.mutation<any, any>({
+            query: ({file}) => ({
+                url: `file/delete?id=${file.id}`,
+                method: 'DELETE',
             })
         }),
         getFiles: builder.query<any, any>({
@@ -35,4 +51,4 @@ export const fileApi = createApi({
 
 })
 
-export const { useGetFilesQuery, useCreateDirMutation, useDownloadFileMutation } = fileApi;
+export const { useGetFilesQuery, useCreateDirMutation, useDownloadFileMutation, useDeleteFileMutation } = fileApi;

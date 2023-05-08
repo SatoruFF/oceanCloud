@@ -4,7 +4,7 @@ import { useAppDispatch } from "../store/store";
 import { useEffect, useState } from "react";
 import { LeftOutlined, UploadOutlined } from "@ant-design/icons";
 import { Button, Spin, Modal, Input, message, Upload } from "antd";
-import { useCreateDirMutation, useGetFilesQuery } from "../services/file";
+import { useCreateDirMutation, useDeleteFileMutation, useGetFilesQuery } from "../services/file";
 import Filelist from "../components/Filelist";
 import {
   setFiles,
@@ -26,8 +26,8 @@ const FileSpace = () => {
 
   //RTK query
   const { data, isLoading, refetch } = useGetFilesQuery(currentDir);
-  const [addFile, { data: dirData, error: dirError, isLoading: dirLoad }] =
-    useCreateDirMutation();
+  const [addFile, { data: dirData, error: dirError, isLoading: dirLoad }] = useCreateDirMutation();
+  const [deleteFile, {data: delData, error: delErr, isLoading: delLoad}] = useDeleteFileMutation()
 
   useEffect(() => {
     refetch()
@@ -77,8 +77,16 @@ const FileSpace = () => {
         message.success(`${info.file.name} file uploaded successfully`);
         refetch()
       } else if (info.file.status === "error") {
-        message.error(`${info.file.name} file upload failed.`);
+        message.error(`${info.file.name} file upload failed. Perhabs file already exist.`);
       }
+    },
+    progress: {
+      strokeColor: {
+        '0%': '#108ee9',
+        '100%': '#87d068',
+      },
+      strokeWidth: 3,
+      format: (percent) => percent && `${parseFloat(percent.toFixed(2))}%`,
     },
   };
 
@@ -93,6 +101,7 @@ const FileSpace = () => {
         type: "dir",
         parent: currentDir,
       });
+
       setModal(false);
       setFolderName("")
     } catch (error) {
