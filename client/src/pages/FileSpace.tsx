@@ -3,8 +3,8 @@ import { useAppSelector } from "../store/store";
 import { useAppDispatch } from "../store/store";
 import { useEffect, useState } from "react";
 import { LeftOutlined, UploadOutlined } from "@ant-design/icons";
-import { Button, Spin, Modal, Input, message, Upload } from "antd";
-import { useCreateDirMutation, useDeleteFileMutation, useGetFilesQuery } from "../services/file";
+import { Button, Spin, Modal, Input, message, Upload, Select } from "antd";
+import { useCreateDirMutation, useGetFilesQuery } from "../services/file";
 import Filelist from "../components/Filelist";
 import {
   setFiles,
@@ -13,10 +13,12 @@ import {
   popToStack,
 } from "../store/reducers/fileSlice";
 import type { UploadProps } from "antd";
+import { generateParams } from "../utils/generateParams";
 
 const FileSpace = () => {
   const [modal, setModal] = useState(false);
   const [folderName, setFolderName] = useState("");
+  const [sort, setSort]: any = useState('')
   const token = localStorage.getItem("token");
 
   //Redux state
@@ -25,13 +27,14 @@ const FileSpace = () => {
   const dirStack = useAppSelector((state) => state.files.dirStack);
 
   //RTK query
+  const params = generateParams(currentDir, sort)
+  console.log(params)
   const { data, isLoading, refetch } = useGetFilesQuery(currentDir);
-  const [addFile, { data: dirData, error: dirError, isLoading: dirLoad }] = useCreateDirMutation();
-  const [deleteFile, {data: delData, error: delErr, isLoading: delLoad}] = useDeleteFileMutation()
+  const [addFile, { data: dirData, error: dirError}] = useCreateDirMutation();
 
   useEffect(() => {
     refetch()
-  }, [])
+  }, [sort])
 
   useEffect(() => {
     if (data) {
@@ -131,6 +134,17 @@ const FileSpace = () => {
               Click to Upload
             </Button>
           </Upload>
+
+          <Select
+            className="disk-order"
+            defaultValue='Order by'
+            onChange={value => setSort(value)}
+            options={[
+              { value: 'name', label: 'name' },
+              { value: 'type', label: 'type' },
+              { value: 'date', label: 'date' },
+            ]}
+          />
         </div>
       </div>
       <Modal

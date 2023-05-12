@@ -27,6 +27,11 @@
                 @extend %secondFont;
             }
         }
+        .disk-order {
+            * {
+                @extend %secondFont;
+            }
+        }
     }
     &::before {
         content: "";

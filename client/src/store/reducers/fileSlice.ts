@@ -2,13 +2,13 @@ import { createSlice } from "@reduxjs/toolkit";
 
 export interface fileInterface {
   files: [];
-  currentDir: null | number | any;
+  currentDir: any; // Исправить!
   dirStack: number[] | [];
 }
 
 const initialState: fileInterface = {
   files: [],
-  currentDir: null,
+  currentDir: null, // КОСТЫЛЬ!!!!
   dirStack: [],
 };
 

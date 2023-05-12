@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from "../store/store";
 import { pushToStack, setDir } from "../store/reducers/fileSlice";
 import {useDeleteFileMutation, useDownloadFileMutation, useGetFilesQuery}  from '../services/file'
 import { sizeFormat } from "../utils/sizeFormat";
+import { motion } from "framer-motion"
 
 const File = ({ file }: any) => {
   

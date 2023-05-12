@@ -53,13 +53,13 @@ class FileControllerClass {
       let files;
       switch (sort) {
         case 'name':
-          files = await File.findAll({where: { userId: req.user.id, parentId }, include: [{ model: File, as: "child" }],}).sort({name: 1})
+          files = await File.findAll({where: { userId: req.user.id, parentId }, include: [{ model: File, as: "child" }], order: [['name', 'ASC']],})
           break;
         case 'type':
-          files = await File.findAll({where: { userId: req.user.id, parentId },include: [{ model: File, as: "child" }],}).sort({type: 1})
+          files = await File.findAll({where: { userId: req.user.id, parentId },include: [{ model: File, as: "child" }], order: [['type', 'DESC']],})
           break;
         case 'date':
-          files = await File.findAll({where: { userId: req.user.id, parentId },include: [{ model: File, as: "child" }],}).sort({createdAt: 1})
+          files = await File.findAll({where: { userId: req.user.id, parentId },include: [{ model: File, as: "child" }], order: [['createdAt', 'ASC']],})
           break;
         default:
           files = await File.findAll({where: { userId: req.user.id, parentId },include: [{ model: File, as: "child" }],});
