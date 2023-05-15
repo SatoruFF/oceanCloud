@@ -9,9 +9,11 @@
     padding: 10px;
     align-items: center;
     @extend %secondFont;
+
     .file-btn {
         display: none;
     }
+
     .file-name {
         grid-column-start: 2;
 
@@ -20,6 +22,7 @@
         box-sizing: border-box;
         padding: 8px;
     }
+
     .file-date {
         grid-column-start: 5;
         justify-self: center;
@@ -33,6 +36,7 @@
         box-sizing: border-box;
         padding: 8px;
     }
+
     .file-size {
         grid-column-start: 6;
         justify-self: center;
@@ -51,15 +55,18 @@
         .file-date {
             grid-column-start: 3;
         }
+
         .file-size {
             grid-column-start: 4;
         }
+
         .file-download {
             grid-column-start: 5;
             display: block;
             width: 70%;
             align-self: center;
         }
+
         .file-delete {
             grid-column-start: 6;
             display: block;
@@ -67,23 +74,45 @@
             align-self: center;
         }
     }
-    
-    .folder {
+
+    .folder, .file {
         font-size: 250%;
         color: white;
-        
         width: 100px;
         box-sizing: border-box;
         padding: 8px;
         border-radius: 10px;
     }
-    .file {
-        font-size: 250%;
+}
 
+
+.fileplate-file-wrapper {
+    overflow: hidden;
+    width: 150px;
+    height: 125px;
+    cursor: default;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    text-align: center;
+
+    .folder, .file {
+        font-size: 290%;
         color: white;
-        width: 100px;
-        box-sizing: border-box;
-        padding: 8px;
-        border-radius: 10px;
+    }
+
+    .file-name {
+        color: white;
+        @extend %secondFont;
+    }
+
+    .file-btns {
+        display: none;
+    }
+    &:hover {
+        .file-btns {
+            display: block;
+        }
     }
 }

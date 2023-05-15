@@ -50,6 +50,12 @@ class FileControllerClass {
     try {
       const {sort} = req.query
       const parentId = req.query.parent || null;
+      const searchItem = req.query.search
+      if (searchItem) {
+        let files = await File.findAll({where: {userId: req.user.id}})
+        files = files.filter(file => file.name.includes(searchItem))
+        return res.json(files)
+      }
       let files;
       switch (sort) {
         case 'name':
@@ -71,6 +77,18 @@ class FileControllerClass {
       return res.status(500).json({ message: "Unable to retrieve files" });
     }
   }
+
+  // async searchFiles(req, res) {
+  //   try {
+  //     const searchItem = req.query.search
+  //     let files = await File.findAll({where: {userId: req.user.id}})
+  //     files = files.filter(file => file.name.includes(searchItem))
+  //     return res.json(files)
+  //   } catch (error) {
+  //     console.log(error);
+  //     return res.status(404).json({ message: "Search error" });
+  //   }
+  // }
 
   async uploadFile(req, res) {
     try {

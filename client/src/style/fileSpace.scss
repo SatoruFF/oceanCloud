@@ -2,14 +2,17 @@
 
 .disk-wrapper {
     height: 91vh;
-    background: url('../assets/disk-back.jpg') no-repeat center center;
-    background-size: cover;
-    box-sizing: border-box;
-
+    background: linear-gradient(109.6deg, rgb(6, 2, 2) 32.4%, rgb(137, 30, 47) 98.8%);
+    position: relative;
     overflow: hidden;
     overflow-y: auto;
+    .disk-background-img {
+        display: none; //!
+        filter: brightness(30%);
+        @extend %backgroundPic;
+    }
     
-    .disk-wrapper-btns {
+    .disk-control-btns {
         width: 100%;
         height: 7vh;
         display: flex;
@@ -32,16 +35,42 @@
                 @extend %secondFont;
             }
         }
-    }
-    &::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-    
-        backdrop-filter: blur(4px); /* задаем эффект размытия */
-        background-color: rgba(0, 0, 0, 0.7);
+        .search-files {
+            width: 20%;
+            * {
+                @extend %mainFont;
+            }
+        }
+        .visual {
+            width: 8%;
+            display: flex;
+            justify-content: space-evenly;
+            z-index: 0;
+            .visual-by-list {
+                font-size: 20px;
+                color: white;
+                transition: transform 0.2s ease-out;
+                &:hover {
+                    cursor: pointer;
+                    transform: scale(1.1);
+                }
+            }
+            .visual-by-file {
+                font-size: 20px;
+                color: white;
+                transition: transform 0.2s ease-out;
+                &:hover {
+                    cursor: pointer;
+                    transform: scale(1.1);
+                    
+                }
+            }
+        }
+        .breadcrumb {
+            overflow-y: auto;
+            & * {
+                color: white;
+            }
+        }
     }
 }

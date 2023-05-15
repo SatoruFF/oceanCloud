@@ -1,10 +1,12 @@
 import React from "react";
 import "../style/welcome.scss";
+import welcomeBack from '../assets/welcome-back.jpg'
 
 const Welcome = () => {
 
   return (
     <div className="welcome__wrapper">
+      <img src={welcomeBack} className="welcome-background-img" loading="lazy"/>
       <div className="welcome__card">
         <div className="welcome-card__title animate__animated animate__fadeIn">Ocean cloud</div>
         <div className="welcome-card__description animate__animated animate__fadeInDown">

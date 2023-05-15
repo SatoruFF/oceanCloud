@@ -2,14 +2,18 @@ import { createSlice } from "@reduxjs/toolkit";
 
 export interface fileInterface {
   files: [];
-  currentDir: any; // Исправить!
+  currentDir: any;
   dirStack: number[] | [];
+  view: string;
+  paths: any[];
 }
 
 const initialState: fileInterface = {
   files: [],
-  currentDir: null, // КОСТЫЛЬ!!!!
+  currentDir: null,
   dirStack: [],
+  view: 'list',
+  paths: [{title: 'Root'}],
 };
 
 export const fileSlice = createSlice({
@@ -31,8 +35,17 @@ export const fileSlice = createSlice({
     popToStack: (state: any) => {
       state.currentDir = state.dirStack.pop()
     },
+    pushToPath: (state: any, action) => {
+      state.paths.push(action.payload)
+    },
+    popToPath: (state: any) => {
+      state.paths.pop()
+    },
+    setView: (state: any, action) => {
+      state.view = action.payload
+    }
   },
 });
 
-export const { setFiles, setDir, addNewFile, pushToStack, popToStack } = fileSlice.actions;
+export const { setFiles, setDir, addNewFile, pushToStack, popToStack, setView, pushToPath, popToPath } = fileSlice.actions;
 export default fileSlice.reducer;

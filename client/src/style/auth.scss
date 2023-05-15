@@ -22,13 +22,17 @@
             }
         }
         .auth__right-side {
-            background: url('../assets/reg-back.jpg') no-repeat center center;
             background-size: cover;
-            background-color: #fafafa;
+            background-color: #595959;
             height: 100%;
             width: 80%;
+            position: relative;
             @extend %centerTemplate;
+            .auth-background-img {
+                @extend %backgroundPic;
+            }
             .right-side__form {
+                z-index: 0;
                 padding: 20px;
                 width: 400px;
                 height: auto;

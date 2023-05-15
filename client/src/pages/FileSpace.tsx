@@ -2,39 +2,61 @@ import "../style/fileSpace.scss";
 import { useAppSelector } from "../store/store";
 import { useAppDispatch } from "../store/store";
 import { useEffect, useState } from "react";
-import { LeftOutlined, UploadOutlined } from "@ant-design/icons";
-import { Button, Spin, Modal, Input, message, Upload, Select } from "antd";
+import {
+  LeftOutlined,
+  UploadOutlined,
+  UnorderedListOutlined,
+  AppstoreOutlined,
+} from "@ant-design/icons";
+import {
+  Button,
+  Spin,
+  Modal,
+  Input,
+  message,
+  Upload,
+  Select,
+  Breadcrumb,
+} from "antd";
 import { useCreateDirMutation, useGetFilesQuery } from "../services/file";
 import Filelist from "../components/Filelist";
+import diskBack from "../assets/disk-back.jpg";
 import {
   setFiles,
   addNewFile,
   setDir,
   popToStack,
+  setView,
+  popToPath,
 } from "../store/reducers/fileSlice";
 import type { UploadProps } from "antd";
 import { generateParams } from "../utils/generateParams";
+const { Search } = Input;
 
 const FileSpace = () => {
-  const [modal, setModal] = useState(false);
-  const [folderName, setFolderName] = useState("");
-  const [sort, setSort]: any = useState('')
-  const token = localStorage.getItem("token");
-
   //Redux state
   const dispatch = useAppDispatch();
   const currentDir = useAppSelector((state) => state.files.currentDir);
   const dirStack = useAppSelector((state) => state.files.dirStack);
+  const paths = useAppSelector((state) => state.files.paths);
+
+  //states
+  const [modal, setModal] = useState(false);
+  const [folderName, setFolderName] = useState("");
+  const [sort, setSort]: any = useState("");
+  const token = localStorage.getItem("token");
+  const [search, setSearch] = useState("");
+  const onSearch = (value: string) => setSearch(value);
+  console.log(dirStack);
 
   //RTK query
-  const params = generateParams(currentDir, sort)
-  console.log(params)
-  const { data, isLoading, refetch } = useGetFilesQuery(currentDir);
-  const [addFile, { data: dirData, error: dirError}] = useCreateDirMutation();
+  const params = generateParams(currentDir, sort, search);
+  const { data, isLoading, refetch } = useGetFilesQuery(params ? params : null);
+  const [addFile, { data: dirData, error: dirError }] = useCreateDirMutation();
 
   useEffect(() => {
-    refetch()
-  }, [sort])
+    refetch();
+  }, [sort]);
 
   useEffect(() => {
     if (data) {
@@ -49,7 +71,7 @@ const FileSpace = () => {
   useEffect(() => {
     if (dirData) {
       dispatch(addNewFile(dirData));
-      refetch()
+      refetch();
     }
     if (dirError) {
       message.error("Create dir error");
@@ -59,6 +81,7 @@ const FileSpace = () => {
   const goBack = () => {
     if (dirStack.length > 0) {
       dispatch(popToStack());
+      dispatch(popToPath());
     }
   };
 
@@ -70,7 +93,7 @@ const FileSpace = () => {
       Authorization: `Bearer ${token}`,
     },
     data: {
-      parent: currentDir
+      parent: currentDir,
     },
     onChange(info) {
       if (info.file.status !== "uploading") {
@@ -78,15 +101,17 @@ const FileSpace = () => {
       }
       if (info.file.status === "done") {
         message.success(`${info.file.name} file uploaded successfully`);
-        refetch()
+        refetch();
       } else if (info.file.status === "error") {
-        message.error(`${info.file.name} file upload failed. Perhabs file already exist.`);
+        message.error(
+          `${info.file.name} file upload failed. Perhabs file already exist.`
+        );
       }
     },
     progress: {
       strokeColor: {
-        '0%': '#108ee9',
-        '100%': '#87d068',
+        "0%": "#108ee9",
+        "100%": "#87d068",
       },
       strokeWidth: 3,
       format: (percent) => percent && `${parseFloat(percent.toFixed(2))}%`,
@@ -106,7 +131,7 @@ const FileSpace = () => {
       });
 
       setModal(false);
-      setFolderName("")
+      setFolderName("");
     } catch (error) {
       console.log(error);
     }
@@ -120,8 +145,9 @@ const FileSpace = () => {
 
   return (
     <div className="disk-wrapper">
+      <img src={diskBack} className="disk-background-img" loading="lazy" />
       <div className="disk-nav">
-        <div className="disk-wrapper-btns">
+        <div className="disk-control-btns">
           <Button onClick={() => goBack()}>
             <LeftOutlined />
           </Button>
@@ -129,7 +155,12 @@ const FileSpace = () => {
             <p className="disc-createFolder-txt">Create new folder</p>
           </Button>
 
-          <Upload className="disk-upload" name="file" multiple={true} {...props}>
+          <Upload
+            className="disk-upload"
+            name="file"
+            multiple={true}
+            {...props}
+          >
             <Button icon={<UploadOutlined />} className="upload-btn">
               Click to Upload
             </Button>
@@ -137,14 +168,31 @@ const FileSpace = () => {
 
           <Select
             className="disk-order"
-            defaultValue='Order by'
-            onChange={value => setSort(value)}
+            defaultValue="Order by"
+            onChange={(value) => setSort(value)}
             options={[
-              { value: 'name', label: 'name' },
-              { value: 'type', label: 'type' },
-              { value: 'date', label: 'date' },
+              { value: "name", label: "name" },
+              { value: "type", label: "type" },
+              { value: "date", label: "date" },
             ]}
           />
+          <Search
+            placeholder="What are you looking for?"
+            className="search-files"
+            onSearch={onSearch}
+            enterButton
+          />
+          <div className="visual">
+            <UnorderedListOutlined
+              className="visual-by-list"
+              onClick={() => dispatch(setView("list"))}
+            />
+            <AppstoreOutlined
+              className="visual-by-file"
+              onClick={() => dispatch(setView("plate"))}
+            />
+          </div>
+          <Breadcrumb className="breadcrumb" items={paths} />
         </div>
       </div>
       <Modal

@@ -1,8 +1,9 @@
 @import '../utils/tmp.scss';
 
-.fileList-wrapper{
+.filelist-wrapper{
     height: 90%;
     box-sizing: border-box;
+    position: relative;
     .fileList-header{
         width: 100%;
         display: grid;
@@ -43,4 +44,25 @@
             cursor: default;
         }
     }
+}
+
+.fileplate-list-wrapper {
+    box-sizing: border-box;
+    padding-top: 20px;
+    display: flex;
+    width: 100%;
+    height: auto;
+    flex-wrap: wrap;
+}
+
+
+.files-not-found {
+    position: absolute;
+    z-index: 0;
+    width: 100%;
+    height: calc(100vh - 16vh);
+    box-sizing: border-box;
+    color: white;
+    font-size: 24px;
+    @extend %centerTemplate, %mainFont;
 }

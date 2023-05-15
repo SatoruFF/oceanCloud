@@ -2,16 +2,17 @@
 .welcome__wrapper {
     width: 100wh;
     height: 91vh;
-    background: url('../assets/welcome-back.jpg') no-repeat center center;
-    background-size: cover;
+    position: relative;
     @extend %centerTemplate;
+    .welcome-background-img {
+        @extend %backgroundPic;
+    }
 }
 
 .welcome__card {
     width: 600px;
     height: auto;
     border-radius: 10px;
-    //@extend %shadowTemplate;
     .welcome-card__title {
         font-size: 29px;
         color: white;
