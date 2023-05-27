@@ -47,7 +47,6 @@ const FileSpace = () => {
   const token = localStorage.getItem("token");
   const [search, setSearch] = useState("");
   const onSearch = (value: string) => setSearch(value);
-  console.log(dirStack);
 
   //RTK query
   const params = generateParams(currentDir, sort, search);
@@ -144,7 +143,7 @@ const FileSpace = () => {
   }
 
   return (
-    <div className="disk-wrapper">
+    <div className="disk-wrapper">      
       <img src={diskBack} className="disk-background-img" loading="lazy" />
       <div className="disk-nav">
         <div className="disk-control-btns">
@@ -192,7 +191,7 @@ const FileSpace = () => {
               onClick={() => dispatch(setView("plate"))}
             />
           </div>
-          <Breadcrumb className="breadcrumb" items={paths} />
+          <Breadcrumb separator=">" className="breadcrumb" items={paths} />
         </div>
       </div>
       <Modal

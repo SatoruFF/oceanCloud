@@ -20,7 +20,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const [setLogin, { isLoading, error }]: any = userApi.useLoginMutation();
+  const [setLogin, { data, isLoading, error }]: any = userApi.useLoginMutation();
   const isAuth = useAppSelector((state) => state.users.isAuth);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -34,14 +34,18 @@ const Login = () => {
         email,
         password,
       });
-      dispatch(setUser(user.data as any));
-      notification.open({
-        message: "Success log in",
-        description: `User with email: ${email} has log in`,
-        placement: "topLeft",
-        icon: <SmileOutlined style={{ color: "#52c41a" }} />,
-      });
-      navigate(FILE_ROUTE);
+
+      if(data) {
+        dispatch(setUser(user.data as any));
+        notification.open({
+          message: "Success log in",
+          description: `User with email: ${email} has log in`,
+          placement: "topLeft",
+          icon: <SmileOutlined style={{ color: "#52c41a" }} />,
+        });
+        navigate(FILE_ROUTE);
+      }
+
     } catch (e: any) {
       message.error(`error: ${error.data.message}`);
       console.log(error.data.message);

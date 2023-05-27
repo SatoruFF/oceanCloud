@@ -44,6 +44,12 @@ export const fileApi = createApi({
         method: "DELETE",
       }),
     }),
+    deleteAvatar: builder.mutation<any, void>({
+      query: () => ({
+        url: `file/avatar`,
+        method: "DELETE",
+      }),
+    }),
     getFiles: builder.query<any, any>({
       query: (dirId: string) => `file${dirId ? dirId : ""}`,
     }),
@@ -55,4 +61,5 @@ export const {
   useCreateDirMutation,
   useDownloadFileMutation,
   useDeleteFileMutation,
+  useDeleteAvatarMutation
 } = fileApi;

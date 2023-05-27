@@ -5,6 +5,7 @@ import mainLogo from "../assets/logo-without-back.png";
 import {
   FILE_ROUTE,
   LOGIN_ROUTE,
+  PROFILE_ROUTE,
   REGISTRATION_ROUTE,
   WELCOME_ROUTE,
 } from "../utils/consts";
@@ -14,6 +15,7 @@ const { Title, Paragraph } = Typography;
 import { logout } from "../store/reducers/userSlice";
 import { ApiOutlined, SettingOutlined } from "@ant-design/icons";
 import AccountSettings from "./AccountSettings.";
+import avatarIcon from "../assets/avatar-icon.png";
 
 const MyNavbar: React.FC = () => {
   const isAuth = useAppSelector((state) => state.users.isAuth);
@@ -21,6 +23,7 @@ const MyNavbar: React.FC = () => {
   const [drawer, setDrawer] = useState(false);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const avatar = user.avatar ? `http://localhost:3002/${user.avatar}` : avatarIcon; 
 
   const logOut = () => {
     dispatch(logout());
@@ -36,23 +39,28 @@ const MyNavbar: React.FC = () => {
   return (
     <div className="navbar">
       <div className="main-logo">
-        <img src={mainLogo} alt="" />
+        <img src={mainLogo} alt="" onClick={() => navigate(WELCOME_ROUTE)}/>
       </div>
       {isAuth ? (
         <div className="nav__items">
-          <div className="navbar__item">
+          {/* <div className="navbar__item">
             <NavLink to={WELCOME_ROUTE}>home page</NavLink>
-          </div>
+          </div> */}
           <div className="navbar__item">
             <NavLink to={FILE_ROUTE}>My files</NavLink>
           </div>
           <Button type="primary" onClick={() => logOut()}>
             Log out
           </Button>
-          <div className="user-info" onClick={() => setDrawer(true)}>
-            <p>{user.firstName}</p>
-            <p>{user.lastName}</p>
-            <SettingOutlined />
+          <div className="nav-user">
+            <div className="user-info" onClick={() => setDrawer(true)}>
+              <p>{user.firstName}</p>
+              <p>{user.lastName}</p>
+              <SettingOutlined />
+            </div>
+            <div className="avatar">
+              <img src={avatar} onClick={() => navigate(PROFILE_ROUTE)}/>
+            </div>
           </div>
           <Drawer
             title="Settings"
@@ -60,7 +68,7 @@ const MyNavbar: React.FC = () => {
             onClose={() => setDrawer(false)}
             open={drawer}
           >
-            <AccountSettings/>
+            <AccountSettings />
           </Drawer>
         </div>
       ) : (
@@ -71,9 +79,9 @@ const MyNavbar: React.FC = () => {
           <div className="navbar__item">
             <NavLink to={REGISTRATION_ROUTE}>registration</NavLink>
           </div>
-          <div className="navbar__item">
+          {/* <div className="navbar__item">
             <NavLink to={WELCOME_ROUTE}>HOME PAGE</NavLink>
-          </div>
+          </div> */}
         </div>
       )}
     </div>

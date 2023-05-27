@@ -1,6 +1,7 @@
 import { File, User } from "../models/models.js";
 import { FileService } from "../services/fileService.js";
 import { fileURLToPath } from 'url';
+import { v4 as uuidv4 } from 'uuid';
 import path from 'path';
 import fs from 'fs';
 import { dirname } from 'path';
@@ -78,18 +79,6 @@ class FileControllerClass {
     }
   }
 
-  // async searchFiles(req, res) {
-  //   try {
-  //     const searchItem = req.query.search
-  //     let files = await File.findAll({where: {userId: req.user.id}})
-  //     files = files.filter(file => file.name.includes(searchItem))
-  //     return res.json(files)
-  //   } catch (error) {
-  //     console.log(error);
-  //     return res.status(404).json({ message: "Search error" });
-  //   }
-  // }
-
   async uploadFile(req, res) {
     try {
       const file = req.files.file
@@ -111,9 +100,9 @@ class FileControllerClass {
       let filePath;
   
       if (parent) {
-        filePath = path.join(__dirname, '..', 'static', String(user.id), parent.path, file.name);
+        filePath = path.join(__dirname, '..', 'files', String(user.id), parent.path, file.name);
       } else {
-        filePath = path.join(__dirname, '..', 'static', String(user.id), file.name);
+        filePath = path.join(__dirname, '..', 'files', String(user.id), file.name);
       }
   
       if (!fs.existsSync(filePath)) {
@@ -146,7 +135,7 @@ class FileControllerClass {
       const currentUserId = req.user.id
       const queryId = req.query.id
       const file = await File.findOne({where: {id: queryId, userId: currentUserId}})
-      const filePath = path.join(__dirname, '..', 'static', String(currentUserId), file.path, file.name);
+      const filePath = path.join(__dirname, '..', 'files', String(currentUserId), file.path, file.name);
       if (fs.existsSync(filePath)) {
         return res.download(filePath, file.name)
       }
@@ -171,10 +160,54 @@ class FileControllerClass {
       }
       FileService.deleteFile(file)
       await file.destroy()
+
+      const user = await User.findOne({where: {id: req.user.id}})
+      user.usedSpace = user.usedSpace - file.size
+      await user.save()
+
       return res.json({message: 'File was destroyed'})
     } catch (error) {
       console.log(error)
       return res.status(500).json({message: error.message})
+    }
+  }
+
+  async uploadAvatar(req, res) {
+    try {
+      const file = req.files.file
+      const user = await User.findOne({where: {id: req.user.id}})
+      // first we must delete old avatar
+      if (user.avatar) {
+        const avatarPath = path.join(__dirname, '..', 'static', user.avatar)
+        fs.unlinkSync(avatarPath)
+      }
+      const avatarName = uuidv4() + '.png'
+      const avatarPath = path.join(__dirname, '..', 'static', avatarName)
+      fs.mkdirSync(path.dirname(avatarPath), { recursive: true })
+      file.mv(avatarPath)
+      user.avatar = avatarName
+      await user.save()
+      return res.json(user)
+    } catch (error) {
+      console.log(error)
+      return res.status(400).json({message: error.message})
+    }
+  }
+
+  async deleteAvatar(req, res) {
+    try {
+      const user = await User.findOne({where: {id: req.user.id}})
+      if (user.avatar) {
+        const avatarPath = path.join(__dirname, '..', 'static', user.avatar)
+        fs.unlinkSync(avatarPath)
+        user.avatar = null
+        await user.save()
+        return res.json(user)
+      }
+      return res.json({message: 'avatar not found'})
+    } catch (error) {
+      console.log(error)
+      return res.status(400).json({message: error.message})
     }
   }
 }

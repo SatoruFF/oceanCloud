@@ -1,0 +1,34 @@
+@import '../utils/tmp.scss';
+
+.profile-wrapper {
+    width: 100%;
+    height: 91vh;
+    box-sizing: border-box;
+    background-color: black;
+    @extend %centerTemplate;
+
+    .profile-content {
+        width: 100%;
+        height: 100%;
+        max-width: 1400px;
+        @extend %centerTemplate;
+
+        .profile__main-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-evenly;
+            width: 700px;
+            height: 600px;
+            border-radius: 15px;
+            background-color: white;
+            img {
+                width: 200px;
+            }
+            .profile-btns {
+                display: flex;
+                gap: 15px;
+            }
+        }
+    }
+}

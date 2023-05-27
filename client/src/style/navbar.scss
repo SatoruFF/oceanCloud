@@ -12,6 +12,11 @@
     align-items: center;
     position: relative;
     z-index: 1;
+    .main-logo img{
+        &:hover {
+            cursor: pointer;
+        }
+    }
     .user-info {
         @extend %centerTemplate;
         gap: 15px;
@@ -31,6 +36,19 @@
         color: white;
         p {
             color: white;
+        }
+    }
+    .nav-user {
+        display: flex;
+        align-items: center;
+        gap: 30px;
+        .avatar {
+            img {
+                width: 40px;
+                &:hover {
+                    cursor: pointer;
+                }
+            }
         }
     }
     .main-logo img{
