@@ -1,19 +1,33 @@
 import { useAppDispatch, useAppSelector } from "../store/store";
-import { Button, Upload, message } from "antd";
+import {
+  Button,
+  Upload,
+  message,
+  Typography,
+  Col,
+  Row,
+  Statistic,
+  Card,
+} from "antd";
+import { PieChartOutlined, CloudOutlined } from '@ant-design/icons';
 import type { UploadProps } from "antd";
 import "../style/profile.scss";
 import { useDeleteAvatarMutation } from "../services/file";
 import { setUser } from "../store/reducers/userSlice";
+import { sizeFormat } from "../utils/sizeFormat";
 import avatarIcon from "../assets/avatar-icon.png";
+const { Paragraph } = Typography;
 
 const Profile = () => {
   const user = useAppSelector((state) => state.users.currentUser);
+  const totalSpace = sizeFormat(user.diskSpace);
+  const usedSize = sizeFormat(user.usedSpace);
   const dispatch = useAppDispatch();
   const token = localStorage.getItem("token");
   const avatar = user.avatar
     ? `http://localhost:3002/${user.avatar}`
     : avatarIcon;
-  const [deleteAvatar, { data: userWithoutAvatarData }] =
+  const [deleteAvatar] =
     useDeleteAvatarMutation();
 
   // file upload
@@ -56,7 +70,7 @@ const Profile = () => {
   const changeAvatarHandler = async () => {
     try {
       const response: any = await deleteAvatar();
-      dispatch(setUser(userWithoutAvatarData));
+      dispatch(setUser(response.data));
       message.success("Avatar successfully deleted");
     } catch (error) {
       console.log(error);
@@ -67,14 +81,46 @@ const Profile = () => {
     <div className="profile-wrapper">
       <div className="profile-content">
         <div className="profile__main-card">
-          <img src={avatar} alt="avatar" loading="lazy" />
-          <div className="profile-btns">
-            <Button type="primary" danger onClick={() => changeAvatarHandler()}>
-              Delete avatar
-            </Button>
-            <Upload name="file" multiple={true} {...props}>
-              <Button className="upload-btn">Upload avatar</Button>
-            </Upload>
+          <div className="profile__left-side">
+            <img src={avatar} alt="avatar" loading="lazy" />
+            <div className="profile-btns">
+              <Button
+                type="primary"
+                danger
+                onClick={() => changeAvatarHandler()}
+              >
+                Delete avatar
+              </Button>
+              <Upload name="file" multiple={true} {...props}>
+                <Button className="upload-btn">Upload avatar</Button>
+              </Upload>
+            </div>
+          </div>
+          <div className="profile__right-side">
+            <div className="profile-name">
+              {user.firstName} {user.lastName}
+            </div>
+            <Paragraph copyable className="profile-email">
+              Email: {user.email}
+            </Paragraph>
+            <Paragraph className="profile-item">Role: {user.role}</Paragraph>
+            <Row gutter={16} className="profile-stat">
+              <Col span={12}>
+                <Card>
+                  <Statistic title="Total space" value={totalSpace}/>
+                </Card>
+              </Col>
+              <Col span={12}>
+                <Card>
+                  <Statistic
+                    title="Used space"
+                    value={usedSize}
+                    precision={2}
+                    prefix={<PieChartOutlined />}
+                  />
+                </Card>
+              </Col>
+            </Row>
           </div>
         </div>
       </div>

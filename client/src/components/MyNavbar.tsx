@@ -10,20 +10,36 @@ import {
   WELCOME_ROUTE,
 } from "../utils/consts";
 import { useAppDispatch, useAppSelector } from "../store/store";
-import { Button, notification, Typography, Drawer } from "antd";
+import {
+  Button,
+  notification,
+  Typography,
+  Drawer,
+  Divider,
+  Tooltip,
+} from "antd";
 const { Title, Paragraph } = Typography;
 import { logout } from "../store/reducers/userSlice";
-import { ApiOutlined, SettingOutlined } from "@ant-design/icons";
+import {
+  ApiOutlined,
+  SettingOutlined,
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+} from "@ant-design/icons";
+import { motion } from "framer-motion";
 import AccountSettings from "./AccountSettings.";
 import avatarIcon from "../assets/avatar-icon.png";
 
 const MyNavbar: React.FC = () => {
   const isAuth = useAppSelector((state) => state.users.isAuth);
   const user = useAppSelector((state) => state.users.currentUser);
-  const [drawer, setDrawer] = useState(false);
+  const [profile, setProfile] = useState(false);
+  const [burger, setBurger] = useState(false);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const avatar = user.avatar ? `http://localhost:3002/${user.avatar}` : avatarIcon; 
+  const avatar = user.avatar
+    ? `http://localhost:3002/${user.avatar}`
+    : avatarIcon;
 
   const logOut = () => {
     dispatch(logout());
@@ -39,34 +55,40 @@ const MyNavbar: React.FC = () => {
   return (
     <div className="navbar">
       <div className="main-logo">
-        <img src={mainLogo} alt="" onClick={() => navigate(WELCOME_ROUTE)}/>
+        <img src={mainLogo} alt="" onClick={() => navigate(WELCOME_ROUTE)} />
       </div>
       {isAuth ? (
         <div className="nav__items">
-          {/* <div className="navbar__item">
-            <NavLink to={WELCOME_ROUTE}>home page</NavLink>
-          </div> */}
-          <div className="navbar__item">
-            <NavLink to={FILE_ROUTE}>My files</NavLink>
+          <div className="nav-files">
+            <Button ghost>
+              <NavLink to={FILE_ROUTE}>My files</NavLink>
+            </Button>
           </div>
-          <Button type="primary" onClick={() => logOut()}>
+          <Button
+            className="nav-logout"
+            type="primary"
+            onClick={() => logOut()}
+          >
             Log out
           </Button>
           <div className="nav-user">
-            <div className="user-info" onClick={() => setDrawer(true)}>
-              <p>{user.firstName}</p>
-              <p>{user.lastName}</p>
-              <SettingOutlined />
-            </div>
+            <Tooltip title="Account Settings">
+              <div className="user-info" onClick={() => setProfile(true)}>
+                <p>{user.firstName}</p>
+                <p>{user.lastName}</p>
+                <SettingOutlined />
+              </div>
+            </Tooltip>
             <div className="avatar">
-              <img src={avatar} onClick={() => navigate(PROFILE_ROUTE)}/>
+              <img src={avatar} onClick={() => navigate(PROFILE_ROUTE)} />
             </div>
           </div>
           <Drawer
             title="Settings"
             placement="right"
-            onClose={() => setDrawer(false)}
-            open={drawer}
+            onClose={() => setProfile(false)}
+            open={profile}
+            style={{backgroundColor: 'white'}}
           >
             <AccountSettings />
           </Drawer>
@@ -74,14 +96,62 @@ const MyNavbar: React.FC = () => {
       ) : (
         <div className="nav__items">
           <div className="navbar__item">
-            <NavLink to={LOGIN_ROUTE}>authorization</NavLink>
+            <Button ghost>
+              <NavLink to={LOGIN_ROUTE}>authorization</NavLink>
+            </Button>
           </div>
           <div className="navbar__item">
-            <NavLink to={REGISTRATION_ROUTE}>registration</NavLink>
+            <Button ghost>
+              <NavLink to={REGISTRATION_ROUTE}>registration</NavLink>
+            </Button>
           </div>
-          {/* <div className="navbar__item">
-            <NavLink to={WELCOME_ROUTE}>HOME PAGE</NavLink>
-          </div> */}
+          <div className="nav-burger">
+            {!burger ? (
+              <MenuFoldOutlined
+                className="burger-icon"
+                onClick={() => setBurger(true)}
+              />
+            ) : (
+              <MenuUnfoldOutlined className="burger-icon" />
+            )}
+            <Drawer
+              title="Pages"
+              placement="left"
+              onClose={() => setBurger(false)}
+              open={burger}
+            >
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1 }}
+                className="burger__item"
+              >
+                <Divider>
+                  <NavLink to={WELCOME_ROUTE}>Home page</NavLink>
+                </Divider>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1 }}
+                className="burger__item"
+              >
+                <Divider>
+                  <NavLink to={LOGIN_ROUTE}>Log in</NavLink>
+                </Divider>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1 }}
+                className="burger__item"
+              >
+                <Divider>
+                  <NavLink to={REGISTRATION_ROUTE}>Registration</NavLink>
+                </Divider>
+              </motion.div>
+            </Drawer>
+          </div>
         </div>
       )}
     </div>

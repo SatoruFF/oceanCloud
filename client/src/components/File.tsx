@@ -1,9 +1,13 @@
 import "../style/file.scss";
-import { FolderFilled, FileFilled } from "@ant-design/icons";
+import {
+  FolderFilled,
+  FileFilled,
+  QuestionCircleOutlined,
+} from "@ant-design/icons";
 import { useEffect, useState } from "react";
-import { Button, Spin, message } from "antd";
+import { Button, Popconfirm, Spin, Tooltip, message } from "antd";
 import { useAppDispatch, useAppSelector } from "../store/store";
-import { pushToPath, pushToStack, setDir } from "../store/reducers/fileSlice";
+import { pushToPath, pushToStack, setDir, setFiles } from "../store/reducers/fileSlice";
 import {
   useDeleteFileMutation,
   useDownloadFileMutation,
@@ -30,7 +34,7 @@ const File = ({ file }: any) => {
     if (file.type == "dir") {
       dispatch(setDir(file.id));
       dispatch(pushToStack(currentDir));
-      dispatch(pushToPath({title: file.name}))
+      dispatch(pushToPath({ title: file.name }));
     }
   };
 
@@ -45,18 +49,16 @@ const File = ({ file }: any) => {
     }
   };
 
-  const deleteHandler = async (e: any) => {
+  const deleteHandler = async () => {
     try {
-      e.stopPropagation();
       const response: any = await deleteFile({
         file,
       });
-      message.info(response.data.message);
+      dispatch(setFiles(response.data))
+      message.info("File was destroyed")
     } catch (error: any) {
       message.error(`Request failed: ${error.message}`);
-    } finally {
-      refetch();
-    }
+    } 
   };
 
   if (fileView == "plate") {
@@ -71,7 +73,10 @@ const File = ({ file }: any) => {
         ) : (
           <FileFilled className="file" />
         )}
-        <div className="file-name">{file.name}</div>
+
+        <Tooltip title={file.name}>
+          <div className="file-name">{file.name}</div>
+        </Tooltip>
         <div className="file-btns">
           {file.type !== "dir" && (
             <Button
@@ -82,14 +87,18 @@ const File = ({ file }: any) => {
               Download
             </Button>
           )}
-          <Button
-            className="file-btn file-delete"
-            type="link"
-            onClick={(e) => deleteHandler(e)}
-            danger
+          <Popconfirm
+            title="Delete"
+            description="Exactly?"
+            onConfirm={deleteHandler}
+            okText="Yes"
+            cancelText="No"
+            icon={<QuestionCircleOutlined style={{ color: "red" }} />}
           >
-            Delete
-          </Button>
+            <Button className="file-btn file-delete" type="link" danger>
+              Delete
+            </Button>
+          </Popconfirm>
         </div>
       </motion.div>
     );
@@ -106,7 +115,10 @@ const File = ({ file }: any) => {
       ) : (
         <FileFilled className="file" />
       )}
-      <div className="file-name">{file.name}</div>
+
+      <Tooltip title={file.name}>
+        <div className="file-name">{file.name}</div>
+      </Tooltip>
       <div className="file-date">{file.updatedAt.slice(0, 10)}</div>
       <div className="file-size">{size}</div>
       {file.type !== "dir" && (
@@ -118,13 +130,18 @@ const File = ({ file }: any) => {
           Download
         </Button>
       )}
-      <Button
-        className="file-btn file-delete"
-        onClick={(e) => deleteHandler(e)}
-        danger
+      <Popconfirm
+        title="Delete"
+        description="Exactly?"
+        onConfirm={deleteHandler}
+        okText="Yes"
+        cancelText="No"
+        icon={<QuestionCircleOutlined style={{ color: "red" }} />}
       >
-        Delete
-      </Button>
+        <Button className="file-btn file-delete" type="link" danger>
+          Delete
+        </Button>
+      </Popconfirm>
     </motion.div>
   );
 };

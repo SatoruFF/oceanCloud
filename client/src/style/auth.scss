@@ -2,7 +2,7 @@
 
 .auth__wrapper {
     width: 100vw;
-    height: 91vh;
+    height: 90vh;
     .auth__space {
         height: 100%;
         display: flex;
@@ -23,16 +23,16 @@
         }
         .auth__right-side {
             background-size: cover;
-            background-color: #595959;
+            background-color: #111827;
             height: 100%;
             width: 80%;
+            z-index: 1;
             position: relative;
             @extend %centerTemplate;
             .auth-background-img {
                 @extend %backgroundPic;
             }
             .right-side__form {
-                z-index: 0;
                 padding: 20px;
                 width: 400px;
                 height: auto;
@@ -48,6 +48,17 @@
                     @extend %secondFont;
                 }
             }
+        }
+    }
+}
+
+@media screen and (max-width: 992px) {
+    .auth__wrapper {
+        .auth__left-side {
+            display: none !important;
+        }
+        .auth__right-side {
+            width: 100% !important;
         }
     }
 }

@@ -1,13 +1,14 @@
-import { Anchor, Button } from "antd";
+import { Anchor, Button, message } from "antd";
 import "../style/welcome.scss";
-import mainLogo from "../assets/main-logo.jpg";
+import mainLogo from "../assets/wave-and-sun.png";
 import desktopIcon from "../assets/desktop.png";
 import mobileIcon from "../assets/mobile-phone.png";
-import storageIcon from '../assets/cloud-data.png'
-import telegramLogo from '../assets/telegram.png'
-import twitterLogo from '../assets/twitter.png'
-import instagramLogo from '../assets/inst.png'
+import storageIcon from "../assets/cloud-data.png";
+import telegramLogo from "../assets/telegram.png";
+import twitterLogo from "../assets/twitter.png";
+import gitIcon from "../assets/github-icon.png";
 import ParticleEffect from "../components/ParticleEffect";
+import { LazyMotion, domAnimation, motion } from "framer-motion";
 
 const Welcome = () => {
   return (
@@ -53,15 +54,18 @@ const Welcome = () => {
         <div className="content-max">
           <div className="welcome__card animate__animated animate__fadeIn">
             <div className="left-side">
-              <div className="welcome__title ">Ocean cloud</div>
+              <div className="welcome__title">Ocean cloud</div>
               <div className="welcome__description animate__animated animate__fadeInDown">
                 Ocean - its a nice web cloud for everyone. each person is given
-                as much as 100 free megabytes.
-                In addition, customers can upload, store and manage their data in a cloud environment with a simple and user-friendly interface.
+                as much as 100 free megabytes. In addition, customers can
+                upload, store and manage their data in a cloud environment with
+                a simple and user-friendly interface.
               </div>
             </div>
             <div className="right-side">
-              <img src={mainLogo} alt="ocean" loading="lazy" />
+              <LazyMotion features={domAnimation}>
+                <motion.img src={mainLogo} animate={{ opacity: 1 }} />
+              </LazyMotion>
             </div>
           </div>
         </div>
@@ -79,14 +83,25 @@ const Welcome = () => {
                 You can also download desktop applications by clicking the
                 button below
               </div>
-              <Button type="primary">download</Button>
+              <Button
+                type="primary"
+                onClick={() => message.info("coming soon...")}
+              >
+                download
+              </Button>
             </div>
+
             <div className="more__mobile-card">
               <img src={mobileIcon} alt="mobile" loading="lazy" />
               <div className="more-description">
                 And there is also a mobile cloud storage application
               </div>
-              <Button type="primary">download</Button>
+              <Button
+                type="primary"
+                onClick={() => message.info("coming soon...")}
+              >
+                download
+              </Button>
             </div>
           </div>
         </div>
@@ -102,31 +117,42 @@ const Welcome = () => {
               manage their data in a cloud environment. It provides high-level
               security and data access control functions, as well as guarantees
               high availability and scalability. The main advantages of Ocean
-              Cloud are: <br/>
-              ·Flexibility and Scalability: Ocean Cloud allows users
-              to easily scale their storage to meet growing data storage needs,
-              expanding storage capacity as needed.<br /> 
-              ·High Availability: Ocean Cloud provides high availability and reliability of data through
-              the use of distributed storage systems and multiple copies of data
-              in different availability zones.<br />
-              ·Security: Ocean Cloud provides a
-              high level of data security thanks to data encryption at rest and
-              in motion, traffic filtering and the ability to control access to
-              data at the user level.<br /> 
-              ·Usability: Ocean Cloud has a simple and
-              intuitive interface that allows users to easily upload, store and
-              manage their data without requiring special knowledge and skills.
+              Cloud are: <br />
+              ·Flexibility and Scalability: Ocean Cloud allows users to easily
+              scale their storage to meet growing data storage needs, expanding
+              storage capacity as needed.
+              <br />
+              ·Security: Ocean Cloud provides a high level of data security
+              thanks to data encryption at rest and in motion, traffic filtering
+              and the ability to control access to data at the user level.
+              <br />
+              ·Usability: Ocean Cloud has a simple and intuitive interface that
+              allows users to easily upload, store and manage their data without
+              requiring special knowledge and skills.
             </div>
             <div className="about-links">
-              <img src={storageIcon} alt="storage" loading="lazy" className="storage-logo"/>
+              <img
+                src={storageIcon}
+                alt="storage"
+                loading="lazy"
+                className="storage-logo"
+              />
               <div className="socials">
-                <div className="socials-item"> <img src={telegramLogo} alt="telegram" loading="lazy"/> </div>
-                <div className="socials-item"> <img src={twitterLogo} alt="twitter" loading="lazy"/> </div>
-                <div className="socials-item"> <img src={instagramLogo} alt="instagram" loading="lazy"/> </div>
+                <div className="socials-item">
+                  <a href="https://t.me/AlexDayy" target="_blank">
+                    <img src={telegramLogo} alt="telegram" loading="lazy" />
+                  </a>
+                </div>
+                <div className="socials-item">
+                  <a href="https://github.com/SatoruFF" target="_blank">
+                    <img src={gitIcon} alt="instagram" loading="lazy" />
+                  </a>
+                </div>
+                <div className="socials-item">
+                  <img src={twitterLogo} alt="twitter" loading="lazy" />{" "}
+                </div>
               </div>
-              <div className="about__signature">
-                Made by SatoruF
-              </div>
+              <div className="about__signature">Made by SatoruF</div>
             </div>
           </div>
         </div>

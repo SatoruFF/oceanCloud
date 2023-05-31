@@ -28,7 +28,7 @@
 
     .welcome-main {
         width: 100wh;
-        height: 91vh;
+        height: 90vh;
         position: relative;
         background-color: white;
         @extend %centerTemplate;
@@ -87,6 +87,7 @@
             .right-side {
                 @extend %centerTemplate;
                 img {
+                    width: 350px;
                     border-radius: 10px;
                 }
             }
@@ -133,8 +134,10 @@
         width: 100%;
         background-color: black;
         overflow: hidden;
+
         position: relative;
-        z-index: -1;
+        z-index: 0;
+
         @extend %centerTemplate;
         flex-direction: column;
         .more__title {
@@ -153,8 +156,9 @@
             justify-content: space-evenly;
 
             .more__desktop-card, .more__mobile-card {
-                width: 400px;
-                height: 500px;
+                z-index: 1;
+                width: 30%;
+                height: 70%;
                 background-color: white;
                 overflow: hidden;
                 border-radius: 10px;
@@ -171,6 +175,7 @@
                     height: 33%;
                 }
                 .more-description {
+                    padding: 10px;
                     @extend %mainFont;
                 }
             }
@@ -219,7 +224,7 @@
                 flex-direction: column;
                 justify-content: space-evenly;
                 .about__signature {
-                    color: white;
+                    color: #fee2e2;
                     font-size: 24px;
                     @extend %secondFont;
                 }
@@ -236,6 +241,58 @@
                             width: 50px;
                         }
                     }
+                }
+            }
+        }
+    }
+}
+
+// adaptive
+@media screen and (max-width: 992px) {
+
+    .welcome-main {
+        height: auto !important;
+    }
+
+    .welcome-anchor {
+        display: none;
+    }
+
+    .welcome__card {
+        flex-direction: column;
+        .welcome__title {
+            margin-bottom: 20px;
+        }
+        .welcome__description {
+            display: none;
+        }
+    }
+
+    .welcome-more {
+        height: auto !important; //!!!!
+        .more-content {
+            flex-direction: column;
+            .more__desktop-card, .more__mobile-card {
+                margin: 20px;
+                width: 65% !important; //!!!!
+                gap: 30px !important; //!!!!
+            }
+        }
+    }
+    .welcome-about {
+        height: auto !important; //!!!!
+        .about-content {
+            flex-direction: column !important; //!!!!
+            .about-description {
+                width: 90% !important;
+            }
+            .about-links {
+                width: 100% !important;
+                .about__signature {
+                    padding: 20px;
+                }
+                .socials {
+                    width: 70% !important;
                 }
             }
         }

@@ -8,6 +8,7 @@
     color: white;
     padding: 10px;
     align-items: center;
+    transition: 1s all ease;
     @extend %secondFont;
 
     .file-btn {
@@ -21,6 +22,9 @@
         width: 100px;
         box-sizing: border-box;
         padding: 8px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
     }
 
     .file-date {
@@ -88,8 +92,8 @@
 
 .fileplate-file-wrapper {
     overflow: hidden;
-    width: 150px;
-    height: 125px;
+    width: 125px;
+    height: 150px;
     cursor: default;
     display: flex;
     flex-direction: column;
@@ -99,12 +103,16 @@
     transition-duration: 0.5s;
 
     .folder, .file {
-        font-size: 290%;
+        font-size: 60px;
         color: white;
     }
 
     .file-name {
+        max-width: 100px;
         color: white;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
         @extend %secondFont;
     }
 
@@ -115,5 +123,12 @@
         .file-btns {
             display: block;
         }
+    }
+}
+
+@media screen and (max-width:992px) {
+    .fileplate-file-wrapper {
+        width: 110px;
+        height: 150px;
     }
 }

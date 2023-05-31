@@ -16,12 +16,16 @@ const ParticleEffect = () => {
             enable: true,
             zIndex: -1,
           },
+          style: {
+            position: 'absolute',
+            zIndex: '-1',
+          },
           interactivity: {
             events: {
-              onClick: {
-                enable: true,
-                mode: "push",
-              },
+              // onClick: {
+              //   enable: true,
+              //   mode: "push",
+              // },
               onHover: {
                 enable: true,
                 mode: "repulse",

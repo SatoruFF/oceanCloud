@@ -9,12 +9,16 @@
         flex-direction: column;
         justify-content: space-evenly;
         .personal-item {
-            background-color: #1677ff;
-            color: white;
+            border: 1px solid #1677ff;
+            color: black;
             padding: 10px;
             text-align: start;
             cursor: default;
             border-radius: 10px;
+            @extend %mainFont;
+        }
+        .personal-logout {
+            color: white;
             @extend %mainFont;
         }
     }

@@ -3,7 +3,7 @@
 
 .navbar {
     width: 100%;
-    height: 9vh;
+    height: 10vh;
     background-color: #434343;
     display: flex;
     flex-direction: row;
@@ -45,6 +45,7 @@
         .avatar {
             img {
                 width: 40px;
+                border-radius: 10px;
                 &:hover {
                     cursor: pointer;
                 }
@@ -64,8 +65,55 @@
         text-transform: lowercase;
     }
     .nav__items {
+        .nav-logout {
+            @extend %mainFont;
+        }
         width: 60%;
         @extend %centerTemplate;
         justify-content: space-around;
+        .nav-burger {
+            display: none;
+            padding-right: 40px;
+            .burger-icon {
+                color: white;
+                font-size: 22px;
+            }
+        }
+    }
+}
+
+.burger__item {
+    width: 80%;
+    padding: 10px;
+    margin-top: 10px;
+    a {
+        font-size: 16px;
+        @extend %mainFont;
+    }
+}
+
+@media screen and (max-width: 992px) {
+    .navbar {
+        justify-content: space-between;
+        .main-logo img {
+            padding-left: 6px;
+        }
+        .nav__items {
+            width: 100%;
+            justify-content: end;
+            padding-right: 20px;
+            .navbar__item {
+                display: none;
+            }
+            .nav-burger {
+                display: block;
+            }
+        }
+        .nav-files {
+            margin-right: 30px;
+        }
+        .nav-logout {
+            display: none;
+        }
     }
 }

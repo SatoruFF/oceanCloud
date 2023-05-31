@@ -155,6 +155,7 @@ class FileControllerClass {
       }
   
       const file = await File.findOne({where: {id: fileId, userId: req.user.id}})
+
       if (!file) {
         return res.status(400).json({message: 'file not found'})
       }
@@ -165,7 +166,9 @@ class FileControllerClass {
       user.usedSpace = user.usedSpace - file.size
       await user.save()
 
-      return res.json({message: 'File was destroyed'})
+      const allFiles = await File.findAll({where: {userId: req.user.id}})
+
+      return res.json(allFiles)
     } catch (error) {
       console.log(error)
       return res.status(500).json({message: error.message})
