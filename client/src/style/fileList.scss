@@ -65,4 +65,10 @@
     color: white;
     font-size: 24px;
     @extend %centerTemplate, %mainFont;
+    .empty-folder {
+        div {
+            color: white;
+            @extend %mainFont;
+        }
+    }
 }

@@ -15,12 +15,13 @@ import { useAppDispatch, useAppSelector } from "../store/store";
 import { setUser } from "../store/reducers/userSlice";
 import { userApi } from "../services/user";
 import { SmileOutlined } from "@ant-design/icons";
+import { unwrapResult } from "@reduxjs/toolkit";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const [setLogin, { data, isLoading, error }]: any = userApi.useLoginMutation();
+  const [setLogin, { isLoading }]: any = userApi.useLoginMutation();
   const isAuth = useAppSelector((state) => state.users.isAuth);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -34,21 +35,17 @@ const Login = () => {
         email,
         password,
       });
-
-      if(data) {
-        dispatch(setUser(user.data as any));
-        notification.open({
-          message: "Success log in",
-          description: `User with email: ${email} has log in`,
-          placement: "topLeft",
-          icon: <SmileOutlined style={{ color: "#52c41a" }} />,
-        });
-        navigate(FILE_ROUTE);
-      }
-
+      unwrapResult(user)
+      dispatch(setUser(user.data as any));
+      notification.open({
+        message: "Success log in",
+        description: `User with email: ${email} has log in`,
+        placement: "topLeft",
+        icon: <SmileOutlined style={{ color: "#52c41a" }} />,
+      });
+      navigate(FILE_ROUTE);
     } catch (e: any) {
-      message.error(`error: ${error.data.message}`);
-      console.log(error.data.message);
+      message.error(`error: ${e.data.message}`);
     }
   };
 

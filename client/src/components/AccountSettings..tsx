@@ -37,8 +37,7 @@ const AccountSettings = () => {
   return (
     <div className="account-wrapper">
       <div className="account-personal">
-        <p className="personal-item">First name: {user.firstName}</p>
-        <p className="personal-item">Last name: {user.lastName}</p>
+        <p className="personal-item">Username: {user.userName}</p>
         <p className="personal-item">Email: {user.email}</p>
         <p className="personal-item">Role: {user.role}</p>
         <Button className="personal-logout" type="primary" onClick={() => logOut()}>

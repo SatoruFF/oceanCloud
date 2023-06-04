@@ -74,8 +74,7 @@ const MyNavbar: React.FC = () => {
           <div className="nav-user">
             <Tooltip title="Account Settings">
               <div className="user-info" onClick={() => setProfile(true)}>
-                <p>{user.firstName}</p>
-                <p>{user.lastName}</p>
+                <p>{user.userName}</p>
                 <SettingOutlined />
               </div>
             </Tooltip>

@@ -5,8 +5,7 @@ import { DataTypes } from "sequelize";
 // User data table
 export const User = pool.define('user', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    firstName: {type: DataTypes.STRING, allowNull: true},
-    lastName: {type: DataTypes.STRING, allowNull: true},
+    userName: {type: DataTypes.STRING, allowNull: true},
     email: {type: DataTypes.STRING, unique: true, allowNull: false},
     password: {type: DataTypes.STRING, allowNull: false},
     diskSpace: {type: DataTypes.BIGINT, defaultValue: 100*1024*1024},

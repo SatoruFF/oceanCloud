@@ -1,4 +1,4 @@
-import { Divider } from "antd";
+import { Divider, Empty } from "antd";
 import "../style/fileList.scss";
 import { useAppSelector } from "../store/store";
 import File from "./File";
@@ -8,7 +8,7 @@ const Filelist = () => {
   const fileView = useAppSelector((state) => state.files.view);
 
   if (files.length === 0) {
-    return <h1 className="files-not-found animate__animated animate__fadeIn">files not found in directory</h1>
+    return <h1 className="files-not-found animate__animated animate__fadeIn"> <Empty className="empty-folder"/> </h1>
   }
 
   if (fileView == 'plate') {

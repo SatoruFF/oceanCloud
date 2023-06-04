@@ -43,7 +43,14 @@ export const userApi = createApi({
     auth: builder.query<any, void>({
       query: () => "auth",
     }),
+    changeInfo: builder.mutation<any, any>({
+      query: (body) => ({
+        url: 'userchange',
+        method: "PATCH",
+        body
+      })
+    }),
   }),
 });
 
-export const { useAuthQuery } = userApi;
+export const { useAuthQuery, useChangeInfoMutation } = userApi;

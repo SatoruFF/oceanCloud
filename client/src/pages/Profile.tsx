@@ -1,4 +1,5 @@
 import { useAppDispatch, useAppSelector } from "../store/store";
+import _ from 'lodash'
 import {
   Button,
   Upload,
@@ -13,7 +14,7 @@ import { PieChartOutlined, CloudOutlined } from '@ant-design/icons';
 import type { UploadProps } from "antd";
 import "../style/profile.scss";
 import { useDeleteAvatarMutation } from "../services/file";
-import { setUser } from "../store/reducers/userSlice";
+import { setAvatar, setUser, deleteAvatar } from "../store/reducers/userSlice";
 import { sizeFormat } from "../utils/sizeFormat";
 import avatarIcon from "../assets/avatar-icon.png";
 const { Paragraph } = Typography;
@@ -27,7 +28,7 @@ const Profile = () => {
   const avatar = user.avatar
     ? `http://localhost:3002/${user.avatar}`
     : avatarIcon;
-  const [deleteAvatar] =
+  const [removeAvatar] =
     useDeleteAvatarMutation();
 
   // file upload
@@ -50,6 +51,7 @@ const Profile = () => {
         console.log(info.file, info.fileList);
       }
       if (info.file.status === "done") {
+        dispatch(setAvatar(info.file.response))
         message.success(`${info.file.name} file uploaded successfully`);
       } else if (info.file.status === "error") {
         message.error(
@@ -69,8 +71,11 @@ const Profile = () => {
 
   const changeAvatarHandler = async () => {
     try {
-      const response: any = await deleteAvatar();
-      dispatch(setUser(response.data));
+      if (_.isEmpty(user.avatar)) {
+        return message.error('Avatar not found')
+      }
+      const response: any = await removeAvatar();
+      dispatch(deleteAvatar());
       message.success("Avatar successfully deleted");
     } catch (error) {
       console.log(error);
@@ -91,14 +96,14 @@ const Profile = () => {
               >
                 Delete avatar
               </Button>
-              <Upload name="file" multiple={true} {...props}>
+              <Upload className="avatar-uploader" name="file" multiple={false} maxCount={1} {...props}>
                 <Button className="upload-btn">Upload avatar</Button>
               </Upload>
             </div>
           </div>
           <div className="profile__right-side">
             <div className="profile-name">
-              {user.firstName} {user.lastName}
+              {user.userName}
             </div>
             <Paragraph copyable className="profile-email">
               Email: {user.email}

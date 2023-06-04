@@ -35,7 +35,16 @@
                 .profile-btns {
                     display: flex;
                     gap: 15px;
+                
                 }
+                .avatar-uploader {
+                    max-width: 100px;
+                    * {
+                        text-overflow: ellipsis;
+                        overflow: hidden;
+                        white-space: nowrap;
+                    }
+                } 
             }
             .profile__right-side {
                 border-top-right-radius: 10px;

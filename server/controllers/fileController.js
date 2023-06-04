@@ -190,7 +190,7 @@ class FileControllerClass {
       file.mv(avatarPath)
       user.avatar = avatarName
       await user.save()
-      return res.json(user)
+      return res.json(user.avatar)
     } catch (error) {
       console.log(error)
       return res.status(400).json({message: error.message})

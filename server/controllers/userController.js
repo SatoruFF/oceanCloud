@@ -26,8 +26,7 @@ class UserControllerClass {
         try {
             const errors = validationResult(req)
             const {
-                firstName,
-                lastName,
+                userName,
                 email,
                 password
             } = req.body
@@ -52,8 +51,7 @@ class UserControllerClass {
             const hashPassword = await bcrypt.hash(password, 5)
 
             const user = await User.create({
-                firstName,
-                lastName,
+                userName,
                 email,
                 password: hashPassword
             })
@@ -67,8 +65,7 @@ class UserControllerClass {
                 token,
                 user: {
                     id: user.id,
-                    firstName: user.firstName,
-                    lastName: user.lastName,
+                    userName: user.userName,
                     email: user.email,
                     diskSpace: user.diskSpace,
                     usedSpace: user.usedSpace,
@@ -77,7 +74,6 @@ class UserControllerClass {
                 }
             })
         } catch (error) {
-            console.log(error)
             res.send({
                 message: error.message
             })
@@ -119,8 +115,7 @@ class UserControllerClass {
                 token,
                 user: {
                     id: user.id,
-                    firstName: user.firstName,
-                    lastName: user.lastName,
+                    userName: user.userName,
                     email: user.email,
                     diskSpace: user.diskSpace,
                     usedSpace: user.usedSpace,
@@ -129,7 +124,6 @@ class UserControllerClass {
                 }
             })
         } catch (error) {
-            console.log(error)
             res.send({
                 message: error.message
             })
@@ -150,8 +144,7 @@ class UserControllerClass {
                 token,
                 user: {
                     id: user.id,
-                    firstName: user.firstName,
-                    lastName: user.lastName,
+                    userName: user.userName,
                     email: user.email,
                     diskSpace: user.diskSpace,
                     usedSpace: user.usedSpace,
@@ -160,10 +153,23 @@ class UserControllerClass {
                 }
             })
         } catch (error) {
-            console.log(error)
             res.send({
                 message: error.message
             })
+        }
+    }
+
+    async changeInfo(req, res) {
+        try {
+            // const {email, firstName, lastName} = req.body
+            // const user = await User.findOne({where: {id: req.user.id}})
+            // user.email = email
+            // user.firstName = firstName
+            // user.lastName = lastName
+            // user.save()
+            // return res.json(user)
+        } catch (error) {
+            return res.status(400).json({message: "change profile info error"})
         }
     }
 }

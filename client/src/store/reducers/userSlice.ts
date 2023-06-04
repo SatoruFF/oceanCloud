@@ -30,8 +30,14 @@ export const userSlice = createSlice({
       state.token = null
       localStorage.removeItem("token");
     },
+    deleteAvatar: (state) => {
+      state.currentUser.avatar = null;
+    },
+    setAvatar: (state, action: any) => {
+      state.currentUser.avatar = action.payload;
+    },
   },
 });
 
-export const { setUser, logout } = userSlice.actions;
+export const { setUser, logout, setAvatar, deleteAvatar } = userSlice.actions;
 export default userSlice.reducer;

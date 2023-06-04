@@ -1,10 +1,16 @@
-import { Form, Input, Modal } from "antd";
+import { Form, Input, Modal, message } from "antd";
 import { useAppSelector, useAppDispatch } from "../../store/store";
+import { useChangeInfoMutation } from "../../services/user";
+import { useState } from "react";
+import _ from 'lodash'
 
 const InfoModal = ({ status, def }) => {
+  const [userName, setUserName] = useState()
+  const [email, setEmail] = useState()
+  const [password, setPassword] = useState()
   const user = useAppSelector((state) => state.users.currentUser);
+  const [changeUser, {data, isLoading, isError}] = useChangeInfoMutation()
   const changeInfo = () => {
-    // ...
     def(false);
   };
   return (
@@ -24,22 +30,23 @@ const InfoModal = ({ status, def }) => {
         autoComplete="off"
       >
         <Form.Item
-          label="First name"
-          name="first-name"
+          label="Username"
+          name="Username"
         >
-          <Input placeholder={user.firstName}/>
-        </Form.Item>
-        <Form.Item
-          label="Last name"
-          name="last-name"
-        >
-          <Input placeholder={user.lastName}/>
+          <Input placeholder={user.userName} value={userName} onChange={(e: any) => setUserName(e.target.value)}/>
         </Form.Item>
         <Form.Item
           label="Email"
-          name="username"
+          name="Email"
         >
-          <Input placeholder={user.email}/>
+          <Input placeholder={user.email} value={email} onChange={(e: any) => setEmail(e.target.value)}/>
+        </Form.Item>
+        <Form.Item
+          label="Password"
+          name="Password"
+          rules={[{ required: true, message: 'Please input your password!' }]}
+        >
+          <Input type="password" placeholder="Confirm password" value={password} onChange={(e: any) => setPassword(e.target.value)}/>
         </Form.Item>
       </Form>
     </Modal>

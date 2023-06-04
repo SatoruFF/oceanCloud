@@ -28,10 +28,7 @@
             @extend %secondFont;
         }
         .disk-upload {
-            color: white;
-            .upload-btn {
-                @extend %secondFont;
-            }
+            @extend %secondFont;
         }
         .disk-order {
             * {

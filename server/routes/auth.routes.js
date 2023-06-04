@@ -25,4 +25,6 @@ router.post('/login', UserController.login)
 
 router.get('/auth', authMiddleware, UserController.auth)
 
+router.patch('changeinfo', [check('email', 'Uncorrect email').isEmail()] ,authMiddleware, UserController.changeInfo)
+
 export default router
