@@ -33,7 +33,7 @@ const Profile = () => {
   // file upload
   const props: UploadProps = {
     name: "file",
-    action: "http://localhost:3002/api/file/avatar",
+    action: "https://ocean-cloud-backend.onrender.com/api/file/avatar",
     headers: {
       Authorization: `Bearer ${token}`,
     },

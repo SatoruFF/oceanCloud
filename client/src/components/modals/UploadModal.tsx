@@ -15,7 +15,7 @@ const UploadModal = ({ status, def }) => {
   // file upload
   const props: UploadProps = {
     name: "file",
-    action: "http://localhost:3002/api/file/upload",
+    action: "https://ocean-cloud-backend.onrender.com/api/file/upload",
     headers: {
       Authorization: `Bearer ${token}`,
     },

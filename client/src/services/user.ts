@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import 'dotenv/config'
 
 interface RegisterRequest {
   firstName: string;
@@ -16,7 +17,7 @@ export const userApi = createApi({
   reducerPath: "userApi",
   tagTypes: ["User"],
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:3002/api/user/",
+    baseUrl: `https://ocean-cloud-backend.onrender.com/api/user/`,
     prepareHeaders: (headers, { getState }) => {
       const token = localStorage.getItem('token');
       if (token) {

@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-const url = "http://localhost:3002/api/";
+const url = "https://ocean-cloud-backend.onrender.com/api/";
 
 export const fileApi = createApi({
   reducerPath: "fileApi",
