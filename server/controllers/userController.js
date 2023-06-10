@@ -4,9 +4,9 @@ import {
 import {
     User
 } from "../models/models.js";
-import config from 'config';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+import 'dotenv/config'
 import { FileService } from "../services/fileService.js"
 import { File } from "../models/models.js"
 
@@ -14,7 +14,7 @@ const generateJwt = (id) => {
     return jwt.sign({
             id
         },
-        config.get("SECRET-KEY"), {
+        process.env.SECRET_KEY, {
             expiresIn: '12h'
         },
     )

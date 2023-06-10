@@ -1,5 +1,2 @@
-/server/config
-/server/node_modules
-
-/client/node_modules
-/client/src/assets
+*.node_modules
+*.env

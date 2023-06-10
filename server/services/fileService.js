@@ -1,5 +1,5 @@
-import config from 'config';
 import { s3 } from "../app.js";
+import 'dotenv/config'
 
 class FileServiceClass {
   async createDir(file) {
@@ -8,7 +8,7 @@ class FileServiceClass {
       folderPath += '/';
     }
     const params = {
-      Bucket: config.get('S3-bucket-name'),
+      Bucket: process.env.S3_BUCKET_NAME,
       Key: folderPath,
       Body: '',
     };
@@ -18,18 +18,35 @@ class FileServiceClass {
 
   async deleteFile(file) {
     if (file.type === 'dir') {
-      const filePath = `${String(file.userId)}/${file.path}`
-      console.log(filePath)
+      let filePath = `${String(file.userId)}/${file.path}`
+      filePath = filePath.replace(/\/{2,}/g, '/')
       const params = {
-        Bucket: config.get('S3-bucket-name'),
-        Key: filePath,
+        Bucket: process.env.S3_BUCKET_NAME,
+        Prefix: filePath,
       };
-      await s3.deleteObject(params).promise();
-      return { message: "File was deleted" };
+      const { Contents } = await s3.listObjectsV2(params).promise();
+      if (Contents.length === 0) {
+        return { message: "Folder was deleted" };
+      }
+      const deleteParams = {
+        Bucket: process.env.S3_BUCKET_NAME,
+        Delete: { Objects: [] },
+      };
+      Contents.forEach(({ Key }) => {
+        deleteParams.Delete.Objects.push({ Key });
+      });
+      await s3.deleteObjects(deleteParams).promise();
+      if (Contents.IsTruncated) {
+        await this.deleteFile(file);
+      } else {
+        await s3.deleteObject({ Bucket: process.env.S3_BUCKET_NAME, Key: filePath }).promise();
+      }
+      return { message: "Folder was deleted" };
   } else {
-      const filePath = `${String(file.userId)}/${file.path}/${file.name}`
+      let filePath = `${String(file.userId)}/${file.path}/${file.name}`
+      filePath = filePath.replace(/\/{2,}/g, '/')
       const params = {
-        Bucket: config.get('S3-bucket-name'),
+        Bucket: process.env.S3_BUCKET_NAME,
         Key: filePath,
       };
       await s3.deleteObject(params).promise();

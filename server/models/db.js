@@ -1,13 +1,13 @@
 import { Sequelize } from "sequelize";
-import config from 'config';
+import 'dotenv/config'
 
 
 //get all info about db
-const DBName = config.get('DB-name')
-const DBUser = config.get('DB-user')
-const DBPassword = config.get('DB-password')
-const DBHost = config.get('DB-host')
-const DBPort = config.get('DB-port')
+const DBName = process.env.DB_NAME;
+const DBUser = process.env.DB_USER;
+const DBPassword = process.env.DB_PASSWORD;
+const DBHost = process.env.DB_HOST;
+const DBPort = process.env.DB_PORT;
 
 
 //Connect db

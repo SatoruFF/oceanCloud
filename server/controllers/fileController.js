@@ -3,18 +3,14 @@ import { File, User } from "../models/models.js";
 import { FileService } from "../services/fileService.js";
 // services
 import { s3 } from "../app.js";
+import { imagekit } from "../app.js";
 // Utils
-import { fileURLToPath } from 'url';
 import { v4 as uuidv4 } from 'uuid';
-import { dirname } from 'path';
 import { createReadStream } from 'streamifier';
-import config from 'config';
 import { PassThrough } from "stream";
+import 'dotenv/config'
 // Tools
 import _ from 'lodash'
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 class FileControllerClass {
   async createDir(req, res) {
@@ -108,7 +104,7 @@ class FileControllerClass {
         filePath = `${String(user.id)}/${file.name}`;
       }
       const params = {
-        Bucket: config.get('S3-bucket-name'),
+        Bucket: process.env.S3_BUCKET_NAME,
         Key: filePath, 
         Body: req.files.file.data
       };
@@ -133,11 +129,12 @@ async downloadFile(req, res) {
     const currentUserId = req.user.id
     const queryId = req.query.id
     const file = await File.findOne({ where: { id: queryId, userId: currentUserId } });
-    const filePath = `${String(currentUserId)}/${file.path}/${file.name}`
+    let filePath = `${String(currentUserId)}/${file.path}/${file.name}`
+    filePath = filePath.replace(/\/{2,}/g, '/')
 
     const s3object = await s3.getObject({
-      Bucket: config.get('S3-bucket-name'), 
-      Key: filePath
+      Bucket: process.env.S3_BUCKET_NAME, 
+      Key: `${filePath}`
     }).promise()
 
     const stream = new PassThrough(); // создаем новый поток
@@ -163,6 +160,10 @@ async deleteFile(req, res) {
       return res.status(400).json({message: 'Invalid file ID'})
     }
     const file = await File.findOne({ where: { id: fileId, userId: req.user.id } });
+    const existInnerContent = await File.findAll({where: {parentId: file.id}})
+    if (!_.isEmpty(existInnerContent)) {
+      return res.status(400).json({ message: "You cannot delete a folder while it has content" });
+    }
     if (!file) {
       return res.status(400).json({ message: "File not found" });
     }

@@ -1,5 +1,4 @@
 // imports
-import config from 'config';
 import express from "express";
 import cors from 'cors';
 import {pool} from './models/db.js'
@@ -7,23 +6,24 @@ import router from './routes/index.js';
 import fileUpload from 'express-fileupload';
 import ImageKit from "imagekit";
 import AWS from 'aws-sdk';
+import 'dotenv/config'
 
 // assets upload
 export const imagekit = new ImageKit({
-    publicKey : config.get("IK-public-key"),
-    privateKey : config.get("IK-private-key"),
-    urlEndpoint : config.get("IK-url-endpoint")
+    publicKey : process.env.IK_PUBLIC_KEY,
+    privateKey : process.env.IK_PRIVATE_KEY,
+    urlEndpoint : process.env.IK_URL_ENDPOINT
 })
 
 //S3
-AWS.config.update({region: config.get("S3-region"), accessKeyId: config.get("YK-identidier"), secretAccessKey: config.get("YK-secret")})
+AWS.config.update({region: process.env.S3_REGION, accessKeyId: process.env.YK_IDENTIFIER, secretAccessKey: process.env.YK_SECRET})
 export const s3 = new AWS.S3({
     endpoint: 'https://storage.yandexcloud.net',
 });
 
 // base consts
 const app = express()
-const port = config.get('PORT')
+const port = process.env.PORT || 3002
 
 // middleware
 app.use(express.json())

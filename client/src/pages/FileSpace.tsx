@@ -81,7 +81,7 @@ const FileSpace = () => {
       if (folderName.length === 0) {
         return message.info("The file name should not be empty");
       }
-      let folderNameValid = folderName.replace(/[^\w\s]/g, "").trim();
+      let folderNameValid = folderName.replace(/[^\p{L}\d\s]/gu, '').trim();
       await addFile({
         name: folderNameValid,
         type: "dir",

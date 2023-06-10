@@ -27,3 +27,5 @@ dist-ssr
 static
 files
 config
+.env
+*.env
