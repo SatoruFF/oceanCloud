@@ -34,6 +34,10 @@ app.use(express.static('static'))
 //routes
 app.use('/api', router)
 
+app.get('/', (_, res) => {
+    res.send("backend")
+})
+
 // main def
 const start = async () => {
     try {
