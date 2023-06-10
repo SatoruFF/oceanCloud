@@ -144,7 +144,7 @@
             width: 300px;
             height: 50px;
             color: white;
-            border-bottom: 1px dashed white;
+            border-bottom: 1px solid white;
             font-size: 24px;
             @extend %centerTemplate, %secondFont;
         }
@@ -172,7 +172,7 @@
                 gap: 10px;
                 img {
                     width: 40%;
-                    height: 33%;
+                    height: 150px;
                 }
                 .more-description {
                     padding: 10px;
@@ -185,14 +185,14 @@
     .welcome-about {
         height: 100vh;
         width: 100%;
-        background-color: #1f2937;
+        background-color: #eb2f96;
         @extend %centerTemplate;
         flex-direction: column;
         .about-title {
             width: 300px;
             height: 50px;
             color: white;
-            border-bottom: 1px dashed white;
+            border-bottom: 1px solid white;
             font-size: 24px;
             @extend %centerTemplate, %secondFont;
         }
