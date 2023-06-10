@@ -27,15 +27,15 @@ class FileControllerClass {
       if (!_.isEmpty(isDouble)) {
         return res.status(400).json({ message: "Folder name is not unique!" });
       }
-
-      if (!parent) {
+      console.log(parent)
+      if (parent == null) {
         file.path = name;
         await FileService.createDir(file);
       } else {
         const parentFile = await File.findOne({
           where: { id: parent, userId: req.user.id },
         });
-        if (!parentFile) {
+        if (_.isEmpty(parentFile)) {
           return res
             .status(400)
             .json({ message: "Parent directory not found" });

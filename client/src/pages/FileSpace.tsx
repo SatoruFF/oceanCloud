@@ -22,6 +22,7 @@ import {
 } from "../store/reducers/fileSlice";
 import { generateParams } from "../utils/generateParams";
 import UploadModal from "../components/modals/UploadModal";
+import { unwrapResult } from "@reduxjs/toolkit";
 const { Search } = Input;
 
 const FileSpace = () => {
@@ -82,16 +83,16 @@ const FileSpace = () => {
         return message.info("The file name should not be empty");
       }
       let folderNameValid = folderName.replace(/[^\p{L}\d\s]/gu, '').trim();
-      await addFile({
+      const response: any = await addFile({
         name: folderNameValid,
         type: "dir",
         parent: currentDir,
       });
-
+      unwrapResult(response)
       setModal(false);
       setFolderName("");
-    } catch (error) {
-      console.log(error);
+    } catch (e: any) {
+      message.error(`Request failed: ${e.data.message}`);
     }
   };
 
