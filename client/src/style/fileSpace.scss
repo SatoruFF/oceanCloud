@@ -110,3 +110,22 @@
         }
     }
 }
+
+@media screen and (max-width: 576px) {
+    .disk-nav { 
+        .disk-control-btns {
+            .disk-order {
+                width: 70px;
+            }
+            .disk-upload, upload-btn {
+                width: 90%;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                white-space: nowrap;
+            }
+            .visual {
+                width: 80px;
+            }
+        }
+    }
+}
