@@ -98,9 +98,8 @@ const Welcome = () => {
               </div>
               <Button
                 type="primary"
-                onClick={() => message.info("coming soon...")}
               >
-                download
+                <a href="https://wdfiles.ru/775e318" target="_blank">download</a>
               </Button>
             </div>
           </div>
