@@ -38,7 +38,7 @@ const MyNavbar: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const avatar = user.avatar
-    ? `http://localhost:3002/${user.avatar}`
+    ? user.avatar
     : avatarIcon;
 
   const logOut = () => {

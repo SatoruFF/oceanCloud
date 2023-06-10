@@ -105,7 +105,7 @@ class UserControllerClass {
 
             if (!isPassValid) {
                 return res.status(400).json({
-                    message: `Incorrect password`
+                    message: `Uncorrect password`
                 });
             }
 

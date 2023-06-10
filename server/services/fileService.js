@@ -1,35 +1,41 @@
-import fs from 'fs';
-import { fileURLToPath } from 'url';
-import path from 'path';
-import { dirname } from 'path';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+import config from 'config';
+import { s3 } from "../app.js";
 
 class FileServiceClass {
-    async createDir(file) {
-        const folderPath = path.join(__dirname, '..', 'files', String(file.userId), file.path);
-        if (!fs.existsSync(folderPath)) {
-            fs.mkdirSync(folderPath)
-            return {message: 'Folder was created'}
-        } else { 
-            throw new Error('Folder already exist')
-        }
+  async createDir(file) {
+    let folderPath = `${file.userId}/${file.path}`;
+    if (!folderPath.endsWith('/')) {
+      folderPath += '/';
     }
+    const params = {
+      Bucket: config.get('S3-bucket-name'),
+      Key: folderPath,
+      Body: '',
+    };
+    await s3.putObject(params).promise();
+    return { message: "Folder was created" };
+  }
 
-    async deleteFile(file) {
-        if (file.type === 'dir') {
-            const filePath = path.join(__dirname, '..', 'files', String(file.userId), file.path);
-            fs.rmdir(filePath, () => {
-                console.log('file was deleted')
-            })
-        } else {
-            const filePath = path.join(__dirname, '..', 'files', String(file.userId), file.path, file.name);
-            fs.unlink(filePath, () => {
-                console.log('file was deleted')
-            })
-        }
+  async deleteFile(file) {
+    if (file.type === 'dir') {
+      const filePath = `${String(file.userId)}/${file.path}`
+      console.log(filePath)
+      const params = {
+        Bucket: config.get('S3-bucket-name'),
+        Key: filePath,
+      };
+      await s3.deleteObject(params).promise();
+      return { message: "File was deleted" };
+  } else {
+      const filePath = `${String(file.userId)}/${file.path}/${file.name}`
+      const params = {
+        Bucket: config.get('S3-bucket-name'),
+        Key: filePath,
+      };
+      await s3.deleteObject(params).promise();
+      return { message: "File was deleted" };
     }
+  }
 }
 
-export const FileService = new FileServiceClass()
+export const FileService = new FileServiceClass();

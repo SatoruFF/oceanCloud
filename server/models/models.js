@@ -22,6 +22,7 @@ export const File = pool.define('file', {
     access_link: {type: DataTypes.STRING},
     size: {type: DataTypes.INTEGER, defaultValue: 0},
     path: {type: DataTypes.STRING, defaultValue: ''},
+    url: {type: DataTypes.STRING, defaultValue: ''},
     parentId: {type: DataTypes.INTEGER, defaultValue: null}
 })
 

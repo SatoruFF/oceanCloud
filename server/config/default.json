@@ -5,5 +5,12 @@
     "DB-user": "SatoruF",
     "DB-password": "5352",
     "DB-host": "localhost",
-    "DB-port": 5432
+    "DB-port": 5432,
+    "IK-public-key": "public_PmA9g81PQJVA0rh5CmwOWcGOZQ8=",
+    "IK-private-key": "private_M4k0zRr+vF2b6hyDwRSukPxS8ew=",
+    "IK-url-endpoint": "https://ik.imagekit.io/oceancloud",
+    "YK-identidier": "YCAJEK22fhE46HpuH06yYu7xy",
+    "YK-secret": "YCOAkD2_eKMaR3ntEOKhZUUC-wdAehtROn2GKdY6",
+    "S3-region": "ru-central1",
+    "S3-bucket-name": "ocean-cloud"
 }

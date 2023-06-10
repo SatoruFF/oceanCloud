@@ -1,10 +1,17 @@
+// DB-models
 import { File, User } from "../models/models.js";
 import { FileService } from "../services/fileService.js";
+// services
+import { s3 } from "../app.js";
+// Utils
 import { fileURLToPath } from 'url';
 import { v4 as uuidv4 } from 'uuid';
-import path from 'path';
-import fs from 'fs';
 import { dirname } from 'path';
+import { createReadStream } from 'streamifier';
+import config from 'config';
+import { PassThrough } from "stream";
+// Tools
+import _ from 'lodash'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -20,6 +27,11 @@ class FileControllerClass {
         userId: req.user.id,
       });
 
+      const isDouble = await File.findAll({where: {name: name}})
+      if (!_.isEmpty(isDouble)) {
+        return res.status(400).json({ message: "Folder name is not unique!" });
+      }
+
       if (!parent) {
         file.path = name;
         await FileService.createDir(file);
@@ -27,18 +39,15 @@ class FileControllerClass {
         const parentFile = await File.findOne({
           where: { id: parent, userId: req.user.id },
         });
-
         if (!parentFile) {
           return res
             .status(400)
             .json({ message: "Parent directory not found" });
         }
-
         file.path = `${parentFile.path}/${name}`;
         await FileService.createDir(file);
         await parentFile.addChild(file);
       }
-
       await file.save();
       return res.json(file);
     } catch (error) {
@@ -83,112 +92,122 @@ class FileControllerClass {
     try {
       const file = req.files.file
       const currentUserId = req.user.id
-  
       let parent;
       if (req.body.parent !== 'null') {
         parent = await File.findOne({where: {userId: currentUserId, id: req.body.parent}})
       }
-
       const user = await User.findOne({where: {id: currentUserId}})
-  
       if (user.usedSpace + file.size > user.diskSpace) {
         return res.status(400).json({message: 'Not enough space on the disk!'})
       }
-  
       user.usedSpace += file.size
-  
-      let filePath;
-  
+      let filePath
       if (parent) {
-        filePath = path.join(__dirname, '..', 'files', String(user.id), parent.path, file.name);
+        filePath = `${String(user.id)}/${parent.path}/${file.name}`;
       } else {
-        filePath = path.join(__dirname, '..', 'files', String(user.id), file.name);
+        filePath = `${String(user.id)}/${file.name}`;
       }
-  
-      if (!fs.existsSync(filePath)) {
-        file.mv(filePath)
-        const type = file.name.split('.').pop()
-        const dbFile = await File.create({
-          name: file.name,
-          type,
-          size: file.size,
-          path: parent?.path,
-          parentId: parent ? parent.id : null,
-          userId: user.id,
-        })
-  
-        await user.save()
-  
-        return res.json(dbFile)
-      } else {
-          throw new Error('File already exist')
-      }
-  
+      const params = {
+        Bucket: config.get('S3-bucket-name'),
+        Key: filePath, 
+        Body: req.files.file.data
+      };
+      await s3.upload(params).promise()
+      const dbFile = await File.create({
+        name: file.name,
+        type: file.name.split('.').pop(),
+        size: file.size,
+        path: parent?.path,
+        parentId: parent ? parent.id : null,
+        userId: user.id,
+      });
+      await user.save()
+      return res.json(dbFile)
     } catch (error) {
       console.log(error)
       return res.status(400).json({message: "Upload error"})
-    }
+}}
+
+async downloadFile(req, res) {
+  try {
+    const currentUserId = req.user.id
+    const queryId = req.query.id
+    const file = await File.findOne({ where: { id: queryId, userId: currentUserId } });
+    const filePath = `${String(currentUserId)}/${file.path}/${file.name}`
+
+    const s3object = await s3.getObject({
+      Bucket: config.get('S3-bucket-name'), 
+      Key: filePath
+    }).promise()
+
+    const stream = new PassThrough(); // создаем новый поток
+
+    stream.end(s3object.Body); // записываем данные из s3object.Body в поток
+
+    res.setHeader('Content-disposition', 'attachment; filename=' + file.name);
+    res.setHeader('Content-type', file.type);
+    res.attachment(file.name);
+
+    stream.pipe(res); // передаем поток в res.download()
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Unable to download file" });
   }
+}
 
-  async downloadFile(req, res) {
-    try {
-      const currentUserId = req.user.id
-      const queryId = req.query.id
-      const file = await File.findOne({where: {id: queryId, userId: currentUserId}})
-      const filePath = path.join(__dirname, '..', 'files', String(currentUserId), file.path, file.name);
-      if (fs.existsSync(filePath)) {
-        return res.download(filePath, file.name)
-      }
-      return res.status(500).json({message: "File not found"})
-    } catch (error) {
-      console.log(error)
-      return res.status(500).json({message: error.message})
+
+async deleteFile(req, res) {
+  try {
+    const fileId = Number(req.query.id);
+    if (isNaN(fileId)) {
+      return res.status(400).json({message: 'Invalid file ID'})
     }
-  }
-
-  async deleteFile(req, res) {
-    try {
-      const fileId = Number(req.query.id);
-  
-      if (isNaN(fileId)) {
-        return res.status(400).json({message: 'Invalid file ID'})
-      }
-  
-      const file = await File.findOne({where: {id: fileId, userId: req.user.id}})
-
-      if (!file) {
-        return res.status(400).json({message: 'file not found'})
-      }
-      FileService.deleteFile(file)
-      await file.destroy()
-
-      const user = await User.findOne({where: {id: req.user.id}})
-      user.usedSpace = user.usedSpace - file.size
-      await user.save()
-
-      const allFiles = await File.findAll({where: {userId: req.user.id}})
-
-      return res.json(allFiles)
-    } catch (error) {
-      console.log(error)
-      return res.status(500).json({message: error.message})
+    const file = await File.findOne({ where: { id: fileId, userId: req.user.id } });
+    if (!file) {
+      return res.status(400).json({ message: "File not found" });
     }
+    FileService.deleteFile(file)
+    await file.destroy()
+    const user = await User.findOne({where: {id: req.user.id}})
+    user.usedSpace = user.usedSpace - file.size
+    await user.save()
+    const allFiles = await File.findAll({where: {userId: req.user.id}})
+    return res.json(allFiles)
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Unable to delete file" });
   }
+}
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
   async uploadAvatar(req, res) {
     try {
-      const file = req.files.file
-      const user = await User.findOne({where: {id: req.user.id}})
-      // first we must delete old avatar
-      if (user.avatar) {
-        const avatarPath = path.join(__dirname, '..', 'static', user.avatar)
-        fs.unlinkSync(avatarPath)
-      }
+      const fileBuffer = req.files.file.data;
+      const fileStream = createReadStream(fileBuffer);
       const avatarName = uuidv4() + '.png'
-      const avatarPath = path.join(__dirname, '..', 'static', avatarName)
-      fs.mkdirSync(path.dirname(avatarPath), { recursive: true })
-      file.mv(avatarPath)
-      user.avatar = avatarName
+      const user = await User.findOne({where: {id: req.user.id}})
+      // in first, we must delete old avatar
+      if (user.avatar) {
+        const fileList = await imagekit.listFiles();
+        const file = fileList.find((file) => file.url === user.avatar);
+        const fileId = file ? file.fileId : null;
+        imagekit.deleteFile(fileId, function(error, result) {
+          if(error) console.log(error);
+          else console.log(result);
+        });
+      }
+      const response = await imagekit.upload({
+        file: fileStream,
+        fileName: avatarName,
+        extensions: [
+          {
+            name: "google-auto-tagging",
+            maxTags: 5,
+            minConfidence: 95,
+          },
+        ],
+      });
+      user.avatar = response.url
       await user.save()
       return res.json(user.avatar)
     } catch (error) {
@@ -201,8 +220,13 @@ class FileControllerClass {
     try {
       const user = await User.findOne({where: {id: req.user.id}})
       if (user.avatar) {
-        const avatarPath = path.join(__dirname, '..', 'static', user.avatar)
-        fs.unlinkSync(avatarPath)
+        const fileList = await imagekit.listFiles();
+        const file = fileList.find((file) => file.url === user.avatar);
+        const fileId = file ? file.fileId : null;
+        imagekit.deleteFile(fileId, function(error, result) {
+          if(error) console.log(error);
+          else console.log(result);
+        });
         user.avatar = null
         await user.save()
         return res.json(user)

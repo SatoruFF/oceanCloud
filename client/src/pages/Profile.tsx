@@ -26,7 +26,7 @@ const Profile = () => {
   const dispatch = useAppDispatch();
   const token = localStorage.getItem("token");
   const avatar = user.avatar
-    ? `http://localhost:3002/${user.avatar}`
+    ? user.avatar
     : avatarIcon;
   const [removeAvatar] =
     useDeleteAvatarMutation();
