@@ -1,0 +1,74 @@
+@import '../utils/tmp.scss';
+
+.filelist-wrapper{
+    height: 90%;
+    box-sizing: border-box;
+    position: relative;
+    .fileList-header{
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 4fr repeat(4, 1fr);
+        color: white;
+        font-size: 16px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid white;
+        @extend %secondFont;
+        .name {
+            grid-column-start: 2;
+
+
+            box-sizing: border-box;
+            padding: 10px;
+            width: 70px;
+            cursor: default;
+        }
+        .date {
+            grid-column-start: 5;
+            justify-self: center;
+
+
+            box-sizing: border-box;
+            padding: 10px;
+            width: 60px;
+            cursor: default;
+        }
+        .size {
+            grid-column-start: 6;
+            justify-self: center;
+
+
+            box-sizing: border-box;
+            padding: 10px;
+            width: 55px;
+            cursor: default;
+        }
+    }
+}
+
+.fileplate-list-wrapper {
+    box-sizing: border-box;
+    padding-top: 20px;
+    display: flex;
+    width: 100%;
+    height: auto;
+    flex-wrap: wrap;
+}
+
+
+.files-not-found {
+    position: absolute;
+    z-index: 0;
+    width: 100%;
+    height: calc(100vh - 16vh);
+    box-sizing: border-box;
+    color: white;
+    font-size: 24px;
+    @extend %centerTemplate, %mainFont;
+    .empty-folder {
+        div {
+            color: white;
+            @extend %mainFont;
+        }
+    }
+}

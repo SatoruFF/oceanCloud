@@ -1,0 +1,119 @@
+@import url('https://fonts.googleapis.com/css2?family=Sono&display=swap');
+@import '../utils/tmp.scss';
+
+.navbar {
+    width: 100%;
+    height: 10vh;
+    background-color: #434343;
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
+    justify-content: space-around;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+    .main-logo img{
+        &:hover {
+            cursor: pointer;
+        }
+    }
+    .user-info {
+        @extend %centerTemplate;
+        gap: 15px;
+        background-color: white;
+        box-sizing: border-box;
+        border-radius: 10px;
+        padding: 10px;
+        cursor: pointer;
+        p {
+            color: black;
+            @extend %mainFont;
+            font-size: 14px;
+        }
+    }
+    .user-info:hover {
+        background-color: #1677ff;
+        color: white;
+        p {
+            color: white;
+        }
+    }
+    .nav-user {
+        display: flex;
+        align-items: center;
+        gap: 30px;
+        .avatar {
+            img {
+                width: 40px;
+                border-radius: 10px;
+                &:hover {
+                    cursor: pointer;
+                }
+            }
+        }
+    }
+    .main-logo img{
+        width: 100px;
+        height: 80px;
+        margin-left: 20px;
+    }
+    a {
+        text-decoration: none;
+        color: white;
+        font-family: 'Sono', sans-serif;
+        font-size: 14px;
+        text-transform: lowercase;
+    }
+    .nav__items {
+        .nav-logout {
+            @extend %mainFont;
+        }
+        width: 60%;
+        @extend %centerTemplate;
+        justify-content: space-around;
+        .nav-burger {
+            display: none;
+            padding-right: 40px;
+            .burger-icon {
+                color: white;
+                font-size: 22px;
+            }
+        }
+    }
+}
+
+.burger__item {
+    width: 80%;
+    padding: 10px;
+    margin-top: 10px;
+    a {
+        font-size: 16px;
+        @extend %mainFont;
+    }
+}
+
+@media screen and (max-width: 992px) {
+    .navbar {
+        justify-content: space-between;
+        .main-logo img {
+            padding-left: 6px;
+        }
+        .nav__items {
+            width: 100%;
+            justify-content: end;
+            padding-right: 20px;
+            .navbar__item {
+                display: none;
+            }
+            .nav-burger {
+                display: block;
+            }
+        }
+        .nav-files {
+            margin-right: 30px;
+        }
+        .nav-logout {
+            display: none;
+        }
+    }
+}

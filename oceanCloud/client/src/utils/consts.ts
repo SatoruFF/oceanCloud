@@ -1,0 +1,5 @@
+export const WELCOME_ROUTE: string = '/welcome'
+export const LOGIN_ROUTE: string = '/login'
+export const REGISTRATION_ROUTE: string = '/registration'
+export const FILE_ROUTE: string = '/files' 
+export const PROFILE_ROUTE: string = '/profile' 
