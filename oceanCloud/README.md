@@ -13,11 +13,5 @@
 * jwt
 * swagger
 * sequalize
-* postgres
-* local save files-> S3
-
-## Start
-
-* create new postgres DB
-* add .env files to server folder
-* npm install -> npm run dev on server and client side
+* postgres->dynamoDB
+* local save files->Amazon S3

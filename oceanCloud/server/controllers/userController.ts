@@ -63,9 +63,8 @@ class UserControllerClass {
       }})
       const token = generateJwt(user.id);
 
-      
       const newFile: any = File.build({ userId: user.id, name: "" });
-      // !!! im stay here
+      //
       await FileService.createDir(newFile);
 
       return res.json({
