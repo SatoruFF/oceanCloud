@@ -12,6 +12,20 @@
 * NodeJS/express
 * jwt
 * swagger
-* sequalize
-* postgres->dynamoDB
-* local save files->Amazon S3
+* sequalize -> prisma
+* postgres
+* local save files-> aws S3
+
+## Deploy
+* onRender
+
+# How to start
+* cd client
+* npm install
+* npm run dev
+
+* create postgres db
+* cd server
+* configure .env
+* npm install
+* npm run dev
