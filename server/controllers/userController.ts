@@ -1,12 +1,12 @@
 import { validationResult } from "express-validator";
-import { User } from "../models/models.js";
+import { User } from "../models-sequelize/models.js";
 import { prisma } from "../app.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { Request, Response } from "express";
 import "dotenv/config";
 import { FileService } from "../services/fileService.js";
-import { File } from "../models/models.js";
+import { File } from "../models-sequelize/models.js";
 
 interface IUser {
   id: number;
@@ -63,8 +63,8 @@ class UserControllerClass {
       }})
       const token = generateJwt(user.id);
 
-      const newFile: any = File.build({ userId: user.id, name: "" });
-      //
+      const newFile: any = await prisma.file.create({ data: {userId: user.id, name: "" }});
+
       await FileService.createDir(newFile);
 
       return res.json({
@@ -90,7 +90,7 @@ class UserControllerClass {
   async login(req: Request, res: Response) {
     try {
       const { email, password } = req.body;
-      const user: any = await User.findOne({
+      const user: any = await prisma.user.findUnique({
         where: {
           email,
         },
@@ -135,7 +135,7 @@ class UserControllerClass {
   async auth(req: any, res: Response) {
     try {
       const id = req.user?.id;
-      const user: any = await User.findOne({
+      const user: any = await prisma.user.findUnique({
         where: {
           id,
         },

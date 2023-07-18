@@ -2,7 +2,7 @@
 import express, { Express, Request, Response } from "express";
 import cors from 'cors';
 import cookieParser from "cookie-parser";
-import {pool} from './models/db.js'
+//import {pool} from './models/db.js'
 import router from './routes/index.js';
 import fileUpload from 'express-fileupload';
 import ImageKit from "imagekit";
