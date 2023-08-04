@@ -5,7 +5,7 @@ interface File {
   userId: number;
   path: string;
   name?: string;
-  type: 'dir' | 'file';
+  type: string | 'dir' | 'file';
 }
 
 interface CreateDirResponse {

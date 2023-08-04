@@ -1,16 +1,16 @@
 {
   "compilerOptions": {
     "sourceMap": true,
-    "target": "es2016",               
-    "module": "commonjs",                               
-    "outDir": "dist",                                  
+    "target": "ES6",               
+    // "module": "CommonJS",
+    "rootDir": "./",                               
+    "outDir": "./dist",                                  
     "esModuleInterop": true,                    
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "lib": ["ESNext"],
     "skipLibCheck": true,
     "noImplicitAny": false,
-  },
-  "include": ["./**/*.ts", "./**/*.tsx"],
-  "exclude": ["dist"]
+    "moduleResolution": "node",
+  }
 }

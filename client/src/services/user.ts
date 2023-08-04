@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { Variables } from "../utils/localVariables";
+import { Variables } from "../config/localVariables";
 
 interface RegisterRequest {
   firstName: string;

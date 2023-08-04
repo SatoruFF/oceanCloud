@@ -1,9 +1,7 @@
-// DB-models
-import { File, User } from "../models-sequelize/models.js";
-import { FileService } from "../services/fileService.js";
 // services
 import { prisma, s3 } from "../app.js";
 import { imagekit } from "../app.js";
+import { FileService } from "../services/fileService.js";
 // Utils
 import { v4 as uuidv4 } from "uuid";
 import { createReadStream } from "streamifier";
@@ -18,7 +16,14 @@ class FileControllerClass {
   async createDir(req, res) {
     try {
       const { name, type, parent } = req.body;
-      const file: any = prisma.file.create({
+
+      const isDouble = await prisma.file.findFirst({ where: { name, parentId: parent } });
+
+      if (!_.isEmpty(isDouble)) {
+        return res.status(400).json({ message: "Folder name is not unique!" });
+      }
+
+      const file: any = await prisma.file.create({
         data: {
           name,
           type,
@@ -26,12 +31,6 @@ class FileControllerClass {
           userId: req.user.id,
         },
       });
-
-      const isDouble = await prisma.file.findMany({ where: { name: name } });
-
-      if (!_.isEmpty(isDouble)) {
-        return res.status(400).json({ message: "Folder name is not unique!" });
-      }
 
       if (parent == null) {
         file.path = name;
@@ -47,7 +46,7 @@ class FileControllerClass {
         }
         file.path = `${parentFile.path}/${name}`;
         await FileService.createDir(file);
-        await parentFile.addChild(file);
+        await prisma.file.update({where: {id: parentFile.id}, data: {childs: {connect: {id: file.id}}}})
       }
       //await file.save();
       return res.json(file);
@@ -60,7 +59,10 @@ class FileControllerClass {
   async getFiles(req: any, res: Response) {
     try {
       const { sort } = req.query;
-      const parentId = req.query.parent || null;
+      let parentId = req.query.parent || null;
+      if (typeof parentId == 'string') {
+        parentId = Number(parentId)
+      }
       const searchItem = req.query.search;
       if (searchItem) {
         let files: any = await prisma.file.findMany({
@@ -72,11 +74,6 @@ class FileControllerClass {
       let files: any;
       switch (sort) {
         case "name":
-          // files = await File.findAll({
-          //   where: { userId: req.user.id, parentId },
-          //   include: [{ model: File, as: "child" }],
-          //   order: [["name", "ASC"]],
-          // });
           files = await prisma.file.findMany({
             where: {
               AND: [{ userId: req.user.id }, { parentId }],

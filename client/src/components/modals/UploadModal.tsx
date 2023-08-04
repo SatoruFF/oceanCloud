@@ -5,7 +5,7 @@ import { useAppSelector } from "../../store/store";
 import { useAppDispatch } from "../../store/store";
 import { addNewFile } from "../../store/reducers/fileSlice";
 import '../../style/uploadModal.scss'
-import { Variables } from "../../utils/localVariables";
+import { Variables } from "../../config/localVariables";
 const { Dragger } = Upload;
 
 const UploadModal = ({ status, def }) => {

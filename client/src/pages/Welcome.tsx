@@ -1,6 +1,6 @@
 import { Anchor, Button, message } from "antd";
 import "../style/welcome.scss";
-import mainLogo from "../assets/wave-and-sun.png";
+import mainLogo from "../assets/sea-turtle.png";
 import desktopIcon from "../assets/desktop.png";
 import mobileIcon from "../assets/mobile-phone.png";
 import storageIcon from "../assets/cloud-data.png";
@@ -54,9 +54,9 @@ const Welcome = () => {
         <div className="content-max">
           <div className="welcome__card animate__animated animate__fadeIn">
             <div className="left-side">
-              <div className="welcome__title">Ocean cloud</div>
+              <div className="welcome__title">Memory turtle</div>
               <div className="welcome__description animate__animated animate__fadeInDown">
-                Ocean - its a nice web cloud for everyone. each person is given
+                Memory turtle - its a nice web cloud for everyone. each person is given
                 as much as 100 free megabytes. In addition, customers can
                 upload, store and manage their data in a cloud environment with
                 a simple and user-friendly interface.

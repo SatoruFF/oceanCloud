@@ -19,7 +19,7 @@ import { setAvatar, deleteAvatar } from "../store/reducers/userSlice";
 import { sizeFormat } from "../utils/sizeFormat";
 import avatarIcon from "../assets/avatar-icon.png";
 import { unwrapResult } from "@reduxjs/toolkit";
-import { Variables } from "../utils/localVariables";
+import { Variables } from "../config/localVariables";
 const { Paragraph } = Typography;
 
 const Profile = () => {

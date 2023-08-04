@@ -1,12 +1,10 @@
 import { validationResult } from "express-validator";
-import { User } from "../models-sequelize/models.js";
 import { prisma } from "../app.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { Request, Response } from "express";
 import "dotenv/config";
 import { FileService } from "../services/fileService.js";
-import { File } from "../models-sequelize/models.js";
 
 interface IUser {
   id: number;
@@ -63,9 +61,12 @@ class UserControllerClass {
       }})
       const token = generateJwt(user.id);
 
-      const newFile: any = await prisma.file.create({ data: {userId: user.id, name: "" }});
+      const baseDir = {userId: user.id, path: "", type: 'dir', name: ""}
 
-      await FileService.createDir(newFile);
+      await FileService.createDir(baseDir);
+
+      const diskSpace = user.diskSpace.toString();
+      const usedSpace = user.usedSpace.toString();
 
       return res.json({
         token,
@@ -73,8 +74,8 @@ class UserControllerClass {
           id: user.id,
           userName: user.userName,
           email: user.email,
-          diskSpace: user.diskSpace,
-          usedSpace: user.usedSpace,
+          diskSpace,
+          usedSpace,
           avatar: user.avatar,
           role: user.role,
         },
@@ -112,14 +113,17 @@ class UserControllerClass {
 
       const token = generateJwt(user.id);
 
+      const diskSpace = user.diskSpace.toString();
+      const usedSpace = user.usedSpace.toString();
+
       return res.json({
         token,
         user: {
           id: user.id,
           userName: user.userName,
           email: user.email,
-          diskSpace: user.diskSpace,
-          usedSpace: user.usedSpace,
+          diskSpace,
+          usedSpace,
           avatar: user.avatar,
           role: user.role,
         },
@@ -131,7 +135,8 @@ class UserControllerClass {
     }
   }
 
-  // Контроллер аутентикации
+
+  // Контроллер аутентификации
   async auth(req: any, res: Response) {
     try {
       const id = req.user?.id;
@@ -141,14 +146,18 @@ class UserControllerClass {
         },
       });
       const token = generateJwt(user.id);
+
+      const diskSpace = user.diskSpace.toString();
+      const usedSpace = user.usedSpace.toString();
+
       return res.json({
         token,
         user: {
           id: user.id,
           userName: user.userName,
           email: user.email,
-          diskSpace: user.diskSpace,
-          usedSpace: user.usedSpace,
+          diskSpace,
+          usedSpace,
           avatar: user.avatar,
           role: user.role,
         },

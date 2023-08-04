@@ -58,12 +58,13 @@
                 justify-content: space-evenly;
 
                 .welcome__title {
-                    font-size: 28px;
-                    color: black;
+                    font-size: 48px;
+                    color: white;
                     box-sizing: border-box;
                     padding: 10px;
                     border-radius: 10px;
                     margin-top: 20px;
+                    background-color: #38bdf8;
                     @extend %secondFont, %shadowTemplate;
                     &:hover {
                         cursor: default;
@@ -71,12 +72,14 @@
                 }
 
                 .welcome__description {
-                    font-size: 18px;
-                    margin-top: 15px;
-                    color: black;
+                    font-size: 22px;
+                    margin-top: 10px;
+                    color: white;
                     width: 80%;
                     line-height: 30px;
                     border-radius: 10px;
+                    padding: 8px;
+                    background-color: #38bdf8;
                     @extend %mainFont;
                     &:hover {
                         cursor: default;
