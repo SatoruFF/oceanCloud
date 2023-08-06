@@ -51,7 +51,7 @@ model UserConfig {
   id        Int       @id @default(autoincrement())
   language  String?   @default("ENG")
   theme     String?   @default("DARK")
-  userId    Int? 
+  userId    Int 
   user      User?     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

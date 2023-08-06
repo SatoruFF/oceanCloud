@@ -146,7 +146,8 @@ class FileControllerClass {
         Key: filePath,
         Body: req.files.file.data,
       };
-      await s3.upload(params).promise();
+      const newFile = await s3.upload(params).promise();
+      const fileUrl = _.get(newFile, 'Location', "")
       const dbFile = await prisma.file.create({
         data: {
           name: file.name,
@@ -155,6 +156,7 @@ class FileControllerClass {
           path: parent?.path,
           parentId: parent ? parent.id : null,
           userId: user.id,
+          url: fileUrl,
         },
       });
       await prisma.user.update({

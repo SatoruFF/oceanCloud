@@ -29,6 +29,7 @@ import {
 import { motion } from "framer-motion";
 import AccountSettings from "./AccountSettings.";
 import avatarIcon from "../assets/avatar-icon.png";
+import WorkspacesDropdown from "./UI/WorkspacesDropdown";
 
 const MyNavbar: React.FC = () => {
   const isAuth = useAppSelector((state) => state.users.isAuth);
@@ -37,9 +38,7 @@ const MyNavbar: React.FC = () => {
   const [burger, setBurger] = useState(false);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const avatar = user.avatar
-    ? user.avatar
-    : avatarIcon;
+  const avatar = user.avatar ? user.avatar : avatarIcon;
 
   const logOut = () => {
     dispatch(logout());
@@ -51,6 +50,8 @@ const MyNavbar: React.FC = () => {
       icon: <ApiOutlined style={{ color: "#ff7875" }} />,
     });
   };
+
+
 
   return (
     <div className="navbar">
@@ -71,6 +72,7 @@ const MyNavbar: React.FC = () => {
           >
             Log out
           </Button>
+          <WorkspacesDropdown/>
           <div className="nav-user">
             <Tooltip title="Account Settings">
               <div className="user-info" onClick={() => setProfile(true)}>
@@ -87,7 +89,7 @@ const MyNavbar: React.FC = () => {
             placement="right"
             onClose={() => setProfile(false)}
             open={profile}
-            style={{backgroundColor: 'white'}}
+            style={{ backgroundColor: "white" }}
           >
             <AccountSettings />
           </Drawer>

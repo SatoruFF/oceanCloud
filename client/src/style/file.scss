@@ -1,5 +1,15 @@
 @import '../utils/tmp.scss';
 
+%file-image {
+    .image-file {
+        max-width: 95px;
+        max-height: 85px;
+        // .img-toolbar-wrapper {
+            
+        // }
+    }
+}
+
 .file-wrapper {
     box-sizing: border-box;
     margin-top: 8px;
@@ -9,7 +19,7 @@
     padding: 10px;
     align-items: center;
     transition: 1s all ease;
-    @extend %secondFont;
+    @extend %secondFont, %file-image;
 
     .file-btn {
         display: none;
@@ -82,7 +92,7 @@
     .folder, .file {
         font-size: 250%;
         color: white;
-        width: 100px;
+        //width: 100px;
         box-sizing: border-box;
         padding: 8px;
         border-radius: 10px;
@@ -101,6 +111,7 @@
     justify-content: space-evenly;
     text-align: center;
     transition-duration: 0.5s;
+    @extend %file-image;
 
     .folder, .file {
         font-size: 60px;

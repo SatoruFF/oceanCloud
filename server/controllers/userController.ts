@@ -59,6 +59,11 @@ class UserControllerClass {
         email,
         password: hashPassword,
       }})
+
+      const userSettings = await prisma.userConfig.create({data: {
+        userId: user.id
+      }})
+
       const token = generateJwt(user.id);
 
       const baseDir = {userId: user.id, path: "", type: 'dir', name: ""}
