@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "../style/navbar.scss";
 import { NavLink, useNavigate } from "react-router-dom";
-import mainLogo from "../assets/logo-without-back.png";
+import mainLogo from "../assets/turtle-logo-without-back.png";
 import {
   FILE_ROUTE,
   LOGIN_ROUTE,

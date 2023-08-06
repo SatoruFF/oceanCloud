@@ -57,9 +57,7 @@ const Welcome = () => {
               <div className="welcome__title">Memory turtle</div>
               <div className="welcome__description animate__animated animate__fadeInDown">
                 Memory turtle - its a nice web cloud for everyone. each person is given
-                as much as 100 free megabytes. In addition, customers can
-                upload, store and manage their data in a cloud environment with
-                a simple and user-friendly interface.
+                as much as 100 free megabytes.
               </div>
             </div>
             <div className="right-side">

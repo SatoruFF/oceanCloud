@@ -6,6 +6,7 @@ interface File {
   path: string;
   name?: string;
   type: string | 'dir' | 'file';
+  url?: string;
 }
 
 interface CreateDirResponse {
@@ -35,8 +36,14 @@ class FileServiceClass {
       Key: folderPath,
       Body: '',
     };
+    const getParams: IS3 = {
+      Bucket: process.env.S3_BUCKET_NAME,
+      Key: folderPath,
+    }
     await s3.putObject(params as any).promise();
-    return { message: "Folder was created" };
+    const newDirUrl = await s3.getSignedUrl('getObject', getParams)
+    console.log(typeof newDirUrl)
+    return newDirUrl
   }
 
   async deleteFile(file: File): Promise<DeleteFileResponse> {

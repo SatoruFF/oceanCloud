@@ -4,7 +4,8 @@
 .navbar {
     width: 100%;
     height: 10vh;
-    background-color: #434343;
+    //background-color: #434343;
+    background-color: #27272a;
     display: flex;
     flex-direction: row;
     overflow: hidden;
@@ -53,8 +54,8 @@
         }
     }
     .main-logo img{
-        width: 100px;
-        height: 80px;
+        width: 110px;
+        height: 95px;
         margin-left: 20px;
     }
     a {
