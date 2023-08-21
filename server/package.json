@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "npx tsc",
-    "start": "concurrently \"npx tsc --watch\" \"nodemon dist/app.js\"",
+    "start": "concurrently \"npx tsc --watch\" \"nodemon dist/app.js\" \"prisma studio\"",
     "dev": "nodemon ./dist/app.js"
   },
   "author": "SatoruF",

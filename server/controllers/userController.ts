@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { Request, Response } from "express";
 import "dotenv/config";
+import  _ from 'lodash'
 import { FileService } from "../services/fileService.js";
 
 interface IUser {
@@ -185,6 +186,35 @@ class UserControllerClass {
       // return res.json(user)
     } catch (error) {
       return res.status(400).json({ message: "change profile info error" });
+    }
+  }
+
+  async activate(req: any, res: Response) {
+    try {
+      const {link} = req.params
+    } catch (error) {
+      
+    }
+  }
+
+  async refresh(req: any, res: Response) {
+    try {
+    } catch (error) {
+      
+    }
+  }
+
+  // Need create
+  async logout(req: any, res: Response) {
+    try {
+      const id = req.user?.id;
+      const user: any = await prisma.user.findUnique({
+        where: {
+          id,
+        },
+      });
+    } catch (error) {
+      
     }
   }
 }

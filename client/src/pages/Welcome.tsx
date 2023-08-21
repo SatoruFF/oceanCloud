@@ -54,9 +54,9 @@ const Welcome = () => {
         <div className="content-max">
           <div className="welcome__card animate__animated animate__fadeIn">
             <div className="left-side">
-              <div className="welcome__title">Memory turtle</div>
+              <div className="welcome__title">Mello</div>
               <div className="welcome__description animate__animated animate__fadeInDown">
-                Memory turtle - its a nice web cloud for everyone. each person is given
+                Mello - its a nice web cloud for everyone. each person is given
                 as much as 100 free megabytes.
               </div>
             </div>

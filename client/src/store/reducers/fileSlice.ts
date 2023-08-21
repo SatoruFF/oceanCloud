@@ -17,7 +17,7 @@ const initialState: fileInterface = {
 };
 
 export const fileSlice = createSlice({
-  name: "user",
+  name: "file",
   initialState,
   reducers: {
     setFiles: (state, action) => {

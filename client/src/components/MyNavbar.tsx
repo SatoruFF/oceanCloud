@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "../style/navbar.scss";
 import { NavLink, useNavigate } from "react-router-dom";
-import mainLogo from "../assets/turtle-logo-without-back.png";
+import mainLogo from "../assets/mainLog.png";
 import {
   FILE_ROUTE,
   LOGIN_ROUTE,
@@ -30,6 +30,7 @@ import { motion } from "framer-motion";
 import AccountSettings from "./AccountSettings.";
 import avatarIcon from "../assets/avatar-icon.png";
 import WorkspacesDropdown from "./UI/WorkspacesDropdown";
+import { useMediaQuery } from "react-responsive";
 
 const MyNavbar: React.FC = () => {
   const isAuth = useAppSelector((state) => state.users.isAuth);
@@ -39,6 +40,7 @@ const MyNavbar: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const avatar = user.avatar ? user.avatar : avatarIcon;
+  const isTabletOrMobile = useMediaQuery({ query: "(max-width: 1224px)" });
 
   const logOut = () => {
     dispatch(logout());
@@ -51,8 +53,6 @@ const MyNavbar: React.FC = () => {
     });
   };
 
-
-
   return (
     <div className="navbar">
       <div className="main-logo">
@@ -60,26 +60,38 @@ const MyNavbar: React.FC = () => {
       </div>
       {isAuth ? (
         <div className="nav__items">
-          <div className="nav-files">
-            <Button ghost>
-              <NavLink to={FILE_ROUTE}>My files</NavLink>
-            </Button>
-          </div>
-          <Button
-            className="nav-logout"
-            type="primary"
-            onClick={() => logOut()}
-          >
-            Log out
-          </Button>
-          <WorkspacesDropdown/>
-          <div className="nav-user">
-            <Tooltip title="Account Settings">
-              <div className="user-info" onClick={() => setProfile(true)}>
-                <p>{user.userName}</p>
-                <SettingOutlined />
+          {!isTabletOrMobile && (
+            <React.Fragment>
+              <div className="nav-files">
+                <Button ghost>
+                  <NavLink to={FILE_ROUTE}>My files</NavLink>
+                </Button>
               </div>
-            </Tooltip>
+              <Button
+                className="nav-logout"
+                type="primary"
+                onClick={() => logOut()}
+              >
+                Log out
+              </Button>
+            </React.Fragment>
+          )}
+
+          <WorkspacesDropdown
+            setProfile={setProfile}
+            logOut={logOut}
+            viewAll={isTabletOrMobile ? true : false}
+          />
+
+          <div className="nav-user">
+            {!isTabletOrMobile && (
+              <Tooltip title="Account Settings">
+                <div className="user-info" onClick={() => setProfile(true)}>
+                  <p>{user.userName}</p>
+                  <SettingOutlined />
+                </div>
+              </Tooltip>
+            )}
             <div className="avatar">
               <img src={avatar} onClick={() => navigate(PROFILE_ROUTE)} />
             </div>

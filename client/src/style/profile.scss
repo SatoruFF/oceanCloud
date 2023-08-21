@@ -3,6 +3,7 @@
 .profile-wrapper {
     width: 100%;
     height: 90vh;
+    min-height: 100%;
     box-sizing: border-box;
     background-color: #111827;
     @extend %centerTemplate;

@@ -171,6 +171,39 @@ class UserControllerClass {
             }
         });
     }
+    activate(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { link } = req.params;
+            }
+            catch (error) {
+            }
+        });
+    }
+    refresh(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+            }
+            catch (error) {
+            }
+        });
+    }
+    // Need create
+    logout(req, res) {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const id = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
+                const user = yield prisma.user.findUnique({
+                    where: {
+                        id,
+                    },
+                });
+            }
+            catch (error) {
+            }
+        });
+    }
 }
 export const UserController = new UserControllerClass();
 //# sourceMappingURL=userController.js.map
