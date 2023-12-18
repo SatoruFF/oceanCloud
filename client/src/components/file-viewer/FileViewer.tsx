@@ -11,6 +11,8 @@ import ReactPlayer from "react-player";
 const FileViewer = ({ type, url }) => {
   const [isOpenPlayer, setIsOpenPlayer] = useState(false);
 
+  type = type.toLowerCase();
+
   const isImage =
     type == "png" || type == "jpg" || type == "jpeg" || type == "gif";
   const isPlayer =
