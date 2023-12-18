@@ -7,7 +7,7 @@ import storageIcon from "../assets/cloud-data.png";
 import telegramLogo from "../assets/telegram.png";
 import twitterLogo from "../assets/twitter.png";
 import gitIcon from "../assets/github-icon.png";
-import ParticleEffect from "../components/ParticleEffect";
+import ParticleEffect from "../components/UI/ParticleEffect";
 import { LazyMotion, domAnimation, motion } from "framer-motion";
 
 const Welcome = () => {

@@ -2,7 +2,7 @@ import { useLocation } from "react-router-dom";
 import Register from "../components/Register";
 import "../style/auth.scss";
 import Login from "../components/Login";
-import ParticleEffect from "../components/ParticleEffect";
+import ParticleEffect from "../components/UI/ParticleEffect";
 
 const Authorization = () => {
   const whereIAm = useLocation();

@@ -22,22 +22,23 @@ const generateJwt = (id) => {
 };
 class UserControllerClass {
     // контроллер регистрации
-    registration(req, res) {
+    registration(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                // check error from validator
                 const errors = validationResult(req);
-                const { userName, email, password } = req.body;
-                const candidate = yield prisma.user.findUnique({
-                    where: {
-                        email: email,
-                    },
-                });
                 if (!errors.isEmpty()) {
                     return res.status(400).json({
                         message: "Uncorrect request",
                         errors,
                     });
                 }
+                const { userName, email, password } = req.body;
+                const candidate = yield prisma.user.findUnique({
+                    where: {
+                        email: email,
+                    },
+                });
                 if (candidate) {
                     return res.status(400).json({
                         message: `User with email: ${email} already exist`,

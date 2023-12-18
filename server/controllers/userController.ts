@@ -1,11 +1,11 @@
-import { validationResult } from "express-validator";
 import { prisma } from "../app.js";
-import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import "dotenv/config";
 import  _ from 'lodash'
-import { FileService } from "../services/fileService.js";
+import { UserService } from "../services/userService.js";
+import bcrypt from "bcrypt";
+import { generateJwt } from "../utils/generateJwt";
+import { logger } from "../logger.js";
 
 interface IUser {
   id: number;
@@ -17,77 +17,15 @@ interface IUser {
   role: "USER" | "ROOT";
 }
 
-const generateJwt = (id: number) => {
-  return jwt.sign(
-    {
-      id,
-    },
-    process.env.SECRET_KEY as string,
-    {
-      expiresIn: "12h",
-    }
-  );
-};
-
 class UserControllerClass {
   // контроллер регистрации
-  async registration(req: Request, res: Response) {
+  async registration(req: Request, res: Response, next: NextFunction) {
     try {
-      const errors = validationResult(req);
       const { userName, email, password } = req.body;
-      const candidate = await prisma.user.findUnique({
-        where: {
-          email: email,
-        },
-      });
-
-      if (!errors.isEmpty()) {
-        return res.status(400).json({
-          message: "Uncorrect request",
-          errors,
-        });
-      }
-      if (candidate) {
-        return res.status(400).json({
-          message: `User with email: ${email} already exist`,
-        });
-      }
-
-      const hashPassword = await bcrypt.hash(password, 5);
-
-      const user = await prisma.user.create({data: {
-        userName,
-        email,
-        password: hashPassword,
-      }})
-
-      const userSettings = await prisma.userConfig.create({data: {
-        userId: user.id
-      }})
-
-      const token = generateJwt(user.id);
-
-      const baseDir = {userId: user.id, path: "", type: 'dir', name: ""}
-
-      await FileService.createDir(baseDir);
-
-      const diskSpace = user.diskSpace.toString();
-      const usedSpace = user.usedSpace.toString();
-
-      return res.json({
-        token,
-        user: {
-          id: user.id,
-          userName: user.userName,
-          email: user.email,
-          diskSpace,
-          usedSpace,
-          avatar: user.avatar,
-          role: user.role,
-        },
-      });
+      const userData = await UserService.registration({userName, email, password})
+      return res.json(userData);
     } catch (error: any) {
-      res.send({
+      res.status(400).send({
         message: error.message,
       });
     }
@@ -117,13 +55,13 @@ class UserControllerClass {
         });
       }
 
-      const token = generateJwt(user.id);
+      const { accessToken } = generateJwt(user.id);
 
       const diskSpace = user.diskSpace.toString();
       const usedSpace = user.usedSpace.toString();
 
       return res.json({
-        token,
+        token: accessToken,
         user: {
           id: user.id,
           userName: user.userName,
@@ -135,6 +73,7 @@ class UserControllerClass {
         },
       });
     } catch (error: any) {
+      logger.error(error)
       res.send({
         message: error.message,
       });

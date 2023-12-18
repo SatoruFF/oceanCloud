@@ -13,7 +13,7 @@ const authMiddle = (req: any, res: Response, next: NextFunction) => {
         if (!token) {
             return res.status(401).json({message: 'Auth error'})
         }
-        const decoded = jwt.verify(token, process.env.SECRET_KEY as string)
+        const decoded = jwt.verify(token, process.env.ACCESS_SECRET_KEY as string)
         req.user = decoded;
         next()
     } catch (e: any) {

@@ -16,6 +16,7 @@ import router from './routes/index.js';
 import fileUpload from 'express-fileupload';
 import ImageKit from "imagekit";
 import AWS from 'aws-sdk';
+import { logger } from './logger.js';
 import 'dotenv/config';
 // assets upload
 export const imagekit = new ImageKit({
@@ -38,9 +39,10 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors());
 app.use(fileUpload({}));
-app.use(express.static('static'));
+// app.use(express.static('static'))
 // routes
 app.use('/api', router);
+// check health
 app.get('/', (_, res) => {
     res.send("backend");
 });
@@ -48,11 +50,11 @@ app.get('/', (_, res) => {
 const start = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         app.listen(port, () => {
-            console.log(`⚡️[server]: 🚀 Server is running at: ${port}`);
+            logger.info(`⚡️[server]: 🚀 Server is running at: ${port}`);
         });
     }
     catch (e) {
-        console.log(e);
+        logger.warn(e);
     }
 });
 start();
