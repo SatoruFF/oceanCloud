@@ -99,7 +99,7 @@ const Register = () => {
       </div>
       <Divider orientation="left">Already have account?</Divider>
       <Button>
-        <NavLink to={LOGIN_ROUTE}>Log in</NavLink>{" "}
+        <NavLink to={LOGIN_ROUTE}>Log in</NavLink>
       </Button>
     </div>
   );

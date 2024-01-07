@@ -1,22 +1,117 @@
 import "../style/pomodoro.scss";
+import Header from "../components/pomodoro/Header";
+import Controls from "../components/pomodoro/Controls";
+import TimerDisplay from "../components/pomodoro/TimerDisplay";
+import Button from "../components/pomodoro/Button";
+import Settings from "../components/pomodoro/Settings";
+import { useState, useEffect } from "react";
+import useSound from "use-sound";
+import timesUpSfx from "../assets/timesUp.mp3";
 
-const PomodoroTimer = () => {
+function App() {
+  const [settingsVisible, setSettingsVisible] = useState(false);
+  const [timerMode, setTimerMode] = useState("pomo"); // options: pomo, short, long
+  const [pomoLength, setPomoLength] = useState(25);
+  const [shortLength, setShortLength] = useState(3);
+  const [longLength, setLongLength] = useState(15);
+  const [fontPref, setFontPref] = useState("kumbh"); // options: kumbh, roboto, space
+  const [accentColor, setAccentColor] = useState("default"); // options: default, blue, purple
+  const [secondsLeft, setSecondsLeft] = useState(pomoLength * 60);
+  const [isActive, setIsActive] = useState(false);
+  const [buttonText, setButtonText] = useState("START");
+
+  const [volume, setVolume] = useState(1);
+  const [timesUp] = useSound(timesUpSfx, {
+    volume: volume,
+  });
+
+  useEffect(() => {
+    if (isActive) {
+      const interval = setInterval(() => {
+        setSecondsLeft((secondsLeft) => secondsLeft - 1);
+      }, 1000);
+
+      if (secondsLeft === 0) {
+        clearInterval(interval);
+        setIsActive(false);
+        setButtonText("");
+        timesUp();
+      }
+
+      return () => clearInterval(interval);
+    }
+  }, [isActive, secondsLeft, timesUp]);
+
+  const toggleSettingsVisibility = () => {
+    setSettingsVisible(!settingsVisible);
+  };
+
+  const formatTimeLeft = (seconds) => {
+    return `${Math.floor(seconds / 60)}:${
+      seconds % 60 > 9 ? seconds % 60 : "0" + (seconds % 60)
+    }`;
+  };
+
+  const calcPercentage = () => {
+    if (timerMode === "pomo") {
+      return (secondsLeft / (pomoLength * 60)) * 100;
+    }
+    if (timerMode === "short") {
+      return (secondsLeft / (shortLength * 60)) * 100;
+    }
+    if (timerMode === "long") {
+      return (secondsLeft / (longLength * 60)) * 100;
+    }
+  };
+
   return (
-    <div className="pomodoroTimer-wrapper">
+    <div className="pomodoroTimerWrapper">
       <div className="pomodoro-content-max">
-        <div className="pomodoro-content">
-          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Placeat
-          ratione accusamus repudiandae natus asperiores maiores distinctio
-          sequi exercitationem voluptate esse cupiditate, laudantium ullam
-          officia libero veniam fugiat aut incidunt obcaecati. Reiciendis
-          facilis sapiente voluptatibus velit deserunt nulla, quaerat sunt.
-          Harum molestiae placeat debitis dolorum voluptatibus libero doloribus,
-          rem praesentium, magni eos quod id voluptate quisquam quibusdam
-          temporibus at repudiandae distinctio!
-        </div>
+      <Header title="pomodoro" />
+      <Controls
+        timerMode={timerMode}
+        setTimerMode={setTimerMode}
+        setSecondsLeft={setSecondsLeft}
+        pomoLength={pomoLength}
+        shortLength={shortLength}
+        longLength={longLength}
+        setIsActive={setIsActive}
+        buttonText={buttonText}
+        setButtonText={setButtonText}
+        volume={volume}
+      />
+      <TimerDisplay
+        timerMode={timerMode}
+        percentage={calcPercentage()}
+        timeLeft={formatTimeLeft(secondsLeft)}
+        isActive={isActive}
+        setIsActive={setIsActive}
+        buttonText={buttonText}
+        setButtonText={setButtonText}
+        volume={volume}
+        setVolume={setVolume}
+      />
+      <Button type="settings" toggleVisibility={toggleSettingsVisibility} />
+      <Settings
+        visible={settingsVisible}
+        toggleSettingsVisibility={toggleSettingsVisibility}
+        pomoLength={pomoLength}
+        setPomoLength={setPomoLength}
+        shortLength={shortLength}
+        setShortLength={setShortLength}
+        longLength={longLength}
+        setLongLength={setLongLength}
+        fontPref={fontPref}
+        setFontPref={setFontPref}
+        accentColor={accentColor}
+        setAccentColor={setAccentColor}
+        closeSettings={toggleSettingsVisibility}
+        setSecondsLeft={setSecondsLeft}
+        timerMode={timerMode}
+      />
       </div>
     </div>
   );
-};
+}
 
-export default PomodoroTimer;
+export default App;
