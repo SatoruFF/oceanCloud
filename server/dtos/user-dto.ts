@@ -5,7 +5,7 @@ interface IUserModel {
         email: string;
         diskSpace?: string | number;
         usedSpace?: string | number;
-        avatar?: string;
+        avatar?: string | null;
         role?: string;
         isActivated?: boolean;
     };
@@ -22,6 +22,7 @@ export class UserDto {
         usedSpace: any;
         avatar: string;
         role: string;
+        isActivated: boolean;
     };
     token: string;
     refreshToken: string;
@@ -37,6 +38,7 @@ export class UserDto {
             usedSpace: user.usedSpace,
             avatar: user.avatar || "",
             role: user.role || "USER",
+            isActivated: user.isActivated || false,
         };
 
         this.token = token;

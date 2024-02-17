@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import 'dotenv/config'
 
 export const generateJwt = (id: number) => {
     const accessToken = jwt.sign(
@@ -7,7 +8,7 @@ export const generateJwt = (id: number) => {
       },
       process.env.ACCESS_SECRET_KEY as string,
       {
-        expiresIn: "30m",
+        expiresIn: "1h",
       }
     );
 

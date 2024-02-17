@@ -7,123 +7,89 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { validationResult } from "express-validator";
-import { prisma } from "../app.js";
-import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
 import "dotenv/config";
-import { FileService } from "../services/fileService.js";
-const generateJwt = (id) => {
-    return jwt.sign({
-        id,
-    }, process.env.SECRET_KEY, {
-        expiresIn: "12h",
-    });
-};
+import { logger } from "../logger.js";
+import { UserService } from "../services/userService.js";
+import { prisma } from "../app.js";
 class UserControllerClass {
-    // контроллер регистрации
+    // reg controller
     registration(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                // check error from validator
-                const errors = validationResult(req);
-                if (!errors.isEmpty()) {
-                    return res.status(400).json({
-                        message: "Uncorrect request",
-                        errors,
-                    });
-                }
                 const { userName, email, password } = req.body;
-                const candidate = yield prisma.user.findUnique({
-                    where: {
-                        email: email,
-                    },
+                const userData = yield UserService.registration({
+                    userName,
+                    email,
+                    password,
                 });
-                if (candidate) {
-                    return res.status(400).json({
-                        message: `User with email: ${email} already exist`,
-                    });
-                }
-                const hashPassword = yield bcrypt.hash(password, 5);
-                const user = yield prisma.user.create({ data: {
-                        userName,
-                        email,
-                        password: hashPassword,
-                    } });
-                const userSettings = yield prisma.userConfig.create({ data: {
-                        userId: user.id
-                    } });
-                const token = generateJwt(user.id);
-                const baseDir = { userId: user.id, path: "", type: 'dir', name: "" };
-                yield FileService.createDir(baseDir);
-                const diskSpace = user.diskSpace.toString();
-                const usedSpace = user.usedSpace.toString();
-                return res.json({
-                    token,
-                    user: {
-                        id: user.id,
-                        userName: user.userName,
-                        email: user.email,
-                        diskSpace,
-                        usedSpace,
-                        avatar: user.avatar,
-                        role: user.role,
-                    },
-                });
+                res.cookie('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
+                return res.json(userData);
             }
             catch (error) {
-                res.send({
+                logger.error(error.message);
+                res.status(400).send({
                     message: error.message,
                 });
             }
         });
     }
-    // Контроллер логина
+    // Login controller
     login(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { email, password } = req.body;
-                const user = yield prisma.user.findUnique({
-                    where: {
-                        email,
-                    },
-                });
-                if (!user) {
-                    return res.status(404).json({
-                        message: `User with email: ${email} not found`,
-                    });
-                }
-                const isPassValid = bcrypt.compareSync(password, user.password);
-                if (!isPassValid) {
-                    return res.status(400).json({
-                        message: `Uncorrect data`,
-                    });
-                }
-                const token = generateJwt(user.id);
-                const diskSpace = user.diskSpace.toString();
-                const usedSpace = user.usedSpace.toString();
-                return res.json({
-                    token,
-                    user: {
-                        id: user.id,
-                        userName: user.userName,
-                        email: user.email,
-                        diskSpace,
-                        usedSpace,
-                        avatar: user.avatar,
-                        role: user.role,
-                    },
-                });
+                const userData = yield UserService.login(email, password);
+                return res.json(userData);
             }
             catch (error) {
+                logger.error(error.message);
+                res.status(error.status).send({
+                    message: error.message,
+                });
+            }
+        });
+    }
+    // auth controller
+    auth(req, res) {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const id = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
+                const userData = yield UserService.auth(id);
+                return res.json(userData);
+            }
+            catch (error) {
+                logger.error(error.message);
                 res.send({
                     message: error.message,
                 });
             }
         });
     }
-    // Контроллер аутентификации
-    auth(req, res) {
+    activate(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { link } = req.params;
+                yield UserService.activate(link);
+                return res.redirect(process.env.CLIENT_URL || "");
+            }
+            catch (error) {
+                logger.error(error.message);
+                res.send({
+                    message: error.message,
+                });
+            }
+        });
+    }
+    refresh(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+            }
+            catch (error) { }
+        });
+    }
+    // Need create
+    logout(req, res) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -133,27 +99,8 @@ class UserControllerClass {
                         id,
                     },
                 });
-                const token = generateJwt(user.id);
-                const diskSpace = user.diskSpace.toString();
-                const usedSpace = user.usedSpace.toString();
-                return res.json({
-                    token,
-                    user: {
-                        id: user.id,
-                        userName: user.userName,
-                        email: user.email,
-                        diskSpace,
-                        usedSpace,
-                        avatar: user.avatar,
-                        role: user.role,
-                    },
-                });
             }
-            catch (error) {
-                res.send({
-                    message: error.message,
-                });
-            }
+            catch (error) { }
         });
     }
     changeInfo(req, res) {
@@ -169,39 +116,6 @@ class UserControllerClass {
             }
             catch (error) {
                 return res.status(400).json({ message: "change profile info error" });
-            }
-        });
-    }
-    activate(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const { link } = req.params;
-            }
-            catch (error) {
-            }
-        });
-    }
-    refresh(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-            }
-            catch (error) {
-            }
-        });
-    }
-    // Need create
-    logout(req, res) {
-        var _a;
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const id = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
-                const user = yield prisma.user.findUnique({
-                    where: {
-                        id,
-                    },
-                });
-            }
-            catch (error) {
             }
         });
     }

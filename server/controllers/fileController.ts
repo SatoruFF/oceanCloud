@@ -13,7 +13,7 @@ import _ from "lodash";
 import { Request, Response } from "express";
 
 class FileControllerClass {
-  async createDir(req, res) {
+  async createDir(req: Request, res: Response) {
     try {
       const { name, type, parent } = req.body;
 
