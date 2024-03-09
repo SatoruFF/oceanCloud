@@ -1,6 +1,7 @@
 import nodemailer from "nodemailer";
 import 'dotenv/config'
 import _ from "lodash"
+import { getTemplate } from "../utils/getTemplate.js";
 
 class MailServiceClass {
     transport: any;
@@ -17,18 +18,13 @@ class MailServiceClass {
         })
     }
 
-    async sendActivationMail(to: string, link: string) {
+    async sendActivationMail(to: string, userData: any) {
         await this.transport.sendMail({
             from: process.env.SMTP_USER,
             to,
             subject: `Account activation on ${process.env.SEVICE_NAME}`
             text: "",
-            html: `
-                <div>
-                    <h1>Follow link for activation</h1>
-                    <a href="${link}">follow...</a>
-                </div>
-            `
+            html: getTemplate(userData)
         })
     }
 }

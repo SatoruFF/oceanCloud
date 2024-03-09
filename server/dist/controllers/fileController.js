@@ -8,23 +8,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 // services
-import { prisma, s3 } from "../app.js";
-import { imagekit } from "../app.js";
+import { prisma } from "../configs/config.js";
 import { FileService } from "../services/fileService.js";
+import { Avatar } from "../helpers/avatar.js";
 // Utils
-import { v4 as uuidv4 } from "uuid";
-import { createReadStream } from "streamifier";
-import { PassThrough } from "stream";
-// Config
-import "dotenv/config";
-// Tools
 import _ from "lodash";
+import { PassThrough } from "stream";
+import createError from "http-errors";
+import { logger } from "../logger.js";
+import "dotenv/config";
 class FileControllerClass {
     createDir(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { name, type, parent } = req.body;
-                const isDouble = yield prisma.file.findFirst({ where: { name, parentId: parent } });
+                // user id from token in auth middleware
+                const userId = _.get(req, ["user", "id"]);
+                const isDouble = yield prisma.file.findFirst({
+                    where: { name, parentId: parent },
+                });
                 if (!_.isEmpty(isDouble)) {
                     return res.status(400).json({ message: "Folder name is not unique!" });
                 }
@@ -32,23 +34,23 @@ class FileControllerClass {
                     name,
                     type,
                     parentId: parent,
-                    userId: req.user.id,
+                    userId,
                     path: "",
-                    url: '',
+                    url: "",
                 };
                 let itemUrl;
+                // if not exist parent => create new folder in root directory on s3
                 if (parent == null) {
                     fileInstance.path = name;
                     itemUrl = yield FileService.createDir(fileInstance);
                 }
                 else {
+                    // find parent folder to this file
                     const parentFile = yield prisma.file.findFirst({
-                        where: { id: parent, userId: req.user.id },
+                        where: { id: parent, userId },
                     });
                     if (_.isEmpty(parentFile)) {
-                        return res
-                            .status(400)
-                            .json({ message: "Parent directory not found" });
+                        throw createError(400, "Parent directory not found");
                     }
                     fileInstance.path = `${parentFile.path}/${name}`;
                     itemUrl = yield FileService.createDir(fileInstance);
@@ -60,7 +62,7 @@ class FileControllerClass {
                 return res.json(file);
             }
             catch (error) {
-                console.log(error);
+                logger.error(error);
                 return res.status(400).json({ message: error.message });
             }
         });
@@ -68,57 +70,14 @@ class FileControllerClass {
     getFiles(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { sort } = req.query;
-                let parentId = req.query.parent || null;
-                if (typeof parentId == 'string') {
-                    parentId = Number(parentId);
-                }
-                const searchItem = req.query.search;
-                if (searchItem) {
-                    let files = yield prisma.file.findMany({
-                        where: { userId: req.user.id },
-                    });
-                    files = _.filter(files, (file) => _.includes(file.name, searchItem));
-                    return res.json(files);
-                }
-                let files;
-                switch (sort) {
-                    case "name":
-                        files = yield prisma.file.findMany({
-                            where: {
-                                AND: [{ userId: req.user.id }, { parentId }],
-                            },
-                            orderBy: { name: "asc" },
-                        });
-                        break;
-                    case "type":
-                        files = yield prisma.file.findMany({
-                            where: {
-                                AND: [{ userId: req.user.id }, { parentId }],
-                            },
-                            orderBy: { type: "asc" },
-                        });
-                        break;
-                    case "date":
-                        files = yield prisma.file.findMany({
-                            where: {
-                                AND: [{ userId: req.user.id }, { parentId }],
-                            },
-                            orderBy: { createdAt: "asc" },
-                        });
-                        break;
-                    default:
-                        files = yield prisma.file.findMany({
-                            where: {
-                                AND: [{ userId: req.user.id }, { parentId }],
-                            },
-                        });
-                        break;
-                }
+                const { sort, search } = req.query;
+                let parentId = parseInt(req.query.parent) || null;
+                const userId = _.get(req, ["user", "id"]);
+                const files = yield FileService.getFiles(sort, search, parentId, userId);
                 return res.json(files);
             }
             catch (error) {
-                console.log(error);
+                logger.error(error);
                 return res.status(500).json({ message: "Unable to retrieve files" });
             }
         });
@@ -127,59 +86,13 @@ class FileControllerClass {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const file = req.files.file;
-                const currentUserId = req.user.id;
-                let parent;
-                if (req.body.parent !== "null") {
-                    parent = yield prisma.file.findFirst({
-                        where: { userId: currentUserId, id: Number(req.body.parent) },
-                    });
-                }
-                const user = yield prisma.user.findFirst({
-                    where: { id: currentUserId },
-                });
-                if (user.usedSpace + BigInt(file.size) > user.diskSpace) {
-                    return res
-                        .status(400)
-                        .json({ message: "Not enough space on the disk!" });
-                }
-                user.usedSpace += BigInt(file.size);
-                let filePath;
-                if (parent) {
-                    filePath = `${String(user.id)}/${parent.path}/${file.name}`;
-                }
-                else {
-                    filePath = `${String(user.id)}/${file.name}`;
-                }
-                const params = {
-                    Bucket: process.env.S3_BUCKET_NAME,
-                    Key: filePath,
-                    Body: req.files.file.data,
-                };
-                const newFile = yield s3.upload(params).promise();
-                const fileUrl = _.get(newFile, 'Location', "");
-                const dbFile = yield prisma.file.create({
-                    data: {
-                        name: file.name,
-                        type: file.name.split(".").pop(),
-                        size: file.size,
-                        path: parent === null || parent === void 0 ? void 0 : parent.path,
-                        parentId: parent ? parent.id : null,
-                        userId: user.id,
-                        url: fileUrl,
-                    },
-                });
-                yield prisma.user.update({
-                    where: {
-                        id: user.id,
-                    },
-                    data: {
-                        usedSpace: user.usedSpace
-                    }
-                });
-                return res.json(dbFile);
+                const userId = req.user.id;
+                const parentId = req.body.parent;
+                const savedFile = yield FileService.uploadFile(file, userId, parentId);
+                return res.json(savedFile);
             }
             catch (error) {
-                console.log(error);
+                logger.error(error);
                 return res.status(400).json({ message: "Upload error" });
             }
         });
@@ -187,19 +100,9 @@ class FileControllerClass {
     downloadFile(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const currentUserId = req.user.id;
+                const userId = req.user.id;
                 const queryId = req.query.id;
-                const file = yield prisma.file.findFirst({
-                    where: { id: Number(queryId), userId: currentUserId },
-                });
-                let filePath = `${String(currentUserId)}/${file.path}/${file.name}`;
-                filePath = filePath.replace(/\/{2,}/g, "/");
-                const s3object = yield s3
-                    .getObject({
-                    Bucket: process.env.S3_BUCKET_NAME,
-                    Key: `${filePath}`,
-                })
-                    .promise();
+                const { s3object, file } = yield FileService.downloadFile(queryId, userId);
                 const stream = new PassThrough(); // создаем новый поток
                 stream.end(s3object.Body); // записываем данные из s3object.Body в поток
                 res.setHeader("Content-disposition", "attachment; filename=" + file.name);
@@ -208,7 +111,7 @@ class FileControllerClass {
                 stream.pipe(res); // передаем поток в res.download()
             }
             catch (error) {
-                console.log(error);
+                logger.error(error);
                 return res.status(500).json({ message: "Unable to download file" });
             }
         });
@@ -217,90 +120,27 @@ class FileControllerClass {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const fileId = Number(req.query.id);
-                if (isNaN(fileId)) {
-                    return res.status(400).json({ message: "Invalid file ID" });
-                }
-                const file = yield prisma.file.findFirst({
-                    where: { id: fileId, userId: req.user.id },
-                });
-                const existInnerContent = yield prisma.file.findMany({
-                    where: { parentId: file.id },
-                });
-                if (!_.isEmpty(existInnerContent)) {
-                    return res
-                        .status(400)
-                        .json({ message: "You cannot delete a folder while it has content" });
-                }
-                if (!file) {
-                    return res.status(400).json({ message: "File not found" });
-                }
-                FileService.deleteFile(file);
-                yield prisma.file.delete({ where: { id: fileId } });
-                const user = yield prisma.user.findFirst({
-                    where: { id: req.user.id },
-                });
-                user.usedSpace = user.usedSpace - BigInt(file.size);
-                yield prisma.user.update({
-                    where: {
-                        id: user.id,
-                    },
-                    data: {
-                        usedSpace: user.usedSpace
-                    }
-                });
-                const allFiles = yield prisma.file.findMany({ where: { userId: req.user.id } });
+                const userId = req.user.id;
+                const allFiles = yield FileService.deleteFile(fileId, userId);
                 return res.json(allFiles);
             }
             catch (error) {
-                console.log(error);
-                return res.status(500).json({ message: "Unable to delete file" });
+                logger.error(error);
+                return res.status(500).json({ message: error.message });
             }
         });
     }
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // to-do: move this into user, cause this is not a file logic
     uploadAvatar(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const fileBuffer = req.files.file.data;
-                const fileStream = createReadStream(fileBuffer);
-                const avatarName = uuidv4() + ".png";
-                const user = yield prisma.user.findFirst({ where: { id: req.user.id } });
-                // in first, we must delete old avatar
-                if (user.avatar) {
-                    const fileList = yield imagekit.listFiles();
-                    const file = fileList.find((file) => file.url === user.avatar);
-                    const fileId = file ? file.fileId : null;
-                    imagekit.deleteFile(fileId, function (error, result) {
-                        if (error)
-                            console.log(error);
-                        else
-                            console.log(result);
-                    });
-                }
-                const response = yield imagekit.upload({
-                    file: fileStream,
-                    fileName: avatarName,
-                    extensions: [
-                        {
-                            name: "google-auto-tagging",
-                            maxTags: 5,
-                            minConfidence: 95,
-                        },
-                    ],
-                });
-                user.avatar = response.url;
-                yield prisma.user.update({
-                    where: {
-                        id: user.id,
-                    },
-                    data: {
-                        avatar: user.avatar
-                    }
-                });
-                return res.json(user.avatar);
+                const userId = req.user.id;
+                const avatarUrl = yield Avatar.uploadAvatar(fileBuffer, userId);
+                return res.json(avatarUrl);
             }
             catch (error) {
-                console.log(error);
+                logger.error(error);
                 return res.status(400).json({ message: error.message });
             }
         });
@@ -308,34 +148,12 @@ class FileControllerClass {
     deleteAvatar(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const user = yield prisma.user.findFirst({ where: { id: req.user.id } });
-                if (user.avatar) {
-                    const fileList = yield imagekit.listFiles();
-                    const file = fileList.find((file) => file.url === user.avatar);
-                    const fileId = file ? file.fileId : null;
-                    imagekit.deleteFile(fileId, function (error, result) {
-                        if (error)
-                            console.log(error);
-                        else
-                            console.log(result);
-                    });
-                    user.avatar = null;
-                    yield prisma.user.update({
-                        where: {
-                            id: user.id,
-                        },
-                        data: {
-                            avatar: user.avatar
-                        }
-                    });
-                    user.diskSpace = user.diskSpace.toString();
-                    user.usedSpace = user.usedSpace.toString();
-                    return res.json(user);
-                }
-                return res.json({ message: "avatar not found" });
+                const userId = req.user.id;
+                const user = yield Avatar.deleteAvatar(userId);
+                return res.json(user);
             }
             catch (error) {
-                console.log(error);
+                logger.error(error);
                 return res.status(400).json({ message: error.message });
             }
         });

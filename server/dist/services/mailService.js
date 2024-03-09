@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import nodemailer from "nodemailer";
 import 'dotenv/config';
+import { getTemplate } from "../utils/getTemplate.js";
 class MailServiceClass {
     constructor() {
         this.transport = nodemailer.createTransport({
@@ -21,19 +22,14 @@ class MailServiceClass {
             }
         });
     }
-    sendActivationMail(to, link) {
+    sendActivationMail(to, userData) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.transport.sendMail({
                 from: process.env.SMTP_USER,
                 to,
                 subject: `Account activation on ${process.env.SEVICE_NAME}`,
                 text: "",
-                html: `
-                <div>
-                    <h1>Follow link for activation</h1>
-                    <a href="${link}">follow...</a>
-                </div>
-            `
+                html: getTemplate(userData)
             });
         });
     }

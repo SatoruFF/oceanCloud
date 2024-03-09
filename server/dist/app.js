@@ -7,30 +7,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-// imports
+// bases
 import express from "express";
-import cors from 'cors';
+import router from "./routes/index.js";
+// middleware
+import cors from "cors";
 import cookieParser from "cookie-parser";
-import { PrismaClient } from '@prisma/client';
-import router from './routes/index.js';
-import fileUpload from 'express-fileupload';
-import ImageKit from "imagekit";
-import AWS from 'aws-sdk';
-import { logger } from './logger.js';
-import 'dotenv/config';
-// assets upload
-export const imagekit = new ImageKit({
-    publicKey: process.env.IK_PUBLIC_KEY,
-    privateKey: process.env.IK_PRIVATE_KEY,
-    urlEndpoint: process.env.IK_URL_ENDPOINT
-});
-// s3
-AWS.config.update({ region: process.env.S3_REGION, accessKeyId: process.env.YK_IDENTIFIER, secretAccessKey: process.env.YK_SECRET });
-export const s3 = new AWS.S3({
-    endpoint: 'https://storage.yandexcloud.net',
-});
-// prisma init
-export const prisma = new PrismaClient({ log: ['query', 'info', 'error'] });
+import fileUpload from "express-fileupload";
+// utils
+import { logger } from "./logger.js";
+import "dotenv/config";
+// performing
+import cluster from "cluster";
+import { cpus } from "os";
+const numCPU = cpus().length;
 // base consts
 const app = express();
 const port = process.env.PORT || 3002;
@@ -41,21 +31,35 @@ app.use(cors());
 app.use(fileUpload({}));
 // app.use(express.static('static'))
 // routes
-app.use('/api', router);
+app.use("/api", router);
 // check health
-app.get('/', (_, res) => {
-    res.send("backend");
+app.get("/", (_, res) => {
+    res.send("i am alive ;)");
 });
-// main def
-const start = () => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        app.listen(port, () => {
-            logger.info(`⚡️[server]: 🚀 Server is running at: ${port}`);
-        });
+if (cluster.isPrimary) {
+    // Create a worker for each CPU
+    for (let i = 0; i < numCPU; i++) {
+        cluster.fork();
     }
-    catch (e) {
-        logger.warn(e);
-    }
-});
-start();
+    cluster.on("online", function (worker) {
+        logger.info("Worker " + worker.process.pid + " is alive.");
+    });
+    cluster.on("exit", function (worker, code, signal) {
+        logger.error("worker " + worker.process.pid + " died.");
+    });
+}
+else {
+    // main def
+    const start = () => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            app.listen(port, () => {
+                logger.info(`⚡️[server]: 🚀 Server is running at: ${port}`);
+            });
+        }
+        catch (e) {
+            logger.warn(e);
+        }
+    });
+    start();
+}
 //# sourceMappingURL=app.js.map

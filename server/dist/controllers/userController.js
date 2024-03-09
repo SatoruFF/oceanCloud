@@ -10,7 +10,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import "dotenv/config";
 import { logger } from "../logger.js";
 import { UserService } from "../services/userService.js";
-import { prisma } from "../app.js";
 class UserControllerClass {
     // reg controller
     registration(req, res, next) {
@@ -39,6 +38,7 @@ class UserControllerClass {
             try {
                 const { email, password } = req.body;
                 const userData = yield UserService.login(email, password);
+                res.cookie('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
                 return res.json(userData);
             }
             catch (error) {
@@ -84,23 +84,34 @@ class UserControllerClass {
     refresh(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                const { refreshToken } = req.cookies;
+                const userData = yield UserService.refresh(refreshToken);
+                res.cookie('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
+                return res.json(userData);
             }
-            catch (error) { }
+            catch (error) {
+                logger.error(error.message);
+                res.send({
+                    message: error.message,
+                });
+            }
         });
     }
     // Need create
     logout(req, res) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const id = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
-                const user = yield prisma.user.findUnique({
-                    where: {
-                        id,
-                    },
+                const { refreshToken } = req.cookies;
+                const user = yield UserService.logout(refreshToken);
+                res.clearCookie("refreshToken");
+                return res.status(200).json({ message: `User ${user.email} was successfully logout` });
+            }
+            catch (error) {
+                logger.error(error.message);
+                res.send({
+                    message: error.message,
                 });
             }
-            catch (error) { }
         });
     }
     changeInfo(req, res) {

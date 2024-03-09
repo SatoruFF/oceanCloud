@@ -1,14 +1,17 @@
-import _, { create } from "lodash";
+// base
+import { FileService } from "../services/fileService.js";
+import { MailService } from "./mailService.js";
+import { prisma } from "../configs/config.js";
+import { UserDto } from "../dtos/user-dto.js";
+
+// utils
+import _ from "lodash";
 import bcrypt from "bcrypt";
 import 'dotenv/config'
 import { v4 as uuidv4 } from "uuid";
 import { generateJwt } from "../utils/generateJwt.js";
 import createError from "http-errors"
-
-import { FileService } from "../services/fileService.js";
-import { MailService } from "./mailService.js";
-import { prisma } from "../app.js";
-import { UserDto } from "../dtos/user-dto.js";
+import { validateRefreshToken } from "../utils/validateJwt.js";
 
 
 interface IUserData {
@@ -27,7 +30,7 @@ class UserServiceClass {
     });
 
     if (candidate) {
-      createError(400, `User with email: ${userData.email} already exists`)
+      throw createError(400, `User with email: ${userData.email} already exists`)
     }
 
     // create user in dataBase
@@ -46,7 +49,7 @@ class UserServiceClass {
 
     activationLink = `${process.env.API_URL}/api/activate/${activationLink}`
 
-    await MailService.sendActivationMail(userData.email, activationLink);
+    await MailService.sendActivationMail(userData.email, {...user, activationLink});
 
     const { accessToken, refreshToken } = generateJwt(user.id);
 
@@ -95,22 +98,28 @@ class UserServiceClass {
     });
 
     if (!user) {
-      createError(400, `User with email: ${email} not found`)
+      throw createError(400, `User with email: ${email} not found`)
     }
 
     const isPassValid = bcrypt.compareSync(password, user.password);
 
     if (!isPassValid) {
-      createError(400, `Uncorrect data`)
+      throw createError(400, `Uncorrect data`)
     }
 
-    const { accessToken } = generateJwt(user.id);
+    const { accessToken, refreshToken } = generateJwt(user.id);
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { refreshToken },
+    });
 
     const diskSpace = user.diskSpace.toString();
     const usedSpace = user.usedSpace.toString();
 
-    return {
+    const userDto = new UserDto({
       token: accessToken,
+      refreshToken,
       user: {
         id: user.id,
         userName: user.userName,
@@ -120,7 +129,9 @@ class UserServiceClass {
         avatar: user.avatar,
         role: user.role,
       },
-    };
+    });
+
+    return userDto;
   }
 
   async auth(id: number | undefined) {
@@ -157,10 +168,52 @@ class UserServiceClass {
     })
 
     if (!user) {
-      createError('404', "user not found")
+      throw createError(404, "user not found")
     }
 
     await prisma.user.update({ isActivated: true })
+  }
+
+  async refresh(refreshToken) {
+
+    if (!refreshToken) {
+      throw createError(404, "Not found token")
+    }
+
+    const userId = validateRefreshToken(refreshToken)
+
+    const foundedUser = await prisma.user.findFirst({
+      where: { refreshToken }
+    })
+
+    if (!foundedUser || !userId) {
+      throw createError(404, "User not found")
+    }
+
+    const { accessToken, refreshToken: newToken } = generateJwt(foundedUser.id)
+
+    const user = await prisma.user.update({
+      where: {
+        id: foundedUser.id,
+      },
+      data: { refreshToken: newToken },
+    })
+
+    return new UserDto({
+      user,
+      token: accessToken,
+    })
+  }
+
+  async logout(refreshToken: string) {
+    const user = await prisma.user.update({
+      where: {
+        refreshToken
+      },
+      data: {refreshToken: null},
+    })
+
+    return user
   }
 }
 

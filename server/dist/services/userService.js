@@ -7,15 +7,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+// base
+import { FileService } from "../services/fileService.js";
+import { MailService } from "./mailService.js";
+import { prisma } from "../configs/config.js";
+import { UserDto } from "../dtos/user-dto.js";
 import bcrypt from "bcrypt";
 import 'dotenv/config';
 import { v4 as uuidv4 } from "uuid";
 import { generateJwt } from "../utils/generateJwt.js";
 import createError from "http-errors";
-import { FileService } from "../services/fileService.js";
-import { MailService } from "./mailService.js";
-import { prisma } from "../app.js";
-import { UserDto } from "../dtos/user-dto.js";
+import { validateRefreshToken } from "../utils/validateJwt.js";
 class UserServiceClass {
     registration(userData) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -26,7 +28,7 @@ class UserServiceClass {
                 },
             });
             if (candidate) {
-                createError(400, `User with email: ${userData.email} already exists`);
+                throw createError(400, `User with email: ${userData.email} already exists`);
             }
             // create user in dataBase
             const hashPassword = yield bcrypt.hash(userData.password, 5);
@@ -40,7 +42,7 @@ class UserServiceClass {
                 },
             });
             activationLink = `${process.env.API_URL}/api/activate/${activationLink}`;
-            yield MailService.sendActivationMail(userData.email, activationLink);
+            yield MailService.sendActivationMail(userData.email, Object.assign(Object.assign({}, user), { activationLink }));
             const { accessToken, refreshToken } = generateJwt(user.id);
             yield prisma.user.update({
                 where: { id: user.id },
@@ -81,17 +83,22 @@ class UserServiceClass {
                 },
             });
             if (!user) {
-                createError(400, `User with email: ${email} not found`);
+                throw createError(400, `User with email: ${email} not found`);
             }
             const isPassValid = bcrypt.compareSync(password, user.password);
             if (!isPassValid) {
-                createError(400, `Uncorrect data`);
+                throw createError(400, `Uncorrect data`);
             }
-            const { accessToken } = generateJwt(user.id);
+            const { accessToken, refreshToken } = generateJwt(user.id);
+            yield prisma.user.update({
+                where: { id: user.id },
+                data: { refreshToken },
+            });
             const diskSpace = user.diskSpace.toString();
             const usedSpace = user.usedSpace.toString();
-            return {
+            const userDto = new UserDto({
                 token: accessToken,
+                refreshToken,
                 user: {
                     id: user.id,
                     userName: user.userName,
@@ -101,7 +108,8 @@ class UserServiceClass {
                     avatar: user.avatar,
                     role: user.role,
                 },
-            };
+            });
+            return userDto;
         });
     }
     auth(id) {
@@ -136,9 +144,45 @@ class UserServiceClass {
                 }
             });
             if (!user) {
-                createError('404', "user not found");
+                throw createError(404, "user not found");
             }
             yield prisma.user.update({ isActivated: true });
+        });
+    }
+    refresh(refreshToken) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!refreshToken) {
+                throw createError(404, "Not found token");
+            }
+            const userId = validateRefreshToken(refreshToken);
+            const foundedUser = yield prisma.user.findFirst({
+                where: { refreshToken }
+            });
+            if (!foundedUser || !userId) {
+                throw createError(404, "User not found");
+            }
+            const { accessToken, refreshToken: newToken } = generateJwt(foundedUser.id);
+            const user = yield prisma.user.update({
+                where: {
+                    id: foundedUser.id,
+                },
+                data: { refreshToken: newToken },
+            });
+            return new UserDto({
+                user,
+                token: accessToken,
+            });
+        });
+    }
+    logout(refreshToken) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield prisma.user.update({
+                where: {
+                    refreshToken
+                },
+                data: { refreshToken: null },
+            });
+            return user;
         });
     }
 }

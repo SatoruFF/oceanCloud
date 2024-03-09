@@ -7,35 +7,38 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { s3 } from "../app.js";
-import 'dotenv/config';
+import { prisma, s3 } from "../configs/config.js";
+import createError from "http-errors";
+import _ from "lodash";
+import "dotenv/config";
 class FileServiceClass {
+    // create dir or file
     createDir(file) {
         return __awaiter(this, void 0, void 0, function* () {
             let folderPath = `${file.userId}/${file.path}`;
-            if (!folderPath.endsWith('/')) {
-                folderPath += '/';
+            if (!folderPath.endsWith("/")) {
+                folderPath += "/";
             }
             const params = {
                 Bucket: process.env.S3_BUCKET_NAME,
                 Key: folderPath,
-                Body: '',
+                Body: "",
             };
             const getParams = {
                 Bucket: process.env.S3_BUCKET_NAME,
                 Key: folderPath,
             };
             yield s3.putObject(params).promise();
-            const newDirUrl = yield s3.getSignedUrl('getObject', getParams);
-            console.log(typeof newDirUrl);
+            const newDirUrl = yield s3.getSignedUrl("getObject", getParams);
             return newDirUrl;
         });
     }
-    deleteFile(file) {
+    // delete file or directory
+    deleteBucketFile(file) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (file.type === 'dir') {
+            if (file.type === "dir") {
                 let filePath = `${String(file.userId)}/${file.path}`;
-                filePath = filePath.replace(/\/{2,}/g, '/');
+                filePath = filePath.replace(/\/{2,}/g, "/");
                 const params = {
                     Bucket: process.env.S3_BUCKET_NAME,
                     Prefix: filePath,
@@ -51,18 +54,24 @@ class FileServiceClass {
                 Contents.forEach(({ Key }) => {
                     deleteParams.Delete.Objects.push({ Key });
                 });
+                // remove all inner files in directory
                 yield s3.deleteObjects(deleteParams).promise();
                 if (Contents.IsTruncated) {
-                    yield this.deleteFile(file);
+                    yield this.deleteBucketFile(file);
                 }
                 else {
-                    yield s3.deleteObject({ Bucket: process.env.S3_BUCKET_NAME, Key: filePath }).promise();
+                    yield s3
+                        .deleteObject({
+                        Bucket: process.env.S3_BUCKET_NAME,
+                        Key: filePath,
+                    })
+                        .promise();
                 }
                 return { message: "Folder was deleted" };
             }
             else {
                 let filePath = `${String(file.userId)}/${file.path}/${file.name}`;
-                filePath = filePath.replace(/\/{2,}/g, '/');
+                filePath = filePath.replace(/\/{2,}/g, "/");
                 const params = {
                     Bucket: process.env.S3_BUCKET_NAME,
                     Key: filePath,
@@ -70,6 +79,165 @@ class FileServiceClass {
                 yield s3.deleteObject(params).promise();
                 return { message: "File was deleted" };
             }
+        });
+    }
+    // get files with wearch params
+    getFiles(sort, search, parentId, userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let files;
+            // find by file name
+            if (search) {
+                files = yield prisma.file.findMany({
+                    where: { userId },
+                });
+                files = _.filter(files, (file) => _.includes(file.name, search));
+                return files;
+            }
+            // find with sort query
+            switch (sort) {
+                case "name":
+                    files = yield prisma.file.findMany({
+                        where: {
+                            AND: [{ userId }, { parentId }],
+                        },
+                        orderBy: { name: "asc" },
+                    });
+                    break;
+                case "type":
+                    files = yield prisma.file.findMany({
+                        where: {
+                            AND: [{ userId }, { parentId }],
+                        },
+                        orderBy: { type: "asc" },
+                    });
+                    break;
+                case "date":
+                    files = yield prisma.file.findMany({
+                        where: {
+                            AND: [{ userId }, { parentId }],
+                        },
+                        orderBy: { createdAt: "asc" },
+                    });
+                    break;
+                default:
+                    files = yield prisma.file.findMany({
+                        where: {
+                            AND: [{ userId }, { parentId }],
+                        },
+                    });
+                    break;
+            }
+            return files;
+        });
+    }
+    // upload file
+    uploadFile(file, userId, parentId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let parent;
+            if (parentId !== "null") {
+                parent = yield prisma.file.findFirst({
+                    where: { userId, id: Number(parentId) },
+                });
+            }
+            const user = yield prisma.user.findFirst({
+                where: { id: userId },
+            });
+            // check size on disc after upload
+            if (user.usedSpace + BigInt(file.size) > user.diskSpace) {
+                throw createError(400, "Not enough space on the disk");
+            }
+            user.usedSpace += BigInt(file.size);
+            let filePath;
+            // find parent with his path
+            if (parent) {
+                filePath = `${String(user.id)}/${parent.path}/${file.name}`;
+            }
+            else {
+                filePath = `${String(user.id)}/${file.name}`;
+            }
+            const params = {
+                Bucket: process.env.S3_BUCKET_NAME,
+                Key: filePath,
+                Body: file.data,
+            };
+            const newFile = yield s3.upload(params).promise();
+            // get url for download new file
+            const fileUrl = _.get(newFile, "Location", "");
+            const dbFile = yield prisma.file.create({
+                data: {
+                    name: file.name,
+                    type: file.name.split(".").pop(),
+                    size: file.size,
+                    path: parent === null || parent === void 0 ? void 0 : parent.path,
+                    parentId: parent ? parent.id : null,
+                    userId: user.id,
+                    url: fileUrl,
+                },
+            });
+            // after we must fill used space
+            yield prisma.user.update({
+                where: {
+                    id: user.id,
+                },
+                data: {
+                    usedSpace: user.usedSpace,
+                },
+            });
+            return dbFile;
+        });
+    }
+    downloadFile(queryId, userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const file = yield prisma.file.findFirst({
+                where: { id: Number(queryId), userId },
+            });
+            let filePath = `${String(userId)}/${file.path}/${file.name}`;
+            filePath = filePath.replace(/\/{2,}/g, "/");
+            const s3object = yield s3
+                .getObject({
+                Bucket: process.env.S3_BUCKET_NAME,
+                Key: `${filePath}`,
+            })
+                .promise();
+            return { file, s3object };
+        });
+    }
+    deleteFile(fileId, userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (_.isNaN(fileId)) {
+                throw createError(400, "Invalid file ID");
+            }
+            const file = yield prisma.file.findFirst({
+                where: { id: fileId, userId },
+            });
+            // directory have a content?
+            const existInnerContent = yield prisma.file.findMany({
+                where: { parentId: file.id },
+            });
+            if (!_.isEmpty(existInnerContent)) {
+                throw createError(400, "You cannot delete a folder while it has content");
+            }
+            if (!file) {
+                throw createError(400, "File not found");
+            }
+            yield this.deleteBucketFile(file);
+            yield prisma.file.delete({ where: { id: fileId } });
+            const user = yield prisma.user.findFirst({
+                where: { id: userId },
+            });
+            user.usedSpace = user.usedSpace - BigInt(file.size);
+            yield prisma.user.update({
+                where: {
+                    id: user.id,
+                },
+                data: {
+                    usedSpace: user.usedSpace,
+                },
+            });
+            const allFiles = yield prisma.file.findMany({
+                where: { userId },
+            });
+            return allFiles;
         });
     }
 }

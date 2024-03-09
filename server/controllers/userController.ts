@@ -4,7 +4,6 @@ import { logger } from "../logger.js";
 
 import { UserService } from "../services/userService.js";
 
-import { prisma } from "../app.js";
 import { NextFunction, Request, Response } from "express";
 
 interface IUser {
@@ -47,6 +46,8 @@ class UserControllerClass {
 
       const userData = await UserService.login(email, password);
 
+      res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true});
+
       return res.json(userData);
     } catch (error: any) {
       logger.error(error.message);
@@ -79,7 +80,7 @@ class UserControllerClass {
       await UserService.activate(link);
 
       return res.redirect(process.env.CLIENT_URL || "")
-    } catch (error) {
+    } catch (error: any) {
       logger.error(error.message);
       res.send({
         message: error.message,
@@ -89,19 +90,37 @@ class UserControllerClass {
 
   async refresh(req: any, res: Response) {
     try {
-    } catch (error) {}
+      const { refreshToken } = req.cookies
+
+      const userData = await UserService.refresh(refreshToken);
+
+      res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true});
+
+      return res.json(userData);
+    } catch (error: any) {
+      logger.error(error.message);
+      res.send({
+        message: error.message,
+      });
+    }
   }
 
   // Need create
   async logout(req: any, res: Response) {
     try {
-      const id = req.user?.id;
-      const user: any = await prisma.user.findUnique({
-        where: {
-          id,
-        },
+      const { refreshToken } = req.cookies;
+
+      const user = await UserService.logout(refreshToken)
+
+      res.clearCookie("refreshToken");
+
+      return res.status(200).json({message: `User ${user.email} was successfully logout`});
+    } catch (error: any) {
+      logger.error(error.message);
+      res.send({
+        message: error.message,
       });
-    } catch (error) {}
+    }
   }
 
   async changeInfo(req: Request, res: Response) {
