@@ -1,4 +1,3 @@
-import React from "react";
 
 const muteToggle = ({ volume, setVolume }) => {
   const handleClick = () => {

@@ -1,19 +1,19 @@
 @import '../utils/tmp.scss';
 
-.auth__wrapper {
+.authWrapper {
     width: 100vw;
     height: 90vh;
-    .auth__space {
+    .authSpace {
         height: 100%;
         display: flex;
         align-items: center;
         flex-direction: row;
-        .auth__left-side {
+        .authLeftSide {
             background-color: black;
             width: 20%;
             height: 100%;
             @extend %centerTemplate;
-            .left-side__title {
+            .leftSideTitle {
                 font-size: 23px;
                 color: white;
                 line-height: 50px;
@@ -21,7 +21,7 @@
                 @extend %mainFont;
             }
         }
-        .auth__right-side {
+        .authRightSide {
             background-size: cover;
             background-color: #111827;
             height: 100%;
@@ -29,17 +29,17 @@
             z-index: 1;
             position: relative;
             @extend %centerTemplate;
-            .auth-background-img {
+            .authBackgroundImg {
                 @extend %backgroundPic;
             }
-            .right-side__form {
+            .rightSideForm {
                 padding: 20px;
                 width: 400px;
                 height: auto;
                 border-radius: 15px;
                 background-color: white;
                 @extend %shadowTemplate;
-                .auth-form__title {
+                .authFormTitle {
                     width: 100%;
                     font-size: 23px;
                     margin-bottom: 15px;
@@ -53,11 +53,11 @@
 }
 
 @media screen and (max-width: 992px) {
-    .auth__wrapper {
-        .auth__left-side {
+    .authWrapper {
+        .authLeftSide {
             display: none !important;
         }
-        .auth__right-side {
+        .authRightSide {
             width: 100% !important;
         }
     }

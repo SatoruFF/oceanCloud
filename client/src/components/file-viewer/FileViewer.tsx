@@ -1,12 +1,14 @@
 import { Image, Modal, Button } from "antd";
-import React, { useState } from "react";
+import { useState } from "react";
+import ReactPlayer from "react-player";
 import {
   FolderFilled,
   FileFilled,
   PlayCircleOutlined,
 } from "@ant-design/icons";
-import "../../style/fileViewer.scss";
-import ReactPlayer from "react-player";
+import cn from "classnames"
+import styles from "../../style/fileViewer.module.scss";
+
 
 const FileViewer = ({ type, url }) => {
   const [isOpenPlayer, setIsOpenPlayer] = useState(false);
@@ -33,11 +35,11 @@ const FileViewer = ({ type, url }) => {
     }
   };
   return (
-    <div className="allFile-viewer">
+    <div className={cn(styles.allFileViewer)}>
       {determineViewer(type, url)}
       <Modal
         title="Player"
-        className="playerModal-file-viewer"
+        className={cn(styles.playerModalFileViewer)}
         open={isOpenPlayer}
         onCancel={() => setIsOpenPlayer(false)}
         footer={[

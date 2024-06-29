@@ -1,6 +1,6 @@
 @import '../utils/tmp.scss';
 
-.allFile-viewer {
+.allFileViewer {
     display: flex;
     justify-content: center;
     .playerIcon {
@@ -13,7 +13,7 @@
     }
 }
 
-.playerModal-file-viewer {
+.playerModalFileViewer {
     //width: 50% !important; //Sorryy!!!!! i dont know why it doesnt work without this
     display: flex;
     align-items: center;

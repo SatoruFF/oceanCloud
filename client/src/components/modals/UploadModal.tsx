@@ -1,11 +1,15 @@
 import { Button, Modal, Upload, message } from "antd";
 import type { UploadProps } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
+
 import { useAppSelector } from "../../store/store";
 import { useAppDispatch } from "../../store/store";
 import { addNewFile } from "../../store/reducers/fileSlice";
-import '../../style/uploadModal.scss'
 import { Variables } from "../../config/localVariables";
+
+import styles from '../../style/uploadModal.module.scss'
+import cn from "classnames"
+
 const { Dragger } = Upload;
 
 const UploadModal = ({ status, def }) => {
@@ -50,7 +54,7 @@ const UploadModal = ({ status, def }) => {
     <Modal
       open={status}
       title="Upload files"
-      className="upl-modal-fileSpace"
+      className={cn(styles.uplModalFileSpace)}
       onCancel={() => def(false)}
       footer={[
         <Button key="back" type="primary" onClick={() => def(false)}>

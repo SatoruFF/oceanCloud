@@ -1,14 +1,14 @@
 @import '../utils/tmp.scss';
 
-.account-wrapper {
+.accountWrapper {
     width: 100%;
     height: 100%;
-    .account-personal {
+    .accountPersonal {
         height: 50%;
         display: flex;
         flex-direction: column;
         justify-content: space-evenly;
-        .personal-item {
+        .personalItem {
             border: 1px solid #1677ff;
             color: black;
             padding: 10px;
@@ -17,17 +17,17 @@
             border-radius: 10px;
             @extend %mainFont;
         }
-        .personal-logout {
+        .personalLogout {
             color: white;
             @extend %mainFont;
         }
     }
-    .account-settings {
+    .accountSettings {
         height: 50%;
         display: flex;
         flex-direction: column;
         justify-content: space-evenly;
-        .account-btn {
+        .accountBtn {
             width: 100%;
         }
         * {

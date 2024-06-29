@@ -1,43 +1,43 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins&family=Sono&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins&family=Sono&display=swap");
 
 $light-text-color: #ffffff;
 
 $dark-text-color: #1e213f;
 
 %centerTemplate {
-    display: -ms-flexbox;
-    display: -webkit-flex;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
 %shadowTemplate {
-    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
 }
 
 %mainFont {
-    font-family: 'Sono', sans-serif;
+  font-family: "Sono", sans-serif;
 }
 
 %secondFont {
-    font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
 %backgroundPic {
-    display: block; 
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
+  display: block;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
 }
 
 %content-max {
-    max-width: 1400px;
-    width: 100%;
-    height: 100%;
+  max-width: 1400px;
+  width: 100%;
+  height: 100%;
 }

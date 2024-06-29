@@ -1,5 +1,4 @@
-import { useAppDispatch, useAppSelector } from "../store/store";
-import _ from "lodash";
+import _ from "lodash-es";
 import {
   Button,
   Upload,
@@ -13,13 +12,19 @@ import {
 } from "antd";
 import { PieChartOutlined } from "@ant-design/icons";
 import type { UploadProps } from "antd";
-import "../style/profile.scss";
+import { unwrapResult } from "@reduxjs/toolkit";
+
+import { useAppDispatch, useAppSelector } from "../store/store";
 import { useDeleteAvatarMutation } from "../services/file";
 import { setAvatar, deleteAvatar } from "../store/reducers/userSlice";
 import { sizeFormat } from "../utils/sizeFormat";
-import avatarIcon from "../assets/avatar-icon.png";
-import { unwrapResult } from "@reduxjs/toolkit";
 import { Variables } from "../config/localVariables";
+
+import avatarIcon from "../assets/avatar-icon.png";
+
+import styles from "../style/profile.module.scss";
+import cn from "classnames"
+
 const { Paragraph } = Typography;
 
 const Profile = () => {
@@ -84,7 +89,7 @@ const Profile = () => {
   };
 
   return (
-    <div className="profile-wrapper">
+    <div className={cn(styles.profileWrapper)}>
       <div className="profile-content">
         <div className="profile__main-card">
           <div className="profile__left-side">

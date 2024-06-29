@@ -1,17 +1,17 @@
-import "../style/fileSpace.scss";
-import { useAppSelector } from "../store/store";
-import { useAppDispatch } from "../store/store";
 import { useEffect, useState } from "react";
+import { Button, Spin, Modal, Input, message, Select, Breadcrumb } from "antd";
 import {
   LeftOutlined,
   UploadOutlined,
   UnorderedListOutlined,
   AppstoreOutlined,
 } from "@ant-design/icons";
-import { Button, Spin, Modal, Input, message, Select, Breadcrumb } from "antd";
+
+import { unwrapResult } from "@reduxjs/toolkit";
+import { useAppSelector } from "../store/store";
+import { useAppDispatch } from "../store/store";
 import { useCreateDirMutation, useGetFilesQuery } from "../services/file";
 import Filelist from "../components/Filelist";
-import diskBack from "../assets/disk-back.jpg";
 import {
   setFiles,
   addNewFile,
@@ -22,7 +22,11 @@ import {
 } from "../store/reducers/fileSlice";
 import { generateParams } from "../utils/generateParams";
 import UploadModal from "../components/modals/UploadModal";
-import { unwrapResult } from "@reduxjs/toolkit";
+
+import diskBack from "../assets/disk-back.jpg";
+import styles from "../style/fileSpace.module.scss";
+import cn from "classnames"
+
 const { Search } = Input;
 
 const FileSpace = () => {
@@ -76,7 +80,7 @@ const FileSpace = () => {
     }
   };
 
-  // Добавить новую папку
+  // create new folder
   const addNewFolder = async () => {
     try {
       if (folderName.length === 0) {
@@ -103,23 +107,23 @@ const FileSpace = () => {
   }
 
   return (
-    <div className="disk-wrapper">
-      <img src={diskBack} className="disk-background-img" loading="lazy" />
-      <div className="disk-nav">
-        <div className="disk-control-btns">
+    <div className={cn(styles.diskWrapper)}>
+      <img src={diskBack} className={cn(styles.diskBackgroundImg)} loading="lazy" />
+      <div className={cn(styles.diskNav)}>
+        <div className={cn(styles.diskControlBtns)}>
           <Button onClick={() => goBack()}>
             <LeftOutlined />
           </Button>
           <Button onClick={() => setModal(true)}>
-            <p className="disc-createFolder-txt">Create new folder</p>
+            <p className={cn(styles.diskCreateFolderTxt)}>Create new folder</p>
           </Button>
 
-          <Button icon={<UploadOutlined />} onClick={() => setUploadModal(true)} className="upload-btn disk-upload">
+          <Button icon={<UploadOutlined />} onClick={() => setUploadModal(true)} className={cn(styles.uploadBtn, styles.diskUpload)}>
             Click to Upload
           </Button>
           <UploadModal status={uploadModal} def={setUploadModal}/>
           <Select
-            className="disk-order"
+            className={cn(styles.diskOrder)}
             defaultValue="Order by"
             onChange={(value) => setSort(value)}
             options={[
@@ -130,21 +134,21 @@ const FileSpace = () => {
           />
           <Search
             placeholder="What are you looking for?"
-            className="search-files"
+            className={cn(styles.searchFiles)}
             onSearch={onSearch}
             enterButton
           />
-          <div className="visual">
+          <div className={cn(styles.visual)}>
             <UnorderedListOutlined
-              className="visual-by-list"
+              className={cn(styles.visualByList)}
               onClick={() => dispatch(setView("list"))}
             />
             <AppstoreOutlined
-              className="visual-by-file"
+              className={cn(styles.visualByFile)}
               onClick={() => dispatch(setView("plate"))}
             />
           </div>
-          <Breadcrumb separator=">" className="breadcrumb" items={paths} />
+          <Breadcrumb separator=">" className={cn(styles.breadcrumb)} items={paths} />
         </div>
       </div>
       <Modal

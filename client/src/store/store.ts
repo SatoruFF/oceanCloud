@@ -1,7 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit'
+import {TypedUseSelectorHook, useDispatch, useSelector} from "react-redux";
+
 import userReducer from './reducers/userSlice'
 import fileReducer from './reducers/fileSlice'
-import {TypedUseSelectorHook, useDispatch, useSelector} from "react-redux";
 import { userApi } from '../services/user';
 import { fileApi } from '../services/file';
 

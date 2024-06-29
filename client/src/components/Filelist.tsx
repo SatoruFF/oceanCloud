@@ -1,19 +1,21 @@
 import { Empty } from "antd";
-import "../style/fileList.scss";
 import { useAppSelector } from "../store/store";
 import File from "./File";
+
+import cn from "classnames"
+import styles from "../style/fileList.module.scss";
 
 const Filelist = () => {
   const files = useAppSelector((state) => state.files.files);
   const fileView = useAppSelector((state) => state.files.view);
 
   if (files.length === 0) {
-    return <h1 className="files-not-found animate__animated animate__fadeIn"> <Empty className="empty-folder"/> </h1>
+    return <h1 className={cn(styles.filesNotFound, "animate__animated animate__fadeIn")}> <Empty className="emptyFolder"/> </h1>
   }
 
   if (fileView == 'plate') {
     return (
-      <div className="fileplate-list-wrapper animate__animated animate__fadeIn">
+      <div className= {cn(styles.fileplateListWrapper, "animate__animated animate__fadeIn")}>
         {files.map((file: any) => (
           <File key={Math.random()} file={file} />
         ))}
@@ -22,11 +24,11 @@ const Filelist = () => {
   }
 
   return (
-    <div className="filelist-wrapper animate__animated animate__fadeIn">
-      <div className="fileList-header">
-        <p className="name">Name</p>
-        <p className="date">Date</p>
-        <p className="size">Size</p>
+    <div className={cn(styles.filelistWrapper, "animate__animated animate__fadeIn" )}>
+      <div className={cn(styles.fileListHeader)}>
+        <p className={cn(styles.name)}>Name</p>
+        <p className={cn(styles.date)}>Date</p>
+        <p className={cn(styles.size)}>Size</p>
       </div>
 
       {files.map((file: any) => (

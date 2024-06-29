@@ -7,7 +7,6 @@ export const fileApi = createApi({
   reducerPath: "fileApi",
   baseQuery: fetchBaseQuery({
     baseUrl: url,
-    credentials: 'include',
     prepareHeaders: (headers) => {
       const token = localStorage.getItem("token");
       if (token) {

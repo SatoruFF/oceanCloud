@@ -1,15 +1,18 @@
+import { ApiOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { Button, Divider, notification } from "antd";
-import "../style/accountSettings.scss";
+
 import { useAppSelector, useAppDispatch } from "../store/store";
 import { sizeFormat } from "../utils/sizeFormat";
 import { logout } from "../store/reducers/userSlice";
 import { WELCOME_ROUTE } from "../utils/consts";
-import { ApiOutlined } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 import InfoModal from "./modals/InfoModal";
 import PasswordModal from "./modals/PasswordModal";
 import DeleteModal from "./modals/DeleteModal";
+
+import styles from "../style/accountSettings.module.scss";
+import cn from "classnames"
 
 const AccountSettings = () => {
   const [changeInfoModal, setChangeInfoModal] = useState(false)
@@ -35,22 +38,18 @@ const AccountSettings = () => {
   };
 
   return (
-    <div className="account-wrapper">
-      <div className="account-personal">
-        <p className="personal-item">Username: {user.userName}</p>
-        <p className="personal-item">Email: {user.email}</p>
-        <p className="personal-item">Role: {user.role}</p>
-        <Button className="personal-logout" type="primary" onClick={() => logOut()}>
+    <div className={cn(styles.accountWrapper)}>
+      <div className={cn(styles.accountPersonal)}>
+        <p className={cn(styles.personalItem)}>Username: {user.userName}</p>
+        <p className={cn(styles.personalItem)}>Email: {user.email}</p>
+        <p className={cn(styles.personalItem)}>Role: {user.role}</p>
+        <Button className={cn(styles.personalLogout)} type="primary" onClick={() => logOut()}>
           Log out
         </Button>
       </div>
-      <div className="account-settings">
+      <div className={cn(styles.accountSettings)}>
         <Divider orientation="left">Edit</Divider>
-        <Button className="account-btn" onClick={() => setChangeInfoModal(true)}>Change profile info</Button>
-        {/* <Button className="account-btn" onClick={() => setChangePassModal(true)}>Change password</Button> */}
-        {/* <Button className="account-btn" danger onClick={() => setDeleteModal(true)}>
-          Delete account
-        </Button> */}
+        <Button className={cn(styles.accountBtn)} onClick={() => setChangeInfoModal(true)}>Change profile info</Button>
       </div>
       <InfoModal status={changeInfoModal} def={setChangeInfoModal}/>
       <PasswordModal status={changePassModal} def={setChangePassModal}/>

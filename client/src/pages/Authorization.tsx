@@ -1,20 +1,23 @@
 import { useLocation } from "react-router-dom";
+
 import Register from "../components/Register";
-import "../style/auth.scss";
 import Login from "../components/Login";
 import ParticleEffect from "../components/UI/ParticleEffect";
+
+import styles from "../style/auth.module.scss";
+import cn from "classnames"
 
 const Authorization = () => {
   const whereIAm = useLocation();
 
   return (
-    <div className="auth__wrapper">
+    <div className={cn(styles.authWrapper)}>
 
-      <div className="auth__space">
-        <div className="auth__left-side">
-          <div className="left-side__title">Its time <br /> to wake up.</div>
+      <div className={cn(styles.authSpace)}>
+        <div className={cn(styles.authLeftSide)}>
+          <div className={cn(styles.leftSideTitle)}>Its time <br /> to wake up.</div>
         </div>
-        <div className="auth__right-side">
+        <div className={cn(styles.authRightSide)}>
           <ParticleEffect/>
           {whereIAm.pathname == "/login" ? (
             <Login/>

@@ -5,8 +5,8 @@ import type {
 } from "@reduxjs/toolkit/query";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { Mutex } from "async-mutex";
-import { Variables } from "../config/localVariables";
 
+import { Variables } from "../config/localVariables";
 import { logout, setUser } from "../store/reducers/userSlice";
 
 // create a new mutex

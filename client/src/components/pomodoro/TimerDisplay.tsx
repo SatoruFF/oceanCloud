@@ -1,4 +1,3 @@
-import React from "react";
 import MuteToggle from "./MuteToggle";
 import {
   CircularProgressbarWithChildren,

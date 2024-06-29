@@ -1,10 +1,10 @@
 @import '../utils/tmp.scss';
 
-.filelist-wrapper{
+.filelistWrapper{
     height: 90%;
     box-sizing: border-box;
     position: relative;
-    .fileList-header{
+    .fileListHeader{
         width: 100%;
         display: grid;
         grid-template-columns: 1fr 4fr repeat(4, 1fr);
@@ -46,7 +46,7 @@
     }
 }
 
-.fileplate-list-wrapper {
+.fileplateListWrapper {
     box-sizing: border-box;
     padding-top: 20px;
     display: flex;
@@ -56,7 +56,7 @@
 }
 
 
-.files-not-found {
+.filesNotFound {
     position: absolute;
     z-index: 0;
     width: 100%;
@@ -65,7 +65,7 @@
     color: white;
     font-size: 24px;
     @extend %centerTemplate, %mainFont;
-    .empty-folder {
+    .emptyFolder {
         div {
             color: white;
             @extend %mainFont;

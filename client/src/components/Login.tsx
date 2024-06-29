@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Form,
   Input,
@@ -10,12 +10,16 @@ import {
 } from "antd";
 import Divider from "antd/es/divider";
 import { NavLink, useNavigate } from "react-router-dom";
+import { SmileOutlined } from "@ant-design/icons";
+import { unwrapResult } from "@reduxjs/toolkit";
+
 import { FILE_ROUTE, REGISTRATION_ROUTE } from "../utils/consts";
 import { useAppDispatch, useAppSelector } from "../store/store";
 import { setUser } from "../store/reducers/userSlice";
 import { userApi } from "../services/user";
-import { SmileOutlined } from "@ant-design/icons";
-import { unwrapResult } from "@reduxjs/toolkit";
+
+import styles from "../style/auth.module.scss";
+import cn from "classnames"
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -50,8 +54,8 @@ const Login = () => {
   };
 
   return (
-    <div className="right-side__form">
-      <div className="auth-form__title">Login</div>
+    <div className={cn(styles.rightSideForm)}>
+      <div className={cn(styles.authFormTitle)}>Login</div>
       <Form layout="vertical">
         <Form.Item
           label="email:"

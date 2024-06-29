@@ -1,12 +1,15 @@
-import "../style/pomodoro.scss";
+import { useState, useEffect } from "react";
+import useSound from "use-sound";
+
 import Header from "../components/pomodoro/Header";
 import Controls from "../components/pomodoro/Controls";
 import TimerDisplay from "../components/pomodoro/TimerDisplay";
 import Button from "../components/pomodoro/Button";
 import Settings from "../components/pomodoro/Settings";
-import { useState, useEffect } from "react";
-import useSound from "use-sound";
+
 import timesUpSfx from "../assets/timesUp.mp3";
+import styles from "../style/pomodoro.module.scss";
+import cn from "classnames"
 
 function App() {
   const [settingsVisible, setSettingsVisible] = useState(false);
@@ -65,7 +68,7 @@ function App() {
   };
 
   return (
-    <div className="pomodoroTimerWrapper">
+    <div className={cn(styles.pomodoroTimerWrapper)}>
       <div className="pomodoro-content-max">
       <Header title="pomodoro" />
       <Controls

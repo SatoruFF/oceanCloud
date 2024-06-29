@@ -1,8 +1,7 @@
-import React, { useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { WELCOME_ROUTE } from "../utils/consts";
 import { routes, privateRoutes } from "../utils/routes";
-import { useAppDispatch, useAppSelector } from "../store/store";
+import { useAppSelector } from "../store/store";
 
 const AppRouter = () => {
   const isAuth = useAppSelector((state) => state.users.isAuth);

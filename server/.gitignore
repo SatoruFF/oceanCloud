@@ -28,4 +28,4 @@ static
 files
 config
 .env
-*.env
+# *.env

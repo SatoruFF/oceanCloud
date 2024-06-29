@@ -1,7 +1,15 @@
 import React, { useState } from "react";
-import "../style/navbar.scss";
 import { NavLink, useNavigate } from "react-router-dom";
-import mainLogo from "../assets/mainLog.png";
+import { Button, notification, Drawer, Divider, Tooltip } from "antd";
+import {
+  ApiOutlined,
+  SettingOutlined,
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+} from "@ant-design/icons";
+import { motion } from "framer-motion";
+import { useMediaQuery } from "react-responsive";
+
 import {
   FILE_ROUTE,
   LOGIN_ROUTE,
@@ -10,27 +18,14 @@ import {
   WELCOME_ROUTE,
 } from "../utils/consts";
 import { useAppDispatch, useAppSelector } from "../store/store";
-import {
-  Button,
-  notification,
-  Typography,
-  Drawer,
-  Divider,
-  Tooltip,
-} from "antd";
-const { Title, Paragraph } = Typography;
 import { logout } from "../store/reducers/userSlice";
-import {
-  ApiOutlined,
-  SettingOutlined,
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-} from "@ant-design/icons";
-import { motion } from "framer-motion";
 import AccountSettings from "./AccountSettings.";
 import avatarIcon from "../assets/avatar-icon.png";
 import WorkspacesDropdown from "./UI/WorkspacesDropdown";
-import { useMediaQuery } from "react-responsive";
+
+import mainLogo from "../assets/mainLog.png";
+import styles from "../style/navbar.module.scss";
+import cn from "classnames";
 
 const MyNavbar: React.FC = () => {
   const isAuth = useAppSelector((state) => state.users.isAuth);
@@ -54,21 +49,21 @@ const MyNavbar: React.FC = () => {
   };
 
   return (
-    <div className="navbar">
-      <div className="main-logo">
+    <div className={cn(styles.navbar)}>
+      <div className={cn(styles.mainLogo)}>
         <img src={mainLogo} alt="" onClick={() => navigate(WELCOME_ROUTE)} />
       </div>
       {isAuth ? (
-        <div className="nav__items">
+        <div className={cn(styles.navItems)}>
           {!isTabletOrMobile && (
             <React.Fragment>
-              <div className="nav-files">
+              <div className={cn(styles.navFiles)}>
                 <Button ghost>
                   <NavLink to={FILE_ROUTE}>My files</NavLink>
                 </Button>
               </div>
               <Button
-                className="nav-logout"
+                className={cn(styles.mainLogout)}
                 type="primary"
                 onClick={() => logOut()}
               >
@@ -83,16 +78,19 @@ const MyNavbar: React.FC = () => {
             viewAll={isTabletOrMobile ? true : false}
           />
 
-          <div className="nav-user">
+          <div className={cn(styles.navUser)}>
             {!isTabletOrMobile && (
               <Tooltip title="Account Settings">
-                <div className="user-info" onClick={() => setProfile(true)}>
+                <div
+                  className={cn(styles.userInfo)}
+                  onClick={() => setProfile(true)}
+                >
                   <p>{user.userName}</p>
                   <SettingOutlined />
                 </div>
               </Tooltip>
             )}
-            <div className="avatar">
+            <div className={cn(styles.avatar)}>
               <img src={avatar} onClick={() => navigate(PROFILE_ROUTE)} />
             </div>
           </div>
@@ -107,18 +105,18 @@ const MyNavbar: React.FC = () => {
           </Drawer>
         </div>
       ) : (
-        <div className="nav__items">
-          <div className="navbar__item">
+        <div className={cn(styles.navItems)}>
+          <div className={cn(styles.navItem)}>
             <Button ghost>
               <NavLink to={LOGIN_ROUTE}>authorization</NavLink>
             </Button>
           </div>
-          <div className="navbar__item">
+          <div className={cn(styles.navItem)}>
             <Button ghost>
               <NavLink to={REGISTRATION_ROUTE}>registration</NavLink>
             </Button>
           </div>
-          <div className="nav-burger">
+          <div className={cn(styles.navBurger)}>
             {!burger ? (
               <MenuFoldOutlined
                 className="burger-icon"
@@ -137,7 +135,7 @@ const MyNavbar: React.FC = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 1 }}
-                className="burger__item"
+                className={cn(styles.burgerItem)}
               >
                 <Divider>
                   <NavLink to={WELCOME_ROUTE}>Home page</NavLink>
@@ -147,7 +145,7 @@ const MyNavbar: React.FC = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 1 }}
-                className="burger__item"
+                className={cn(styles.burgerItem)}
               >
                 <Divider>
                   <NavLink to={LOGIN_ROUTE}>Log in</NavLink>
@@ -157,7 +155,7 @@ const MyNavbar: React.FC = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 1 }}
-                className="burger__item"
+                className={cn(styles.burgerItem)}
               >
                 <Divider>
                   <NavLink to={REGISTRATION_ROUTE}>Registration</NavLink>

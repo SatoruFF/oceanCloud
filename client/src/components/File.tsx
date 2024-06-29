@@ -1,14 +1,16 @@
-import "../style/file.scss";
+import _ from "lodash-es";
 import {
   QuestionCircleOutlined,
 } from "@ant-design/icons";
-import { useEffect, useState } from "react";
 import {
   Button,
   Popconfirm,
   Tooltip,
   message,
 } from "antd";
+import { motion } from "framer-motion";
+import { unwrapResult } from "@reduxjs/toolkit";
+
 import { useAppDispatch, useAppSelector } from "../store/store";
 import {
   pushToPath,
@@ -22,10 +24,10 @@ import {
   useGetFilesQuery,
 } from "../services/file";
 import { sizeFormat } from "../utils/sizeFormat";
-import { motion } from "framer-motion";
-import { unwrapResult } from "@reduxjs/toolkit";
-import _ from "lodash";
 import FileViewer from "./file-viewer/FileViewer";
+
+import styles from "../style/file.module.scss";
+import cn from "classnames"
 
 const File = ({ file }: any) => {
   //size format
@@ -84,19 +86,19 @@ const File = ({ file }: any) => {
     return (
       <motion.div
         key={Math.random()}
-        className="fileplate-file-wrapper"
+        className={cn(styles.fileplateFileWrapper)}
         onDoubleClick={() => openDirHandler()}
       >
 
         <FileViewer type={fileType} url={file.url}/>
 
         <Tooltip title={file.name}>
-          <div className="file-name">{file.name}</div>
+          <div className={cn(styles.fileName)}>{file.name}</div>
         </Tooltip>
-        <div className="file-btns">
+        <div className={cn(styles.fileBtns)}>
           {file.type !== "dir" && (
             <Button
-              className="file-btn file-download"
+              className={cn(styles.fileBtn, styles.fileDownload)}
               onClick={() => downloadHandler()}
               type="link"
             >
@@ -111,7 +113,7 @@ const File = ({ file }: any) => {
             cancelText="No"
             icon={<QuestionCircleOutlined style={{ color: "red" }} />}
           >
-            <Button className="file-btn file-delete" type="link" danger>
+            <Button className={cn(styles.fileBtn, styles.fileDelete)} type="link" danger>
               Delete
             </Button>
           </Popconfirm>
@@ -123,22 +125,22 @@ const File = ({ file }: any) => {
   return (
     <motion.div
       key={Math.random()}
-      className="file-wrapper"
+      className={cn(styles.fileWrapper)}
       onDoubleClick={() => openDirHandler()}
     >
 
       <FileViewer type={fileType} url={file.url}/>
 
       <Tooltip title={file.name}>
-        <div className="file-name">{file.name}</div>
+        <div className={cn(styles.fileName)}>{file.name}</div>
       </Tooltip>
-      <div className="file-date">
+      <div className={cn(styles.fileDate)}>
         {file.updatedAt ? file.updatedAt.slice(0, 10) : "unknown"}
       </div>
-      <div className="file-size">{size}</div>
+      <div className={cn(styles.fileSize)}>{size}</div>
       {file.type !== "dir" && (
         <Button
-          className="file-btn file-download"
+          className={cn(styles.fileBtn, styles.fileDownload)}
           onClick={() => downloadHandler()}
           ghost
         >
@@ -153,7 +155,7 @@ const File = ({ file }: any) => {
         cancelText="No"
         icon={<QuestionCircleOutlined style={{ color: "red" }} />}
       >
-        <Button className="file-btn file-delete" type="link" danger>
+        <Button className={cn(styles.fileBtn, styles.fileDelete)}  type="link" danger>
           Delete
         </Button>
       </Popconfirm>

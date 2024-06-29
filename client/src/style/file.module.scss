@@ -10,7 +10,7 @@
     }
 }
 
-.file-wrapper {
+.fileWrapper {
     box-sizing: border-box;
     margin-top: 8px;
     display: grid;
@@ -21,11 +21,11 @@
     transition: 1s all ease;
     @extend %secondFont, %file-image;
 
-    .file-btn {
+    .fileBtn {
         display: none;
     }
 
-    .file-name {
+    .fileName {
         grid-column-start: 2;
 
 
@@ -37,7 +37,7 @@
         white-space: nowrap;
     }
 
-    .file-date {
+    .fileDate {
         grid-column-start: 5;
         justify-self: center;
 
@@ -51,7 +51,7 @@
         padding: 8px;
     }
 
-    .file-size {
+    .fileSize {
         grid-column-start: 6;
         justify-self: center;
 
@@ -66,22 +66,22 @@
     }
 
     &:hover {
-        .file-date {
+        .fileDate {
             grid-column-start: 3;
         }
 
-        .file-size {
+        .fileSize {
             grid-column-start: 4;
         }
 
-        .file-download {
+        .fileDownload {
             grid-column-start: 5;
             display: block;
             width: 70%;
             align-self: center;
         }
 
-        .file-delete {
+        .fileDelete {
             grid-column-start: 6;
             display: block;
             width: 70%;

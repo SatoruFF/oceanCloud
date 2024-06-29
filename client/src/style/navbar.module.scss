@@ -13,12 +13,12 @@
     align-items: center;
     position: relative;
     z-index: 1;
-    .main-logo img{
+    .mainLogo img{
         &:hover {
             cursor: pointer;
         }
     }
-    .user-info {
+    .userInfo {
         @extend %centerTemplate;
         gap: 15px;
         background-color: white;
@@ -32,14 +32,14 @@
             font-size: 14px;
         }
     }
-    .user-info:hover {
+    .userInfo:hover {
         background-color: #1677ff;
         color: white;
         p {
             color: white;
         }
     }
-    .nav-user {
+    .navUser {
         display: flex;
         align-items: center;
         gap: 30px;
@@ -53,7 +53,7 @@
             }
         }
     }
-    .main-logo img{
+    .mainLogo img{
         width: 105px;
         height: 90px;
         margin-left: 20px;
@@ -65,17 +65,17 @@
         font-size: 14px;
         text-transform: lowercase;
     }
-    .nav__items {
+    .navItems {
         .nav-logout {
             @extend %mainFont;
         }
         width: 60%;
         @extend %centerTemplate;
         justify-content: space-around;
-        .nav-burger {
+        .navBurger {
             display: none;
             padding-right: 40px;
-            .burger-icon {
+            .burgerIcon {
                 color: white;
                 font-size: 22px;
             }
@@ -83,7 +83,7 @@
     }
 }
 
-.burger__item {
+.burgerItem {
     width: 80%;
     padding: 10px;
     margin-top: 10px;
@@ -96,24 +96,24 @@
 @media screen and (max-width: 992px) {
     .navbar {
         justify-content: space-between;
-        .main-logo img {
+        .mainLogo img {
             padding-left: 6px;
         }
-        .nav__items {
+        .navItems {
             width: 100%;
             justify-content: end;
             padding-right: 20px;
-            .navbar__item {
+            .navbarItem {
                 display: none;
             }
-            .nav-burger {
+            .naBurger {
                 display: block;
             }
         }
-        .nav-files {
+        .navFiles {
             margin-right: 30px;
         }
-        .nav-logout {
+        .navLogout {
             display: none;
         }
     }

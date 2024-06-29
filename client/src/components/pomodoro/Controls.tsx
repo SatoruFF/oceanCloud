@@ -1,4 +1,3 @@
-import React from "react";
 import useSound from "use-sound";
 import clickSfx from "../../assets/slide.mp3";
 

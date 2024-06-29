@@ -1,6 +1,6 @@
 @import '../utils/tmp.scss';
 
-.profile-wrapper {
+.profileWrapper {
     width: 100%;
     height: 90vh;
     min-height: 100%;
@@ -80,7 +80,7 @@
 }
 
 @media screen and (max-width: 992px) {
-    .profile-wrapper {
+    .profileWrapper {
         height: auto;
         .profile__main-card {
             flex-direction: column !important;

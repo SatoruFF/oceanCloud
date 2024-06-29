@@ -1,14 +1,17 @@
+import { useState } from "react";
 import { Form, Input, Button, message, Spin, notification } from "antd";
 import Divider from "antd/es/divider";
 import { NavLink, useNavigate } from "react-router-dom";
-import { LOGIN_ROUTE } from "../utils/consts";
-import { useState } from "react";
+import { current, unwrapResult } from "@reduxjs/toolkit";
+import { SmileOutlined } from "@ant-design/icons";
+
+import { LOGIN_ROUTE, FILE_ROUTE } from "../utils/consts";
 import { userApi } from "../services/user";
 import { useAppDispatch } from "../store/store";
 import { setUser } from "../store/reducers/userSlice";
-import { current, unwrapResult } from "@reduxjs/toolkit";
-import { FILE_ROUTE } from "../utils/consts";
-import { SmileOutlined } from "@ant-design/icons";
+
+import styles from "../style/auth.module.scss";
+import cn from "classnames"
 
 const Register = () => {
   const [userName, setUserName] = useState("")
@@ -46,8 +49,8 @@ const Register = () => {
   };
 
   return (
-    <div className="right-side__form">
-      <div className="auth-form__title">Registration</div>
+    <div className={cn(styles.rightSideForm)}>
+      <div className={cn(styles.authFormTitle)}>Registration</div>
       <Form layout="vertical">
         <Form.Item
           label="username:"
