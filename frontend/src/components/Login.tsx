@@ -12,6 +12,7 @@ import Divider from "antd/es/divider";
 import { NavLink, useNavigate } from "react-router-dom";
 import { SmileOutlined } from "@ant-design/icons";
 import { unwrapResult } from "@reduxjs/toolkit";
+import Ajv from "ajv";
 
 import { FILE_ROUTE, REGISTRATION_ROUTE } from "../utils/consts";
 import { useAppDispatch, useAppSelector } from "../store/store";
@@ -19,13 +20,14 @@ import { setUser } from "../store/reducers/userSlice";
 import { userApi } from "../services/user";
 
 import styles from "../style/auth.module.scss";
-import cn from "classnames"
+import cn from "classnames";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const [setLogin, { isLoading }]: any = userApi.useLoginMutation();
+  const [setLogin, { isLoading, error: logError }]: any =
+    userApi.useLoginMutation();
   const isAuth = useAppSelector((state) => state.users.isAuth);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -39,7 +41,10 @@ const Login = () => {
         email,
         password,
       });
-      unwrapResult(user)
+      if (logError) {
+        return message.error(`error: ${logError.error}`); // idk why, but if stat code != 200, this code does not fall to catch
+      }
+      unwrapResult(user);
       dispatch(setUser(user.data as any));
       notification.open({
         message: "Success log in",
@@ -49,7 +54,7 @@ const Login = () => {
       });
       navigate(FILE_ROUTE);
     } catch (e: any) {
-      message.error(`error: ${e.data.message}`);
+      message.error(`error: ${e.data.message || e.error}`);
     }
   };
 

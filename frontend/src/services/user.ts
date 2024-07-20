@@ -64,8 +64,6 @@ const baseQueryWithReauth: BaseQueryFn<
         );
 
         if (refreshResult.data) {
-          console.log("refreshResult.data", refreshResult.data);
-
           api.dispatch(setUser(refreshResult.data as any));
 
           // retry the initial query
