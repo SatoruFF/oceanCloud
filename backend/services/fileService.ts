@@ -112,7 +112,7 @@ class FileServiceClass {
     }
   }
 
-  // get files with wearch params
+  // get files with search params
   async getFiles(sort, search, parentId, userId) {
     let files: any;
 
@@ -171,68 +171,70 @@ class FileServiceClass {
 
   // upload file
   async uploadFile(file: any, userId, parentId?: string): Promise<any> {
-    let parent;
+    return prisma.$transaction(async (trx) => {
+      let parent;
 
-    if (parentId !== "null") {
-      parent = await prisma.file.findFirst({
-        where: { userId, id: Number(parentId) },
+      if (parentId !== "null") {
+        parent = await trx.file.findFirst({
+          where: { userId, id: Number(parentId) },
+        });
+      }
+
+      const user: any = await trx.user.findFirst({
+        where: { id: userId },
       });
-    }
 
-    const user: any = await prisma.user.findFirst({
-      where: { id: userId },
+      // check size on disc after upload
+      if (user.usedSpace + BigInt(file.size) > user.diskSpace) {
+        throw createError(400, "Not enough space on the disk");
+      }
+
+      user.usedSpace += BigInt(file.size);
+
+      let filePath;
+
+      // find parent with his path
+      if (parent) {
+        filePath = `${String(user.id)}/${parent.path}/${file.name}`;
+      } else {
+        filePath = `${String(user.id)}/${file.name}`;
+      }
+
+      const params = {
+        Bucket: process.env.S3_BUCKET_NAME,
+        Key: filePath,
+        Body: file.data,
+      };
+
+      const newFile = await s3.upload(params).promise();
+
+      // get url for download new file
+      const fileUrl = _.get(newFile, "Location", "");
+
+      const dbFile = await trx.file.create({
+        data: {
+          name: file.name,
+          type: file.name.split(".").pop(),
+          size: file.size,
+          path: parent?.path,
+          parentId: parent ? parent.id : null,
+          userId: user.id,
+          url: fileUrl,
+        },
+      });
+
+      // after we must fill used space
+      await trx.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          usedSpace: user.usedSpace,
+        },
+      });
+
+      return dbFile;
     });
-
-    // check size on disc after upload
-    if (user.usedSpace + BigInt(file.size) > user.diskSpace) {
-      throw createError(400, "Not enough space on the disk");
-    }
-
-    user.usedSpace += BigInt(file.size);
-
-    let filePath;
-
-    // find parent with his path
-    if (parent) {
-      filePath = `${String(user.id)}/${parent.path}/${file.name}`;
-    } else {
-      filePath = `${String(user.id)}/${file.name}`;
-    }
-
-    const params = {
-      Bucket: process.env.S3_BUCKET_NAME,
-      Key: filePath,
-      Body: file.data,
-    };
-
-    const newFile = await s3.upload(params).promise();
-
-    // get url for download new file
-    const fileUrl = _.get(newFile, "Location", "");
-
-    const dbFile = await prisma.file.create({
-      data: {
-        name: file.name,
-        type: file.name.split(".").pop(),
-        size: file.size,
-        path: parent?.path,
-        parentId: parent ? parent.id : null,
-        userId: user.id,
-        url: fileUrl,
-      },
-    });
-
-    // after we must fill used space
-    await prisma.user.update({
-      where: {
-        id: user.id,
-      },
-      data: {
-        usedSpace: user.usedSpace,
-      },
-    });
-
-    return dbFile;
   }
 
   async downloadFile(queryId, userId) {
@@ -255,51 +257,56 @@ class FileServiceClass {
   }
 
   async deleteFile(fileId, userId) {
-    if (_.isNaN(fileId)) {
-      throw createError(400, "Invalid file ID");
-    }
+    return prisma.$transaction(async (trx) => {
+      if (_.isNaN(fileId)) {
+        throw createError(400, "Invalid file ID");
+      }
 
-    const file: any = await prisma.file.findFirst({
-      where: { id: fileId, userId },
+      const file: any = await trx.file.findFirst({
+        where: { id: fileId, userId },
+      });
+
+      // directory have a content?
+      const existInnerContent = await trx.file.findMany({
+        where: { parentId: file.id },
+      });
+
+      if (!_.isEmpty(existInnerContent)) {
+        throw createError(
+          400,
+          "You cannot delete a folder while it has content"
+        );
+      }
+
+      if (!file) {
+        throw createError(400, "File not found");
+      }
+
+      await this.deleteBucketFile(file);
+
+      await trx.file.delete({ where: { id: fileId } });
+
+      const user: any = await trx.user.findFirst({
+        where: { id: userId },
+      });
+
+      user.usedSpace = user.usedSpace - BigInt(file.size);
+
+      await trx.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          usedSpace: user.usedSpace,
+        },
+      });
+
+      const allFiles = await trx.file.findMany({
+        where: { userId },
+      });
+
+      return allFiles;
     });
-
-    // directory have a content?
-    const existInnerContent = await prisma.file.findMany({
-      where: { parentId: file.id },
-    });
-
-    if (!_.isEmpty(existInnerContent)) {
-      throw createError(400, "You cannot delete a folder while it has content");
-    }
-
-    if (!file) {
-      throw createError(400, "File not found");
-    }
-
-    await this.deleteBucketFile(file);
-
-    await prisma.file.delete({ where: { id: fileId } });
-
-    const user: any = await prisma.user.findFirst({
-      where: { id: userId },
-    });
-
-    user.usedSpace = user.usedSpace - BigInt(file.size);
-
-    await prisma.user.update({
-      where: {
-        id: user.id,
-      },
-      data: {
-        usedSpace: user.usedSpace,
-      },
-    });
-
-    const allFiles = await prisma.file.findMany({
-      where: { userId },
-    });
-
-    return allFiles;
   }
 }
 

@@ -1,6 +1,6 @@
+import _ from "lodash"
 import nodemailer from "nodemailer";
 import 'dotenv/config.js'
-import _ from "lodash"
 import { getTemplate } from "../utils/getTemplate.js";
 
 class MailServiceClass {

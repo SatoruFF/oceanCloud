@@ -21,123 +21,127 @@ interface IUserData {
 
 class UserServiceClass {
   async registration(userData: IUserData) {
-    // Validate user data
-    const candidate = await prisma.user.findUnique({
-      where: {
-        email: userData.email,
-      },
-    });
+    return prisma.$transaction(async (trx) => {
+      // Validate user data
+      const candidate = await trx.user.findUnique({
+        where: {
+          email: userData.email,
+        },
+      });
 
-    if (candidate) {
-      throw createError(
-        400,
-        `User with email: ${userData.email} already exists`
-      );
-    }
+      if (candidate) {
+        throw createError(
+          400,
+          `User with email: ${userData.email} already exists`
+        );
+      }
 
-    // create user in dataBase
-    const hashPassword = await bcrypt.hash(userData.password, 5);
+      // create user in dataBase
+      const hashPassword = await bcrypt.hash(userData.password, 5);
 
-    let activationLink: string = uuidv4();
+      let activationLink: string = uuidv4();
 
-    const user = await prisma.user.create({
-      data: {
-        userName: userData.userName,
-        email: userData.email,
-        password: hashPassword,
+      const user = await trx.user.create({
+        data: {
+          userName: userData.userName,
+          email: userData.email,
+          password: hashPassword,
+          activationLink,
+        },
+      });
+
+      activationLink = `${process.env.API_URL}/api/user/activate/${activationLink}`;
+
+      await MailService.sendActivationMail(userData.email, {
+        ...user,
         activationLink,
-      },
+      });
+
+      const { accessToken, refreshToken } = generateJwt(user.id);
+
+      await trx.user.update({
+        where: { id: user.id },
+        data: { refreshToken },
+      });
+
+      // to-do: add internationalization and select to language option
+      await trx.userConfig.create({
+        data: {
+          userId: user.id,
+        },
+      });
+
+      const baseDir = { userId: user.id, path: "", type: "dir", name: "" };
+
+      // create new base dir for user
+      await FileService.createDir(baseDir);
+
+      const diskSpace = user.diskSpace.toString();
+      const usedSpace = user.usedSpace.toString();
+
+      const userDto = new UserDto({
+        token: accessToken,
+        refreshToken,
+        user: {
+          id: user.id,
+          userName: user.userName,
+          email: user.email,
+          diskSpace,
+          usedSpace,
+          avatar: user.avatar,
+          isActivated: user.isActivated,
+          role: user.role,
+        },
+      });
+
+      return userDto;
     });
-
-    activationLink = `${process.env.API_URL}/api/user/activate/${activationLink}`;
-
-    await MailService.sendActivationMail(userData.email, {
-      ...user,
-      activationLink,
-    });
-
-    const { accessToken, refreshToken } = generateJwt(user.id);
-
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { refreshToken },
-    });
-
-    // to-do: add internationalization and select to language option
-    await prisma.userConfig.create({
-      data: {
-        userId: user.id,
-      },
-    });
-
-    const baseDir = { userId: user.id, path: "", type: "dir", name: "" };
-
-    // create new base dir for user
-    await FileService.createDir(baseDir);
-
-    const diskSpace = user.diskSpace.toString();
-    const usedSpace = user.usedSpace.toString();
-
-    const userDto = new UserDto({
-      token: accessToken,
-      refreshToken,
-      user: {
-        id: user.id,
-        userName: user.userName,
-        email: user.email,
-        diskSpace,
-        usedSpace,
-        avatar: user.avatar,
-        isActivated: user.isActivated,
-        role: user.role,
-      },
-    });
-
-    return userDto;
   }
 
   async login(email: string, password: string) {
-    const user: any = await prisma.user.findUnique({
-      where: {
-        email,
-      },
+    return prisma.$transaction(async (trx) => {
+      const user: any = await trx.user.findUnique({
+        where: {
+          email,
+        },
+      });
+
+      if (!user) {
+        throw createError(400, `User with email: ${email} not found`);
+      }
+
+      const isPassValid = bcrypt.compareSync(password, user.password);
+
+      if (!isPassValid) {
+        throw createError(400, `Uncorrect data`);
+      }
+
+      const { accessToken, refreshToken } = generateJwt(user.id);
+
+      await trx.user.update({
+        where: { id: user.id },
+        data: { refreshToken },
+      });
+
+      const diskSpace = user.diskSpace.toString();
+      const usedSpace = user.usedSpace.toString();
+
+      const userDto = new UserDto({
+        token: accessToken,
+        refreshToken,
+        user: {
+          id: user.id,
+          userName: user.userName,
+          email: user.email,
+          diskSpace,
+          usedSpace,
+          avatar: user.avatar,
+          role: user.role,
+        },
+      });
+
+      return userDto;
     });
-
-    if (!user) {
-      throw createError(400, `User with email: ${email} not found`);
-    }
-
-    const isPassValid = bcrypt.compareSync(password, user.password);
-
-    if (!isPassValid) {
-      throw createError(400, `Uncorrect data`);
-    }
-
-    const { accessToken, refreshToken } = generateJwt(user.id);
-
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { refreshToken },
-    });
-
-    const diskSpace = user.diskSpace.toString();
-    const usedSpace = user.usedSpace.toString();
-
-    const userDto = new UserDto({
-      token: accessToken,
-      refreshToken,
-      user: {
-        id: user.id,
-        userName: user.userName,
-        email: user.email,
-        diskSpace,
-        usedSpace,
-        avatar: user.avatar,
-        role: user.role,
-      },
-    });
-
-    return userDto;
   }
 
   async auth(id: number | undefined) {
@@ -168,61 +172,69 @@ class UserServiceClass {
   }
 
   async activate(activationLink: string) {
-    const user = await prisma.user.findFirst({
-      where: {
-        activationLink,
-      },
-    });
+    return prisma.$transaction(async (trx) => {
+      const user = await trx.user.findFirst({
+        where: {
+          activationLink,
+        },
+      });
 
-    if (!user) {
-      throw createError(404, "user not found");
-    }
+      if (!user) {
+        throw createError(404, "user not found");
+      }
 
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { isActivated: true },
+      await trx.user.update({
+        where: { id: user.id },
+        data: { isActivated: true },
+      });
     });
   }
 
   async refresh(refreshToken) {
-    if (!refreshToken) {
-      throw createError(404, "Not found token");
-    }
+    return prisma.$transaction(async (trx) => {
+      if (!refreshToken) {
+        throw createError(404, "Not found token");
+      }
 
-    const userId = validateRefreshToken(refreshToken);
+      const userId = validateRefreshToken(refreshToken);
 
-    const foundedUser = await prisma.user.findFirst({
-      where: { refreshToken },
-    });
+      const foundedUser = await trx.user.findFirst({
+        where: { refreshToken },
+      });
 
-    if (!foundedUser || !userId) {
-      throw createError(404, "User not found");
-    }
+      if (!foundedUser || !userId) {
+        throw createError(404, "User not found");
+      }
 
-    const { accessToken, refreshToken: newToken } = generateJwt(foundedUser.id);
+      const { accessToken, refreshToken: newToken } = generateJwt(
+        foundedUser.id
+      );
 
-    const user = await prisma.user.update({
-      where: {
-        id: foundedUser.id,
-      },
-      data: { refreshToken: newToken },
-    });
+      const user = await trx.user.update({
+        where: {
+          id: foundedUser.id,
+        },
+        data: { refreshToken: newToken },
+      });
 
-    return new UserDto({
-      user,
-      token: accessToken,
+      return new UserDto({
+        user,
+        token: accessToken,
+      });
     });
   }
 
   async logout(refreshToken: string) {
-    const user = await prisma.user.update({
-      where: {
-        refreshToken,
-      },
-      data: { refreshToken: null },
-    });
+    return prisma.$transaction(async (trx) => {
+      const user = await trx.user.update({
+        where: {
+          refreshToken,
+        },
+        data: { refreshToken: null },
+      });
 
-    return user;
+      return user;
+    });
   }
 }
 
