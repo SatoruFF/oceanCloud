@@ -1,0 +1,23 @@
+FROM node:20-alpine
+
+# Установка рабочей директории
+WORKDIR /app
+
+# Копируем package.json и package-lock.json (если он есть)
+COPY package*.json ./ 
+
+RUN rm -rf node_modules
+
+RUN npm install
+
+# Копируем все файлы проекта в контейнер
+COPY . .
+
+# Выполняем сборку Strapi
+RUN npm run build
+
+# Открываем порты
+EXPOSE 1337
+
+# Команда для запуска Strapi в режиме разработки 
+CMD ["npm", "run", "dev"]

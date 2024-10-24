@@ -274,7 +274,7 @@ class FileServiceClass {
       if (!_.isEmpty(existInnerContent)) {
         throw createError(
           400,
-          "You cannot delete a folder while it has content"
+          "You cannot delete a folder while it has content",
         );
       }
 
