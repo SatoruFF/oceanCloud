@@ -6,8 +6,8 @@
 // }
 
 export enum Variables {
-    User_URL = `http://localhost:3002/api/user/`,
-    File_URL = `http://localhost:3002/api/`,
-    UpAvatar_URL = `http://localhost:3002/api/file/avatar`,
-    FileUpload_URL = `http://localhost:3002/api/file/upload`,
+    User_URL = `http://localhost:10000/api/user/`,
+    File_URL = `http://localhost:10000/api/`,
+    UpAvatar_URL = `http://localhost:10000/api/file/avatar`,
+    FileUpload_URL = `http://localhost:10000/api/file/upload`,
 }
