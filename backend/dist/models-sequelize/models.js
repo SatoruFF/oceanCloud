@@ -1,4 +1,3 @@
-"use strict";
 // import { pool } from "./db.js";
 // import { DataTypes } from "sequelize";
 // // User data table

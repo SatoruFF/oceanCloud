@@ -12,6 +12,7 @@
   "author": "SatoruF",
   "license": "ISC",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.685.0",
     "@prisma/client": "^4.16.1",
     "@types/express": "^4.17.17",
     "@types/express-fileupload": "^1.4.1",

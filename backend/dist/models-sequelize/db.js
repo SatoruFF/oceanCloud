@@ -1,4 +1,3 @@
-"use strict";
 // import { Sequelize } from "sequelize";
 // import 'dotenv/config'
 // //get all info about db

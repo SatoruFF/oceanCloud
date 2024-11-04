@@ -43,7 +43,7 @@ app.get("/", (_, res) => {
 });
 if (cluster.isPrimary) {
     // Create a worker for each CPU
-    for (let i = 0; i < numCPU; i++) {
+    for (let i = 0; i < 1; i++) {
         cluster.fork();
     }
     cluster.on("online", function (worker) {

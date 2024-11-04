@@ -22,7 +22,7 @@ class MailServiceClass {
         await this.transport.sendMail({
             from: process.env.SMTP_USER,
             to,
-            subject: `Account activation on ${process.env.SEVICE_NAME}`
+            subject: `Account activation on ${process.env.SEVICE_NAME}`,
             text: "",
             html: getTemplate(userData)
         })

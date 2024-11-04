@@ -1,5 +1,5 @@
 // bases
-import express, { Express, Request, Response } from "express";
+import express, { Express, Response } from "express";
 import router from "./routes/index.js";
 
 // middleware

@@ -2,6 +2,7 @@ import "dotenv/config";
 // services
 import ImageKit from "imagekit";
 import AWS from "aws-sdk";
+import { S3 } from "@aws-sdk/client-s3";
 import { PrismaClient } from "@prisma/client";
 // assets upload
 export const imagekit = new ImageKit({
@@ -10,13 +11,21 @@ export const imagekit = new ImageKit({
     urlEndpoint: process.env.IK_URL_ENDPOINT,
 });
 // s3
+// JS SDK v3 does not support global configuration.
+// Codemod has attempted to pass values to each service client in this file.
+// You may need to update clients outside of this file, if they use global config.
 AWS.config.update({
     region: process.env.S3_REGION,
     accessKeyId: process.env.YK_IDENTIFIER,
     secretAccessKey: process.env.YK_SECRET,
 });
-export const s3 = new AWS.S3({
+export const s3 = new S3({
     endpoint: "https://storage.yandexcloud.net",
+    region: process.env.S3_REGION,
+    credentials: {
+        accessKeyId: process.env.YK_IDENTIFIER,
+        secretAccessKey: process.env.YK_SECRET,
+    },
 });
 // prisma init
 export const prisma = new PrismaClient({ log: ["query", "info", "error"] });
