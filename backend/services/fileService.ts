@@ -1,7 +1,8 @@
-import { prisma, s3 } from "../configs/config.js";
-import createError from "http-errors";
 import _ from "lodash";
+import createError from "http-errors";
 import "dotenv/config.js";
+
+import { prisma, s3 } from "../configs/config.js";
 
 interface File {
   userId: number;
@@ -174,7 +175,7 @@ class FileServiceClass {
     return prisma.$transaction(async (trx) => {
       let parent;
 
-      if (parentId !== "null") {
+      if (parentId !== "null" || !_.isNil(parentId)) {
         parent = await trx.file.findFirst({
           where: { userId, id: Number(parentId) },
         });
@@ -274,7 +275,7 @@ class FileServiceClass {
       if (!_.isEmpty(existInnerContent)) {
         throw createError(
           400,
-          "You cannot delete a folder while it has content",
+          "You cannot delete a folder while it has content"
         );
       }
 

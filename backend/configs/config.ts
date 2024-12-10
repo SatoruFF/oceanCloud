@@ -3,7 +3,7 @@ import "dotenv/config";
 // services
 import ImageKit from "imagekit";
 import AWS from "aws-sdk";
-import { S3 } from "@aws-sdk/client-s3";
+// import { S3 } from "@aws-sdk/client-s3";
 import { PrismaClient } from "@prisma/client";
 
 interface ImageKitConfig {
@@ -29,13 +29,8 @@ AWS.config.update({
   secretAccessKey: process.env.YK_SECRET,
 });
 
-export const s3: any = new S3({
+export const s3: any = new AWS.S3({
   endpoint: "https://storage.yandexcloud.net",
-  region: process.env.S3_REGION,
-  credentials: {
-    accessKeyId: process.env.YK_IDENTIFIER,
-    secretAccessKey: process.env.YK_SECRET,
-  },
 });
 
 // prisma init
