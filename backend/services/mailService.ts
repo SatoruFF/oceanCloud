@@ -12,7 +12,7 @@ class MailServiceClass {
     this.transport = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: process.env.SMTP_PORT,
-      secure: false,
+      secure: process.env.SMTP_PORT == 465,
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASSWORD,
@@ -24,7 +24,7 @@ class MailServiceClass {
     await this.transport.sendMail({
       from: process.env.SMTP_USER,
       to,
-      subject: `Account activation on ${process.env.SEVICE_NAME}`,
+      subject: `Account activation on ${process.env.SEVICE_NAME || "mello"}`,
       text: "",
       html: getTemplate(userData),
     });

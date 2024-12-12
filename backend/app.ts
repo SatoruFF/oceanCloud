@@ -43,8 +43,10 @@ app.get("/", (_, res: Response) => {
 });
 
 if (cluster.isPrimary) {
+  const workerCounts = Number(process.env.WORKERS_COUNT) || numCPU;
+
   // Create a worker for each CPU
-  for (let i = 0; i < numCPU; i++) {
+  for (let i = 0; i < workerCounts; i++) {
     cluster.fork();
   }
 

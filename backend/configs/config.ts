@@ -4,7 +4,7 @@ import "dotenv/config";
 import ImageKit from "imagekit";
 import AWS from "aws-sdk";
 // import { S3 } from "@aws-sdk/client-s3";
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 
 interface ImageKitConfig {
   publicKey: string;
@@ -34,4 +34,11 @@ export const s3: any = new AWS.S3({
 });
 
 // prisma init
-export const prisma = new PrismaClient({ log: ["query", "info", "error"] });
+export const prisma = new PrismaClient({
+  log: ["query", "info", "error"],
+  errorFormat: "pretty",
+  transactionOptions: {
+    maxWait: 10000, // default: 2000
+    timeout: 20000, // default: 5000
+  },
+});
