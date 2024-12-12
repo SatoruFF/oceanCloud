@@ -67,9 +67,11 @@ class FileControllerClass {
       });
 
       return res.json(file);
-    } catch (error) {
-      logger.error(error);
-      return res.status(400).json({ message: error.message });
+    } catch (error: any) {
+      logger.error(error.message, error);
+      return res.status(error.statusCode || 500).send({
+        message: error.message,
+      });
     }
   }
 
@@ -88,9 +90,11 @@ class FileControllerClass {
       const files = await FileService.getFiles(sort, search, parentId, userId);
 
       return res.json(files);
-    } catch (error) {
-      logger.error(error);
-      return res.status(500).json({ message: "Unable to retrieve files" });
+    } catch (error: any) {
+      logger.error(error.message, error);
+      return res.status(error.statusCode || 500).send({
+        message: error.message,
+      });
     }
   }
 
@@ -109,9 +113,11 @@ class FileControllerClass {
       const savedFile = await FileService.uploadFile(file, userId, parentId);
 
       return res.json(savedFile);
-    } catch (error) {
-      logger.error(error);
-      return res.status(400).json({ message: "Upload error" });
+    } catch (error: any) {
+      logger.error(error.message, error);
+      return res.status(error.statusCode || 500).send({
+        message: error.message,
+      });
     }
   }
 
@@ -126,7 +132,10 @@ class FileControllerClass {
       const userId = req.user.id;
       const queryId = req.query.id;
 
-      const { s3object, file } = await FileService.downloadFile(queryId, userId);
+      const { s3object, file } = await FileService.downloadFile(
+        queryId,
+        userId
+      );
 
       const stream = new PassThrough();
       stream.end(s3object.Body);
@@ -136,9 +145,11 @@ class FileControllerClass {
       res.attachment(file.name);
 
       stream.pipe(res);
-    } catch (error) {
-      logger.error(error);
-      return res.status(500).json({ message: "Unable to download file" });
+    } catch (error: any) {
+      logger.error(error.message, error);
+      return res.status(error.statusCode || 500).send({
+        message: error.message,
+      });
     }
   }
 
@@ -156,9 +167,11 @@ class FileControllerClass {
       const allFiles = await FileService.deleteFile(fileId, userId);
 
       return res.json(allFiles);
-    } catch (error) {
-      logger.error(error);
-      return res.status(500).json({ message: error.message });
+    } catch (error: any) {
+      logger.error(error.message, error);
+      return res.status(error.statusCode || 500).send({
+        message: error.message,
+      });
     }
   }
 
@@ -176,9 +189,11 @@ class FileControllerClass {
       const avatarUrl = await Avatar.uploadAvatar(fileBuffer, userId);
 
       return res.json(avatarUrl);
-    } catch (error) {
-      logger.error(error);
-      return res.status(400).json({ message: error.message });
+    } catch (error: any) {
+      logger.error(error.message, error);
+      return res.status(error.statusCode || 500).send({
+        message: error.message,
+      });
     }
   }
 
@@ -195,9 +210,11 @@ class FileControllerClass {
       const user = await Avatar.deleteAvatar(userId);
 
       return res.json(user);
-    } catch (error) {
-      logger.error(error);
-      return res.status(400).json({ message: error.message });
+    } catch (error: any) {
+      logger.error(error.message, error);
+      return res.status(error.statusCode || 500).send({
+        message: error.message,
+      });
     }
   }
 }

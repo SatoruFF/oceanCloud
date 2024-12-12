@@ -28,12 +28,15 @@ class UserControllerClass {
         password,
       });
 
-      res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true});
+      res.cookie("refreshToken", userData.refreshToken, {
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+      });
 
       return res.json(userData);
     } catch (error: any) {
-      logger.error(error.message);
-      res.status(400).send({
+      logger.error(error.message, error);
+      return res.status(error.statusCode || 500).send({
         message: error.message,
       });
     }
@@ -46,12 +49,15 @@ class UserControllerClass {
 
       const userData = await UserService.login(email, password);
 
-      res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true});
+      res.cookie("refreshToken", userData.refreshToken, {
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+      });
 
       return res.json(userData);
     } catch (error: any) {
-      logger.error(error.message);
-      res.status(error.status).send({
+      logger.error(error.message, error);
+      return res.status(error.statusCode || 500).send({
         message: error.message,
       });
     }
@@ -66,8 +72,8 @@ class UserControllerClass {
 
       return res.json(userData);
     } catch (error: any) {
-      logger.error(error.message);
-      res.send({
+      logger.error(error.message, error);
+      return res.status(error.statusCode || 500).send({
         message: error.message,
       });
     }
@@ -79,10 +85,10 @@ class UserControllerClass {
 
       await UserService.activate(link);
 
-      return res.redirect(process.env.CLIENT_URL || "")
+      return res.redirect(process.env.CLIENT_URL || "");
     } catch (error: any) {
-      logger.error(error.message);
-      res.send({
+      logger.error(error.message, error);
+      return res.status(error.statusCode || 500).send({
         message: error.message,
       });
     }
@@ -90,16 +96,19 @@ class UserControllerClass {
 
   async refresh(req: any, res: Response) {
     try {
-      const { refreshToken } = req.cookies
+      const { refreshToken } = req.cookies;
 
       const userData = await UserService.refresh(refreshToken);
 
-      res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true});
+      res.cookie("refreshToken", userData.refreshToken, {
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+      });
 
       return res.json(userData);
     } catch (error: any) {
-      logger.error(error.message);
-      res.send({
+      logger.error(error.message, error);
+      return res.status(error.statusCode || 500).send({
         message: error.message,
       });
     }
@@ -110,14 +119,16 @@ class UserControllerClass {
     try {
       const { refreshToken } = req.cookies;
 
-      const user = await UserService.logout(refreshToken)
+      const user = await UserService.logout(refreshToken);
 
       res.clearCookie("refreshToken");
 
-      return res.status(200).json({message: `User ${user.email} was successfully logout`});
+      return res
+        .status(200)
+        .json({ message: `User ${user.email} was successfully logout` });
     } catch (error: any) {
-      logger.error(error.message);
-      res.send({
+      logger.error(error.message, error);
+      res.status(error.statusCode || 500).send({
         message: error.message,
       });
     }
@@ -132,8 +143,10 @@ class UserControllerClass {
       // user.lastName = lastName
       // user.save()
       // return res.json(user)
-    } catch (error) {
-      return res.status(400).json({ message: "change profile info error" });
+    } catch (error: any) {
+      return res.status(error.statusCode || 500).send({
+        message: error.message,
+      });
     }
   }
 }
