@@ -20,6 +20,10 @@ interface IUserData {
 }
 
 class UserServiceClass {
+  // async createUser() {
+
+  // }  
+  
   async registration(userData: IUserData) {
     return prisma.$transaction(async (trx) => {
       // Validate user data
@@ -97,6 +101,10 @@ class UserServiceClass {
       return userDto;
     });
   }
+
+  // async createInvite(userName: string, email: string, password: string) {
+
+  // }
 
   async login(email: string, password: string) {
     return prisma.$transaction(async (trx) => {

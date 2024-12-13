@@ -38,7 +38,7 @@ app.use(fileUpload({}));
 app.use("/api", router);
 
 // check health
-app.get("/", (_, res: Response) => {
+app.all("/", (_, res: Response) => {
   res.send("i am alive ;)");
 });
 

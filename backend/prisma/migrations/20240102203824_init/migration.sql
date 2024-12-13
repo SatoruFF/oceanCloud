@@ -9,7 +9,7 @@ CREATE TABLE "User" (
     "avatar" TEXT,
     "role" TEXT NOT NULL DEFAULT 'USER',
     "isActivated" BOOLEAN NOT NULL DEFAULT false,
-    "activationLink" TEXT,
+    "activationToken" TEXT,
     "refreshToken" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
