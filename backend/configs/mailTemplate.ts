@@ -18,7 +18,7 @@ export const mailTemplate: string = `<!DOCTYPE html>
             <li><strong>Username:</strong> <%= userName %></li>
         </ul>
         <p>Click the link below to confirm your email address and complete the registration process:</p>
-        <a href="<%= activationLink %>">Confirm Email Address</a>
+        <a href="<%= activationToken %>">Confirm Email Address</a>
     </div>
 </body>
 </html>

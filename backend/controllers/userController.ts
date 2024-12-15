@@ -1,10 +1,11 @@
 import _ from "lodash";
 import "dotenv/config.js";
+import { NextFunction, Request, Response } from "express";
+import createError from "http-errors";
+
 import { logger } from "../logger.js";
 
 import { UserService } from "../services/userService.js";
-
-import { NextFunction, Request, Response } from "express";
 
 interface IUser {
   id: number;
@@ -22,18 +23,13 @@ class UserControllerClass {
     try {
       const { userName, email, password } = req.body;
 
-      const userData = await UserService.registration({
+      const invite = await UserService.createInvite({
         userName,
         email,
         password,
       });
 
-      res.cookie("refreshToken", userData.refreshToken, {
-        maxAge: 30 * 24 * 60 * 60 * 1000,
-        httpOnly: true,
-      });
-
-      return res.json(userData);
+      return res.json(invite);
     } catch (error: any) {
       logger.error(error.message, error);
       return res.status(error.statusCode || 500).send({
@@ -81,11 +77,19 @@ class UserControllerClass {
 
   async activate(req: any, res: Response) {
     try {
-      const { link } = req.params;
+      const { token: activationToken } = req.query || req.params;
 
-      await UserService.activate(link);
+      if (!activationToken) throw createError(404, "Cannot get activate token");
 
-      return res.redirect(process.env.CLIENT_URL || "");
+      const userData = await UserService.activate(activationToken);
+
+      res.cookie("refreshToken", userData.refreshToken, {
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+      });
+
+      // return res.redirect(process.env.CLIENT_URL || "");
+      return res.json(userData);
     } catch (error: any) {
       logger.error(error.message, error);
       return res.status(error.statusCode || 500).send({

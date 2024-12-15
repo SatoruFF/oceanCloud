@@ -103,6 +103,12 @@ export const userApi = createApi({
         body,
       }),
     }),
+    activateUser: builder.mutation<any, string>({
+      query: (token) => ({
+        url: `activate?token=${token}`,
+        method: "GET",
+      }),
+    }),
     auth: builder.query<any, void>({
       query: () => "auth",
     }),
@@ -123,4 +129,5 @@ export const userApi = createApi({
   }),
 });
 
-export const { useAuthQuery, useChangeInfoMutation } = userApi;
+export const { useAuthQuery, useChangeInfoMutation, useActivateUserMutation } =
+  userApi;

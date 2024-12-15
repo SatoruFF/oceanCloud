@@ -1,6 +1,49 @@
-@import '../utils/tmp.scss';
+@import "../utils/tmp.scss";
 
-.activateWrapper {
-    width: 100svw;
-    height: 100svh;
+.activateContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 90vh;
+  background-color: #f9f9f9;
+  line-height: 1.2;
+  @extend %secondFont;
+}
+
+.activateMessage {
+  text-align: center;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  width: 100%;
+}
+
+.activateInfo {
+    box-sizing: border-box;
+    padding: 10px;
+}
+
+.activateIcon {
+  font-size: 4rem;
+  color: #4caf50;
+  margin-bottom: 1rem;
+}
+
+h1 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+p {
+  font-size: 1rem;
+  margin: 0.5rem 0;
+  color: #555;
+}
+
+.activateWarning {
+  font-weight: bold;
+  color: #e53935;
 }

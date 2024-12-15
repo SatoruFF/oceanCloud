@@ -1,14 +1,16 @@
-import 'dotenv/config'
-import createError from "http-errors"
+import "dotenv/config";
 import _ from "lodash";
 import jwt from "jsonwebtoken";
 
-export const validateAccessToken = (accessToken) => {
-    const user = jwt.verify(accessToken, process.env.ACCESS_SECRET_KEY)
-    return user;
-}
+const accessSecretKey = process.env.ACCESS_SECRET_KEY;
+const refreshSecretKey = process.env.REFRESH_SECRET_KEY;
 
-export const validateRefreshToken = (refreshToken) => {
-    const user = jwt.verify(refreshToken, process.env.REFRESH_SECRET_KEY)
-    return user;
-}
+export const validateAccessToken = (accessToken: string) => {
+  const decoded = jwt.verify(accessToken, accessSecretKey);
+  return decoded;
+};
+
+export const validateRefreshToken = (refreshToken: string) => {
+  const decoded = jwt.verify(refreshToken, refreshSecretKey);
+  return decoded;
+};

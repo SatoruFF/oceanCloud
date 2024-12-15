@@ -2,19 +2,19 @@ import { useState } from "react";
 import { Form, Input, Button, message, Spin, notification } from "antd";
 import Divider from "antd/es/divider";
 import { NavLink, useNavigate } from "react-router-dom";
-import { current, unwrapResult } from "@reduxjs/toolkit";
+import { unwrapResult } from "@reduxjs/toolkit";
 import { SmileOutlined } from "@ant-design/icons";
 
-import { LOGIN_ROUTE, FILE_ROUTE } from "../utils/consts";
+import { LOGIN_ROUTE, ACTIVATION_ROUTE } from "../utils/consts";
 import { userApi } from "../services/user";
 import { useAppDispatch } from "../store/store";
 import { setUser } from "../store/reducers/userSlice";
 
 import styles from "../style/auth.module.scss";
-import cn from "classnames"
+import cn from "classnames";
 
 const Register = () => {
-  const [userName, setUserName] = useState("")
+  const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -26,23 +26,23 @@ const Register = () => {
 
   const handleCreate = async () => {
     try {
-      if (email == "" && password == "" && userName == "") {
+      if (email == "" || password == "" || userName == "") {
         return message.error(`error: some field are empty`);
       }
-      const user = await regUser({
+      const inviteData = await regUser({
         userName,
         email,
         password,
       });
-      unwrapResult(user)
-      dispatch(setUser(user.data as any));
+      unwrapResult(inviteData);
+      dispatch(setUser(inviteData.data as any));
       notification.open({
         message: "Success registration",
         description: `User with email: ${email} was created`,
         placement: "topLeft",
         icon: <SmileOutlined style={{ color: "#108ee9" }} />,
       });
-      navigate(FILE_ROUTE);
+      navigate(ACTIVATION_ROUTE);
     } catch (e: any) {
       message.error(`error: ${error.data.message}`);
     }

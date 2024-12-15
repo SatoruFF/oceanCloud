@@ -9,6 +9,7 @@ import fileUpload from "express-fileupload";
 
 // utils
 import { logger } from "./logger.js";
+import qs from "qs";
 import "dotenv/config.js";
 
 // performing
@@ -33,6 +34,11 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(fileUpload({}));
 // app.use(express.static('static'))
+
+app.set("query parser", function (str) {
+  const depth = 15;
+  return qs.parse(str, { depth });
+});
 
 // routes
 app.use("/api", router);

@@ -44,6 +44,7 @@
     "pg-hstore": "^2.3.4",
     "pm2": "^5.3.1",
     "prisma": "^6.0.1",
+    "qs": "^6.13.1",
     "streamifier": "^0.1.1",
     "swagger-ui-express": "^4.6.2",
     "typescript": "^5.1.3",

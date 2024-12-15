@@ -8,6 +8,7 @@ import {
   CHATS_ROUTE,
   NOTES_ROUTE,
   TODO_ROUTE,
+  ACTIVATION_ROUTE,
 } from "./consts";
 
 import Welcome from "../pages/Welcome";
@@ -18,6 +19,7 @@ import Pomodoro from "../pages/PomodoroTimer";
 import Chats from "../pages/Chats";
 import Notes from "../pages/Notes";
 import Todo from "../pages/Todo";
+import Activate from "../pages/Activate";
 
 export const routes = [
   {
@@ -32,10 +34,10 @@ export const routes = [
     path: REGISTRATION_ROUTE,
     element: Authorization,
   },
-  // {
-  //   path: ACTIVATION_ROUTE,
-  //   element: Authorization,
-  // },
+  {
+    path: ACTIVATION_ROUTE,
+    element: Activate,
+  },
 ];
 
 export const privateRoutes = [
