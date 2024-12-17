@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.2.5",
-    "@cyntler/react-doc-viewer": "^1.13.0",
+    "@cyntler/react-doc-viewer": "^1.17.0",
     "@reduxjs/toolkit": "^1.9.3",
     "@types/antd": "^1.0.0",
     "@types/lodash": "^4.14.196",
