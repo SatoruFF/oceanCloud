@@ -236,7 +236,10 @@ class UserServiceClass {
       });
 
       if (!invite) {
-        throw createError(404, "Invite not found");
+        throw createError(
+          404,
+          "Invite not found for email address: " + emailFromInvite
+        );
       }
 
       const { email, password, userName } = invite;

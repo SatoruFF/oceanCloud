@@ -28,7 +28,7 @@ const Login = () => {
 
   const [setLogin, { isLoading, error: logError }]: any =
     userApi.useLoginMutation();
-  const isAuth = useAppSelector((state) => state.users.isAuth);
+  // const isAuth = useAppSelector((state) => state.users.isAuth);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -45,7 +45,8 @@ const Login = () => {
         return message.error(`error: ${logError.error}`); // idk why, but if stat code != 200, this code does not fall to catch
       }
       unwrapResult(user);
-      dispatch(setUser(user.data as any));
+      const userData = user.data ? user.data : user;
+      dispatch(setUser(userData as any));
       notification.open({
         message: "Success log in",
         description: `User with email: ${email} has log in`,
