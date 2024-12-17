@@ -1,0 +1,41 @@
+name: Deploy to Server
+
+on:
+  push:
+    tags:        
+      - '*' 
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Access to Server, Pull Git Changes, Rebuild and Restart Docker Compose
+        env:
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+          SSHPASS: ${{ secrets.SERVER_PASSWORD }}
+          SERVER_IP: ${{ secrets.SERVER_IP }}
+        run: |
+          sshpass -e ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP bash -c "
+          echo ✅ SSH connection successful &&
+          cd /root/core/meatIsland &&
+          echo ✅ Cleaning up unused Docker images and containers &&
+          docker system prune -af --volumes &&
+          echo ✅ Pulling from GitHub &&
+          git pull &&
+          echo ✅ Stopping running Docker containers, excluding portainer &&
+          running_containers=\$(docker ps -q --filter name=!portainer) &&
+          if [ -n \"\$running_containers\" ]; then
+            docker stop \$running_containers &&
+            docker rm \$running_containers
+          else
+            echo 'No running containers to stop.'
+          fi &&
+          echo ✅ Rebuilding and starting Docker Compose containers &&
+          docker-compose down &&
+          docker-compose up -d --build &&
+          echo ✅ Deployment completed successfully
+          "
