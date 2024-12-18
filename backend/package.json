@@ -39,7 +39,7 @@
     "lodash-es": "^4.17.21",
     "mime-types": "^2.1.35",
     "nodemailer": "^6.9.9",
-    "nodemon": "^2.0.21",
+    "nodemon": "^3.1.9",
     "pg": "^8.10.0",
     "pg-hstore": "^2.3.4",
     "pm2": "^5.3.1",
